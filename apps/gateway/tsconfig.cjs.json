@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist/cjs",
+    "incremental": true,
+    "tsBuildInfoFile": "dist/cjs/tsconfig.tsbuildinfo",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"],
+  "swc": true,
+  "ts-node": {
+    "swc": true
+  }
+}

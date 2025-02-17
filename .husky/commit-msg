@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Check ESLint Standards
+pnpm run check:commit:msg:staged ||
+(
+  echo '👋 Hey you typed a wrong message! 👋 
+    Commitlint ensures you keep best practices by enforcing you to follow them!'
+  false; 
+)
+
+echo '🎉🎊🥳 Awesome, your commit rocks all over the place!'

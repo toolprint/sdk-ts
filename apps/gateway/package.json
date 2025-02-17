@@ -1,0 +1,56 @@
+{
+  "name": "@repo/onegrep-gateway",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "OneGrep Gateway",
+  "license": "MIT",
+  "author": "OneGrep, Inc.",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "engines": {
+    "node": ">=20.x"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "outputs": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "dev": "LOG_LEVEL=debug tsx watch src/index.ts --transport sse",
+    "inspector:stdio": "npx -y @modelcontextprotocol/inspector -e LOG_LEVEL=debug -e LOG_MODE=file -e LOG_FILEPATH=./logs/gateway.log -e ONEGREP_API_KEY=${ONEGREP_API_KEY} -e ONEGREP_API_URL=${ONEGREP_API_URL} -- tsx src/index.ts",
+    "inspector:sse": "npx -y @modelcontextprotocol/inspector",
+    "start": "tsx dist/esm/index.js --transport sse",
+    "check-types": "tsc -p tsconfig.check.json --noEmit",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "echo 'build success'",
+    "clean:dist": "rimraf ./dist",
+    "clean:dist:types": "rimraf ./dist/types",
+    "clean:dist:cjs": "rimraf ./dist/cjs",
+    "clean:dist:esm": "rimraf ./dist/esm",
+    "clean:modules": "rimraf ./node_modules",
+    "clean": "pnpm run clean:dist && pnpm run clean:modules"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.5.0",
+    "@repo/onegrep-sdk": "workspace:*",
+    "@types/express": "4.17.17",
+    "commander": "^13.1.0",
+    "express": "4.18.2",
+    "typescript": "4.9.4"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@swc/core": "1.10.16",
+    "@swc/helpers": "0.5.15",
+    "dotenv": "^16.4.7",
+    "nodemon": "3.1.7",
+    "regenerator-runtime": "0.13.11",
+    "ts-node": "10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsup": "^8.3.6",
+    "tsx": "^4.19.2"
+  }
+}

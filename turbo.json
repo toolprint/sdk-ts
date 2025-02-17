@@ -1,20 +1,86 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": ["NODE_ENV", "ONEGREP_*"],
+  "globalDependencies": ["**/.env.*local"],
   "tasks": {
+    "trim": {
+      "dependsOn": [],
+      "outputs": ["openapi/*"]
+    },
+    "generate": {
+      "dependsOn": ["trim"],
+      "outputs": ["src/**/*.ts"]
+    },
+    "build:types": {
+      "dependsOn": ["^build:types"],
+      "outputs": ["dist/types/**"]
+    },
+    "build:cjs": {
+      "dependsOn": ["^build:cjs"],
+      "outputs": ["dist/cjs/**"]
+    },
+    "build:esm": {
+      "dependsOn": ["^build:esm"],
+      "outputs": ["dist/esm/**"]
+    },
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "dependsOn": ["generate", "build:types", "build:cjs", "build:esm"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
+      "cache": false
     },
     "lint": {
       "dependsOn": ["^lint"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["build", "^check-types"]
+    },
+    "test": {
+      "dependsOn": ["lint", "build"],
+      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
+      "inputs": ["**/*.tsx", "**/*.ts", "test/**/*.ts", "test/**/*.tsx"],
+      "outputs": []
+    },
+    "test:watch": {
+      "dependsOn": ["^test:watch"],
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "dependsOn": ["^clean"]
+    },
+    "clean:dist": {
+      "dependsOn": ["^clean:dist"]
+    },
+    "clean:dist:types": {
+      "dependsOn": ["^clean:dist:types"]
+    },
+    "clean:dist:cjs": {
+      "dependsOn": ["^clean:dist:cjs"]
+    },
+    "clean:dist:esm": {
+      "dependsOn": ["^clean:dist:esm"]
     },
     "dev": {
+      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
       "cache": false,
+      "persistent": true
+    },
+    "inspector:stdio": {
+      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
+      "cache": false,
+      "persistent": true
+    },
+    "inspector:sse": {
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
+      "dependsOn": ["^build"],
       "persistent": true
     }
   }

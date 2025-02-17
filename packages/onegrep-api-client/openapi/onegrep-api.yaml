@@ -1,0 +1,619 @@
+openapi: 3.1.0
+info:
+  title: OneGrep API
+  description: OneGrep's core API service
+  version: 0.0.1
+paths:
+  /health:
+    get:
+      summary: Health
+      description: Generic healthcheck endpoint to ensure the service is running.
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/clients/meta:
+    get:
+      tags:
+        - clients
+      summary: Get Meta Client
+      description: Gets the remote client config for the meta server.
+      operationId: get_meta_client_api_v1_clients_meta_get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: profile_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: Profile Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoteClientConfig'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/clients/hosts:
+    get:
+      tags:
+        - clients
+      summary: Get Hosts Clients
+      description: Gets all the remote client configs for the host servers.
+      operationId: get_hosts_clients_api_v1_clients_hosts_get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: profile_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: Profile Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RemoteClientConfig'
+                title: Response Get Hosts Clients Api V1 Clients Hosts Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    AccessPolicyType:
+      type: string
+      enum:
+        - ALWAYS
+        - NEVER
+        - REQUIRES_PERMISSION
+      title: AccessPolicyType
+      description: Enum for access policy types
+    AccountInformation:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        account:
+          $ref: '#/components/schemas/UserAccount'
+        organization:
+          $ref: '#/components/schemas/Organization'
+      type: object
+      required:
+        - user_id
+        - account
+        - organization
+      title: AccountInformation
+      description: Model for storing account information
+    ActionApprovalRequest:
+      properties:
+        id:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Id
+        policy_id:
+          type: integer
+          title: Policy Id
+        state:
+          $ref: '#/components/schemas/ActionApprovalState'
+          default: pending
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_updated_at:
+          type: string
+          format: date-time
+          title: Last Updated At
+        updated_by_user_id:
+          type: string
+          title: Updated By User Id
+        payload:
+          anyOf:
+            - type: object
+            - type: 'null'
+          title: Payload
+      type: object
+      required:
+        - id
+        - policy_id
+        - updated_by_user_id
+      title: ActionApprovalRequest
+      description: >-
+        Model that holds the state of a request for an action to be taken with
+        respect to a policy.
+
+        Ex. if the policy is set to require approval, then we will have a
+        request for approval.
+    ActionApprovalState:
+      type: string
+      enum:
+        - pending
+        - approved
+        - rejected
+      title: ActionApprovalState
+      description: Enum for policy approval states
+    ApprovalAndPolicy:
+      properties:
+        approval:
+          $ref: '#/components/schemas/ActionApprovalRequest'
+        policy:
+          $ref: '#/components/schemas/Policy'
+        resource_name:
+          type: string
+          title: Resource Name
+        integration_name:
+          type: string
+          title: Integration Name
+        tool_name:
+          type: string
+          title: Tool Name
+      type: object
+      required:
+        - approval
+        - policy
+        - resource_name
+        - integration_name
+        - tool_name
+      title: ApprovalAndPolicy
+      description: Approval and policy
+    AuditLog:
+      properties:
+        id:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Id
+        policy_id:
+          type: integer
+          title: Policy Id
+        action:
+          type: string
+          title: Action
+        details:
+          type: object
+          title: Details
+        performed_by:
+          type: string
+          title: Performed By
+          default: system
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+      type: object
+      required:
+        - policy_id
+        - action
+      title: AuditLog
+      description: Model for audit logging
+    AuthenticationStatus:
+      properties:
+        authenticated:
+          type: boolean
+          title: Authenticated
+        auth_method:
+          anyOf:
+            - type: string
+              enum:
+                - propelauth
+                - api_key
+            - type: 'null'
+          title: Auth Method
+        user_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: User Id
+      type: object
+      required:
+        - authenticated
+      title: AuthenticationStatus
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    IngressConfig:
+      properties:
+        entryPoints:
+          items:
+            type: string
+          type: array
+          title: Entrypoints
+        proxyDomain:
+          type: string
+          title: Proxydomain
+        orgID:
+          type: string
+          title: Orgid
+        orgRouteStrategy:
+          type: string
+          enum:
+            - PathPrefix
+            - Header
+          title: Orgroutestrategy
+          default: PathPrefix
+        serverID:
+          type: string
+          title: Serverid
+        serverRouteStrategy:
+          type: string
+          enum:
+            - PathPrefix
+            - Header
+          title: Serverroutestrategy
+          default: Header
+        serverIsDefault:
+          anyOf:
+            - type: boolean
+            - type: 'null'
+          title: Serverisdefault
+          default: false
+      type: object
+      required:
+        - proxyDomain
+        - orgID
+        - serverID
+      title: IngressConfig
+    KindMetadata:
+      type: object
+    LauncherConfig:
+      properties:
+        configMapName:
+          type: string
+          title: Configmapname
+        mountPath:
+          type: string
+          title: Mountpath
+      type: object
+      required:
+        - configMapName
+        - mountPath
+      title: LauncherConfig
+    MCPServerConfig:
+      properties:
+        name:
+          type: string
+          title: Name
+        image:
+          type: string
+          title: Image
+          default: registry.onegrep.dev/onegrep/mcp-host:latest
+        git_repo_url:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Git Repo Url
+        git_branch:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Git Branch
+          default: main
+        command:
+          type: string
+          title: Command
+        args:
+          items:
+            type: string
+          type: array
+          title: Args
+        env_vars:
+          additionalProperties:
+            type: string
+          type: object
+          title: Env Vars
+      type: object
+      required:
+        - name
+        - command
+        - args
+        - env_vars
+      title: MCPServerConfig
+    NewPolicyRequest:
+      properties:
+        resource_name:
+          type: string
+          title: Resource Name
+        access_policy:
+          $ref: '#/components/schemas/AccessPolicyType'
+      type: object
+      required:
+        - resource_name
+        - access_policy
+      title: NewPolicyRequest
+      description: Request model for creating a new policy
+    Organization:
+      properties:
+        id:
+          type: string
+          title: Id
+        owner_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Owner Id
+        created_by_user_id:
+          type: string
+          title: Created By User Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+        - id
+        - created_by_user_id
+      title: Organization
+      description: Model for storing organization information
+    Policy:
+      properties:
+        resource_name:
+          type: string
+          title: Resource Name
+        access_policy:
+          $ref: '#/components/schemas/AccessPolicyType'
+        id:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Id
+        organization_id:
+          type: string
+          title: Organization Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Updated At
+      type: object
+      required:
+        - resource_name
+        - access_policy
+        - organization_id
+      title: Policy
+      description: Policy model that works with both SQL and in-memory storage
+    PolicyCheckResult:
+      properties:
+        approved:
+          type: boolean
+          title: Approved
+      type: object
+      required:
+        - approved
+      title: PolicyCheckResult
+      description: Result of a policy check
+    RemoteClientConfig:
+      properties:
+        org_id:
+          type: string
+          title: Org Id
+        name:
+          type: string
+          title: Name
+        display_name:
+          type: string
+          title: Display Name
+        description:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Description
+        ready:
+          type: boolean
+          title: Ready
+        endpoint:
+          type: string
+          title: Endpoint
+        required_headers:
+          anyOf:
+            - additionalProperties:
+                type: string
+              type: object
+            - type: 'null'
+          title: Required Headers
+      type: object
+      required:
+        - org_id
+        - name
+        - display_name
+        - ready
+      title: RemoteClientConfig
+    Server:
+      properties:
+        kind:
+          type: string
+          const: Server
+          title: Kind
+          default: Server
+        metadata:
+          $ref: '#/components/schemas/KindMetadata'
+        spec:
+          $ref: '#/components/schemas/ServerSpec'
+        status:
+          type: object
+          title: Status
+        apiVersion:
+          type: string
+          title: Apiversion
+          readOnly: true
+      additionalProperties: true
+      type: object
+      required:
+        - metadata
+        - spec
+        - status
+        - apiVersion
+      title: Server
+    ServerSpec:
+      properties:
+        orgID:
+          type: string
+          title: Orgid
+        image:
+          type: string
+          title: Image
+        pullPolicy:
+          type: string
+          title: Pullpolicy
+          default: IfNotPresent
+        port:
+          type: integer
+          title: Port
+          default: 8000
+        displayName:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Displayname
+        envFromSources:
+          anyOf:
+            - items:
+                type: object
+              type: array
+            - type: 'null'
+          title: Envfromsources
+        volumes:
+          anyOf:
+            - items:
+                type: object
+              type: array
+            - type: 'null'
+          title: Volumes
+        volumeMounts:
+          anyOf:
+            - items:
+                type: object
+              type: array
+            - type: 'null'
+          title: Volumemounts
+        launcherConfig:
+          anyOf:
+            - $ref: '#/components/schemas/LauncherConfig'
+            - type: 'null'
+        ingressConfig:
+          anyOf:
+            - $ref: '#/components/schemas/IngressConfig'
+            - type: 'null'
+      type: object
+      required:
+        - orgID
+        - image
+      title: ServerSpec
+    TraefikIngressRoute:
+      properties:
+        kind:
+          type: string
+          const: IngressRoute
+          title: Kind
+          default: IngressRoute
+        metadata:
+          $ref: '#/components/schemas/KindMetadata'
+        spec:
+          type: object
+          title: Spec
+        status:
+          type: object
+          title: Status
+        apiVersion:
+          type: string
+          title: Apiversion
+          readOnly: true
+      additionalProperties: true
+      type: object
+      required:
+        - metadata
+        - spec
+        - status
+        - apiVersion
+      title: TraefikIngressRoute
+    UserAccount:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        belongs_to_organization_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Belongs To Organization Id
+        api_key:
+          type: string
+          title: Api Key
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        last_active:
+          type: string
+          format: date-time
+          title: Last Active
+      type: object
+      required:
+        - user_id
+        - api_key
+      title: UserAccount
+      description: Model for storing user information including their API key
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: X-ONEGREP-API-KEY
+    HTTPBearer:
+      type: http
+      scheme: bearer

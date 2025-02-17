@@ -1,0 +1,8 @@
+{
+  "extends": "./types.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "emitDeclarationOnly": false,
+    "skipLibCheck": true
+  }
+}

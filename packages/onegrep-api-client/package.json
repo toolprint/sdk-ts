@@ -1,0 +1,51 @@
+{
+  "name": "@repo/onegrep-api-client",
+  "type": "module",
+  "private": true,
+  "types": "dist/types/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    "import": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/esm/index.js"
+    },
+    "require": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/cjs/index.js"
+    }
+  },
+  "outputs": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "trim": "openapi-endpoint-trimmer --url https://api.onegrep.dev/openapi.json --output ./openapi/onegrep-api.yaml -p /health,/api/v1/clients",
+    "generate": "openapi-zod-client ./openapi/onegrep-api.yaml --output ./src/api.ts --export-schemas --export-types --strict-objects --default-status --with-docs",
+    "check-types": "tsc -p tsconfig.check.json --noEmit",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "echo 'build success'",
+    "test": "vitest --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts --watch",
+    "clean:dist": "rimraf ./dist",
+    "clean:dist:types": "rimraf ./dist/types",
+    "clean:dist:cjs": "rimraf ./dist/cjs",
+    "clean:dist:esm": "rimraf ./dist/esm",
+    "clean:modules": "rimraf ./node_modules",
+    "clean": "pnpm run clean:dist && pnpm run clean:modules"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.13.4",
+    "openapi-endpoint-trimmer": "^2.0.1",
+    "openapi-zod-client": "^1.18.3",
+    "typescript": "latest",
+    "vitest": "^3.0.5"
+  },
+  "dependencies": {
+    "@zodios/core": "^10.9.6",
+    "zod": "^3.24.2",
+    "dotenv": "^16.4.7"
+  }
+}

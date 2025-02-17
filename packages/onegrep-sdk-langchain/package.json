@@ -1,0 +1,56 @@
+{
+  "name": "@repo/onegrep-sdk-langchain",
+  "version": "0.0.1",
+  "private": false,
+  "type": "module",
+  "license": "MIT",
+  "author": "OneGrep, Inc.",
+  "homepage": "https://onegrep.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onegrep/typescript-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/onegrep/typescript-sdk/issues"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "outputs": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "check-types": "tsc -p tsconfig.check.json --noEmit",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build": "echo 'build success'",
+    "test": "vitest --config vitest.config.ts --disable-console-intercept ",
+    "test:watch": "vitest --config vitest.config.ts --disable-console-intercept --watch",
+    "clean:dist": "rimraf ./dist",
+    "clean:dist:types": "rimraf ./dist/types",
+    "clean:dist:cjs": "rimraf ./dist/cjs",
+    "clean:dist:esm": "rimraf ./dist/esm",
+    "clean:modules": "rimraf ./node_modules",
+    "clean": "pnpm run clean:dist && pnpm run clean:modules"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@repo/onegrep-api-client": "workspace:*",
+    "@types/node": "^22.13.4",
+    "dotenv": "^16.4.7",
+    "tsup": "^8.3.6",
+    "typescript": "latest",
+    "vitest": "^3.0.5"
+  },
+  "dependencies": {
+    "@repo/onegrep-sdk": "workspace:*",
+    "@langchain/core": "^0.3.40",
+    "@modelcontextprotocol/sdk": "^1.5.0",
+    "eventsource": "^3.0.5",
+    "json-schema-to-zod": "^2.6.0",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.24.2"
+  }
+}

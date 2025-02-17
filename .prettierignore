@@ -1,0 +1,10 @@
+node_modules
+package-lock.json
+public
+build
+coverage
+.turbo
+.turbo_cache
+.next
+next-env.d.ts
+.vscode

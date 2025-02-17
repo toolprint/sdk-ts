@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo '💅 Styling, testing and building your project before committing'
+
+# Check ESLint Standards
+pnpm run lint:staged ||
+(
+  echo '❌😱 Get that weak shit out of here!
+    ESLint Check Failed. Make the required changes listed above, add changes and try to commit again.'
+  false; 
+)
+
+# Building...
+echo '🛠 Trying to build the code... '
+
+pnpm run build ||
+(
+  echo '❌😱 Next build failed: View the errors above to see why.'
+  false;
+)
+
+# If everything passes... Now we can check commit message
+echo '👨‍💻 Checking commit message '
