@@ -12,16 +12,19 @@
       "dependsOn": ["trim"],
       "outputs": ["src/**/*.ts"]
     },
+    "compile": {
+      "dependsOn": ["^compile"]
+    },
     "build:types": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": ["compile", "^build:types"],
       "outputs": ["dist/types/**"]
     },
     "build:cjs": {
-      "dependsOn": ["^build:cjs"],
+      "dependsOn": ["@repo/utils#compile", "^build:cjs"],
       "outputs": ["dist/cjs/**"]
     },
     "build:esm": {
-      "dependsOn": ["^build:esm"],
+      "dependsOn": ["@repo/utils#compile", "^build:esm"],
       "outputs": ["dist/esm/**"]
     },
     "build": {

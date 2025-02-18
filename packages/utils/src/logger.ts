@@ -1,9 +1,9 @@
-import pino from 'pino'
+import pino, { Logger } from 'pino'
 import path from 'path'
 
-import { getEnv } from '@repo/onegrep-api-client'
+import { getEnv } from './env'
 
-type LogMode = 'stdout' | 'file'
+export type LogMode = 'stdout' | 'file'
 
 const DEFAULT_LOG_FILEPATH = path.join(process.cwd(), 'logs', 'onegrep-sdk.log')
 
@@ -33,7 +33,7 @@ export function getLogger(
   logLevel: string,
   logMode: LogMode,
   logFilepath?: string
-) {
+): Logger {
   return pino({
     level: logLevel,
     transport:
@@ -43,9 +43,9 @@ export function getLogger(
   })
 }
 
-export function getLoggerFromConfig() {
+export function getLoggerFromConfig(): Logger {
   const env = getEnv()
   return getLogger(env.LOG_LEVEL, env.LOG_MODE, env.LOG_FILEPATH)
 }
 
-export const log = getLoggerFromConfig()
+export const log: Logger = getLoggerFromConfig()

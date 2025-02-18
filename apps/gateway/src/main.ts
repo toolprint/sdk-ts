@@ -1,7 +1,7 @@
 import { argv } from 'process'
 import { launchCommand } from './command.js'
 import { stdioServer, sseServer } from './server.js'
-import { log } from '@repo/onegrep-sdk'
+import { log } from '@repo/utils'
 
 async function main() {
   const program = launchCommand()

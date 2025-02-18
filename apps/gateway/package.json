@@ -34,6 +34,7 @@
     "clean": "pnpm run clean:dist && pnpm run clean:modules"
   },
   "dependencies": {
+    "@repo/utils": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.5.0",
     "@repo/onegrep-sdk": "workspace:*",
     "@types/express": "4.17.17",

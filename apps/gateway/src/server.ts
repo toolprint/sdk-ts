@@ -3,7 +3,7 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js'
 
 import express from 'express'
 import { createGateway } from '@repo/onegrep-sdk'
-import { log } from '@repo/onegrep-sdk'
+import { log } from '@repo/utils'
 import { Gateway } from '@repo/onegrep-sdk'
 
 const PORT = process.env.PORT || 8000

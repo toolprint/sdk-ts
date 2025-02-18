@@ -1,6 +1,6 @@
 import { Tool } from '@modelcontextprotocol/sdk/types.js'
 import { z } from 'zod'
-import { log } from '../../logger.js'
+import { log } from '@repo/utils'
 import { JsonSchema, jsonSchemaToZod } from 'json-schema-to-zod'
 
 export interface ToolMetadata {

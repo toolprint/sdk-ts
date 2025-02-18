@@ -6,7 +6,7 @@ import {
 import { RemoteToolCallArgs } from './mcp/gateway/types.js'
 import { ConnectedClient } from './mcp/gateway/client.js'
 import { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js'
-import { log } from './logger.js'
+import { log } from '@repo/utils'
 import { JsonSchema, jsonSchemaToZod } from 'json-schema-to-zod'
 
 export class ToolResource {

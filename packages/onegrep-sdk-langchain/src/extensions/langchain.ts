@@ -9,7 +9,7 @@ import { z } from 'zod'
 
 async function _call(resource: ToolResource, input: any): Promise<any> {
   const result = await resource.callTool(input)
-  const json_content = []
+  const json_content: any[] = []
   for (const content of result.content) {
     if (content.type === 'text') {
       const parsedContent = JSON.parse(content.text)

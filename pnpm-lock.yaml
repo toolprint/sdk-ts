@@ -47,6 +47,9 @@ importers:
       '@repo/onegrep-sdk':
         specifier: workspace:*
         version: link:../../packages/onegrep-sdk
+      '@repo/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@types/express':
         specifier: 4.17.17
         version: 4.17.17
@@ -129,6 +132,9 @@ importers:
 
   packages/onegrep-api-client:
     dependencies:
+      '@repo/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@zodios/core':
         specifier: ^10.9.6
         version: 10.9.6(axios@1.7.9)(zod@3.24.2)
@@ -163,6 +169,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.5.0
         version: 1.5.0
+      '@repo/utils':
+        specifier: workspace:*
+        version: link:../utils
       eventsource:
         specifier: ^3.0.5
         version: 3.0.5
@@ -254,6 +263,34 @@ importers:
         version: 3.0.5(@types/node@22.13.4)(jiti@2.4.2)(jsdom@22.1.0(canvas@2.11.2(encoding@0.1.13)))(tsx@4.19.2)(yaml@2.7.0)
 
   packages/typescript-config: {}
+
+  packages/utils:
+    dependencies:
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
+      pino:
+        specifier: ^9.6.0
+        version: 9.6.0
+      pino-pretty:
+        specifier: ^13.0.0
+        version: 13.0.0
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^22.13.4
+        version: 22.13.4
+      tsup:
+        specifier: ^8.2.0
+        version: 8.3.6(@swc/core@1.10.16(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.2)(tsx@4.19.2)(typescript@5.7.3)(yaml@2.7.0)
+      typescript:
+        specifier: latest
+        version: 5.7.3
 
 packages:
 

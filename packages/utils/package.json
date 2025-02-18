@@ -1,0 +1,27 @@
+{
+  "name": "@repo/utils",
+  "type": "module",
+  "author": "OneGrep, Inc.",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "compile": "tsup src/**/*.ts --format cjs,esm --dts --out-dir dist"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.13.4",
+    "typescript": "latest",
+    "tsup": "^8.2.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.24.2"
+  }
+}

@@ -1,7 +1,7 @@
 import { clientFromConfig, OneGrepApiClient } from '@repo/onegrep-api-client'
 import { createConnectedClient, ConnectedClient } from './mcp/gateway/client.js'
 import { ToolResource, toolResourcesFromClient } from './resource.js'
-import { log } from './logger.js'
+import { log } from '@repo/utils'
 
 export interface ToolFilter {
   (resource: ToolResource): boolean

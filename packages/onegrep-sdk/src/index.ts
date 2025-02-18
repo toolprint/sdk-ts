@@ -1,6 +1,5 @@
 export * from './resource.js'
 export * from './toolbox.js'
-export * from './logger.js'
 export * from './mcp/gateway/app.js'
 export * from './mcp/gateway/client.js'
 export * from './mcp/gateway/toolmetadata.js'

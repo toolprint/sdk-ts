@@ -1,7 +1,7 @@
 import { FetchLikeInit } from 'eventsource'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import { RemoteClientConfig } from './types.js'
-import { getEnv } from '@repo/onegrep-api-client'
+import { getEnv } from '@repo/utils'
 
 export const createClientTransport = (
   remoteClientConfig: RemoteClientConfig

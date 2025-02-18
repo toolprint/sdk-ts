@@ -1,6 +1,6 @@
 import { type ZodiosOptions } from '@zodios/core'
+import { getEnv } from '@repo/utils'
 import { createApiClient } from './api.js'
-import { getEnv } from './env.js'
 
 export type OneGrepApiClient = ReturnType<typeof createApiClient>
 

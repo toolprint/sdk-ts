@@ -31,7 +31,7 @@ import {
   ToolNameFilter
 } from '../../toolbox.js'
 import { ToolResource } from '../../resource.js'
-import { log } from '../../logger.js'
+import { log } from '@repo/utils'
 import { z } from 'zod'
 
 export const ToolNamespaceDelimiter = '_TOOL_'

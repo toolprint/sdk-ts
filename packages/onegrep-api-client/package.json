@@ -44,6 +44,7 @@
     "vitest": "^3.0.5"
   },
   "dependencies": {
+    "@repo/utils": "workspace:*",
     "@zodios/core": "^10.9.6",
     "zod": "^3.24.2",
     "dotenv": "^16.4.7"

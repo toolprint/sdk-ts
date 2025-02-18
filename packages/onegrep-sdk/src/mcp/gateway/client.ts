@@ -1,5 +1,5 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import { log } from '../../logger.js'
+import { log } from '@repo/utils'
 import { createClientTransport } from './transport.js'
 import { RemoteClientConfig, RemoteToolCallArgs } from './types.js'
 import {
