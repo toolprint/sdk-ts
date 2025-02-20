@@ -1,5 +1,6 @@
 {
   "name": "@repo/onegrep-api-client",
+  "version": "0.0.0",
   "type": "module",
   "private": true,
   "types": "dist/types/index.d.ts",
@@ -19,7 +20,7 @@
     "dist/**/*"
   ],
   "scripts": {
-    "trim": "openapi-endpoint-trimmer --url https://api.onegrep.dev/openapi.json --output ./openapi/onegrep-api.yaml -p /health,/api/v1/clients",
+    "openapi:trim": "openapi-endpoint-trimmer --url https://api.onegrep.dev/openapi.json --output ./openapi/onegrep-api.yaml -p /health,/api/v1/clients",
     "generate": "openapi-zod-client ./openapi/onegrep-api.yaml --output ./src/api.ts --export-schemas --export-types --strict-objects --default-status --with-docs",
     "check-types": "tsc -p tsconfig.check.json --noEmit",
     "build:types": "tsc -p tsconfig.types.json",
@@ -32,8 +33,7 @@
     "clean:dist:types": "rimraf ./dist/types",
     "clean:dist:cjs": "rimraf ./dist/cjs",
     "clean:dist:esm": "rimraf ./dist/esm",
-    "clean:modules": "rimraf ./node_modules",
-    "clean": "pnpm run clean:dist && pnpm run clean:modules"
+    "clean:modules": "rimraf ./node_modules"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

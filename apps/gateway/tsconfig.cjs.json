@@ -12,6 +12,7 @@
     "skipLibCheck": true
   },
   "include": ["src"],
+  "exclude": ["**/*.test.ts", "node_modules"],
   "swc": true,
   "ts-node": {
     "swc": true

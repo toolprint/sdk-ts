@@ -7,6 +7,9 @@ export const createClientTransport = (
   remoteClientConfig: RemoteClientConfig
 ) => {
   const env = getEnv() // TODO: inject?
+  if (!env.ONEGREP_API_KEY) {
+    throw new Error('ONEGREP_API_KEY is not set')
+  }
 
   const url = remoteClientConfig.endpoint
   if (!url) {

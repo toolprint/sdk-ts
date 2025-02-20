@@ -1,6 +1,6 @@
 {
-  "name": "@repo/onegrep-sdk",
-  "version": "0.0.1",
+  "name": "onegrep-sdk",
+  "version": "0.0.3",
   "private": false,
   "type": "module",
   "license": "MIT",
@@ -13,14 +13,12 @@
   "bugs": {
     "url": "https://github.com/onegrep/typescript-sdk/issues"
   },
-  "types": "dist/types/index.d.ts",
-  "main": "dist/cjs/index.js",
+  "types": "dist/types/onegrep-sdk/index.d.ts",
+  "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.js",
   "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./dist/esm/index.js"
-    }
+    "require": "./dist/cjs/index.cjs",
+    "import": "./dist/esm/index.js"
   },
   "files": [
     "dist/**/*"
@@ -31,22 +29,25 @@
   "scripts": {
     "check-types": "tsc -p tsconfig.check.json --noEmit",
     "build:types": "tsc -p tsconfig.types.json",
-    "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsup src/index.ts --tsconfig tsconfig.cjs.json --out-dir dist/cjs --format cjs --dts",
+    "build:esm": "tsup src/index.ts --tsconfig tsconfig.esm.json --out-dir dist/esm --format esm --dts",
     "build": "echo 'build success'",
-    "test": "vitest --config vitest.config.ts --disable-console-intercept ",
-    "test:watch": "vitest --config vitest.config.ts --disable-console-intercept --watch",
+    "licenses": "pnpm licenses list --prod --long > .licenses.txt",
+    "package": "mkdir -p pack && pnpm pack --pack-destination pack",
+    "test": "LOG_MODE=pino LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept ",
+    "test:watch": "LOG_MODE=pino LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept --watch",
     "clean:dist": "rimraf ./dist",
     "clean:dist:types": "rimraf ./dist/types",
     "clean:dist:cjs": "rimraf ./dist/cjs",
     "clean:dist:esm": "rimraf ./dist/esm",
-    "clean:modules": "rimraf ./node_modules",
-    "clean": "pnpm run clean:dist && pnpm run clean:modules"
+    "clean:modules": "rimraf ./node_modules"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
     "@repo/onegrep-api-client": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/utils": "workspace:*",
     "@types/node": "^22.13.4",
+    "check-licenses": "^1.1.0",
     "dotenv": "^16.4.7",
     "rimraf": "^6.0.1",
     "tsup": "^8.3.6",
@@ -54,12 +55,13 @@
     "vitest": "^3.0.5"
   },
   "dependencies": {
-    "@repo/utils": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.5.0",
-    "json-schema-to-zod": "^2.6.0",
+    "@zodios/core": "^10.9.6",
     "eventsource": "^3.0.5",
-    "pino": "^9.6.0",
-    "pino-pretty": "^13.0.0",
+    "json-schema-to-zod": "^2.6.0",
     "zod": "^3.24.2"
+  },
+  "peerDependencies": {
+    "dotenv": "^16.4.7"
   }
 }

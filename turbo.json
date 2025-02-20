@@ -4,12 +4,12 @@
   "globalEnv": ["NODE_ENV", "ONEGREP_*"],
   "globalDependencies": ["**/.env.*local"],
   "tasks": {
-    "trim": {
+    "openapi:trim": {
       "dependsOn": [],
       "outputs": ["openapi/*"]
     },
     "generate": {
-      "dependsOn": ["trim"],
+      "dependsOn": ["openapi:trim"],
       "outputs": ["src/**/*.ts"]
     },
     "compile": {
@@ -32,37 +32,79 @@
       "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
       "cache": false
     },
+    "onegrep-gateway#build:types": {
+      "dependsOn": ["onegrep-sdk#build:types"]
+    },
+    "@onegrep-sdk/n8n-nodes-onegrep#build:types": {
+      "dependsOn": ["onegrep-sdk#build:types"]
+    },
+    "@onegrep-sdk/langchain#build:types": {
+      "dependsOn": ["onegrep-sdk#build:types"]
+    },
+    "@onegrep-sdk/n8n-nodes-onegrep#build": {
+      "dependsOn": ["build:types", "build:cjs", "prepack"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
+      "cache": false
+    },
+    "@onegrep-sdk/n8n-nodes-onegrep#prepack": {
+      "dependsOn": ["build:cjs"],
+      "outputs": ["pack/**/*"]
+    },
     "lint": {
       "dependsOn": ["^lint"]
+    },
+    "lint:fix": {
+      "dependsOn": ["^lint:fix"]
     },
     "check-types": {
       "dependsOn": ["build", "^check-types"]
     },
     "test": {
       "dependsOn": ["lint", "build"],
-      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
+      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL", "LOG_MODE", "LOG_LEVEL"],
       "inputs": ["**/*.tsx", "**/*.ts", "test/**/*.ts", "test/**/*.tsx"],
       "outputs": []
     },
     "test:watch": {
-      "dependsOn": ["^test:watch"],
+      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL", "LOG_MODE", "LOG_LEVEL"],
       "cache": false,
       "persistent": true
     },
+    "package": {
+      "cache": false,
+      "dependsOn": ["build"],
+      "outputs": ["pack/**/*"]
+    },
+    "licenses": {
+      "dependsOn": ["package"]
+    },
     "clean": {
-      "dependsOn": ["^clean"]
+      "cache": false,
+      "dependsOn": ["^clean", "clean:dist", "clean:modules", "clean:pack"]
     },
     "clean:dist": {
+      "cache": false,
       "dependsOn": ["^clean:dist"]
     },
     "clean:dist:types": {
+      "cache": false,
       "dependsOn": ["^clean:dist:types"]
     },
     "clean:dist:cjs": {
+      "cache": false,
       "dependsOn": ["^clean:dist:cjs"]
     },
     "clean:dist:esm": {
+      "cache": false,
       "dependsOn": ["^clean:dist:esm"]
+    },
+    "clean:modules": {
+      "cache": false,
+      "dependsOn": ["^clean:modules"]
+    },
+    "clean:pack": {
+      "cache": false,
+      "dependsOn": ["^clean:pack"]
     },
     "dev": {
       "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
@@ -83,7 +125,7 @@
     "start": {
       "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
       "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "persistent": true
     }
   }

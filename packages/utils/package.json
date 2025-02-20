@@ -1,16 +1,31 @@
 {
   "name": "@repo/utils",
+  "version": "0.0.0",
   "type": "module",
   "author": "OneGrep, Inc.",
+  "types": "dist/types/index.d.ts",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.js",
   "exports": {
-    ".": "./dist/index.js"
+    "require": "./dist/cjs/index.cjs",
+    "import": "./dist/esm/index.js"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "outputs": [
+    "dist/**/*"
+  ],
   "scripts": {
     "check-types": "tsc --noEmit",
-    "compile": "tsup src/**/*.ts --format cjs,esm --dts --out-dir dist"
+    "build:types": "tsc --emitDeclarationOnly --declaration --declarationDir dist/types",
+    "build:cjs": "tsup src/index.ts --tsconfig tsconfig.json --out-dir dist/cjs --format cjs --dts",
+    "build:esm": "tsup src/index.ts --tsconfig tsconfig.json --out-dir dist/esm --format esm --dts",
+    "clean:dist": "rimraf ./dist",
+    "clean:dist:types": "rimraf ./dist/types",
+    "clean:dist:cjs": "rimraf ./dist/cjs",
+    "clean:dist:esm": "rimraf ./dist/esm",
+    "clean:modules": "rimraf ./node_modules"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
@@ -19,9 +34,12 @@
     "tsup": "^8.2.0"
   },
   "dependencies": {
+    "zod": "^3.24.2",
+    "ts-log": "^2.2.7"
+  },
+  "peerDependencies": {
     "dotenv": "^16.4.7",
     "pino": "^9.6.0",
-    "pino-pretty": "^13.0.0",
-    "zod": "^3.24.2"
+    "pino-pretty": "^13.0.0"
   }
 }

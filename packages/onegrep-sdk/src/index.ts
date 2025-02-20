@@ -1,3 +1,4 @@
+export * from './client.js'
 export * from './resource.js'
 export * from './toolbox.js'
 export * from './mcp/gateway/app.js'

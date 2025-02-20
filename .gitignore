@@ -26,6 +26,10 @@ coverage
 out/
 build
 dist
+pack
+
+# Licenses (for now, include for publishing?)
+.licenses.txt
 
 # Debug
 npm-debug.log*

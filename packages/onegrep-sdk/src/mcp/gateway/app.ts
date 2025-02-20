@@ -23,7 +23,7 @@ import {
   Implementation
 } from '@modelcontextprotocol/sdk/types.js'
 
-import { clientFromConfig } from '@repo/onegrep-api-client'
+import { clientFromConfig } from '../../client.js'
 import {
   AndFilter,
   createToolbox,

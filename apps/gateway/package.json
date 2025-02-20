@@ -1,10 +1,11 @@
 {
-  "name": "@repo/onegrep-gateway",
+  "name": "onegrep-gateway",
   "type": "module",
   "version": "1.0.0",
   "description": "OneGrep Gateway",
   "license": "MIT",
   "author": "OneGrep, Inc.",
+  "types": "dist/types/index.d.ts",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "engines": {
@@ -17,26 +18,27 @@
     "dist/**/*"
   ],
   "scripts": {
-    "dev": "LOG_LEVEL=debug tsx watch src/index.ts --transport sse",
-    "inspector:stdio": "npx -y @modelcontextprotocol/inspector -e LOG_LEVEL=debug -e LOG_MODE=file -e LOG_FILEPATH=./logs/gateway.log -e ONEGREP_API_KEY=${ONEGREP_API_KEY} -e ONEGREP_API_URL=${ONEGREP_API_URL} -- tsx src/index.ts",
+    "dev": "LOG_MODE=pino LOG_LEVEL=debug node --loader ts-node/esm src/main.ts --transport sse",
+    "inspector:stdio": "npx -y @modelcontextprotocol/inspector -e LOG_MODE=pino -e LOG_LEVEL=debug -e PINO_LOG_TRANSPORT=file -e PINO_LOG_FILEPATH=./logs/gateway.log -e ONEGREP_API_KEY=${ONEGREP_API_KEY} -e ONEGREP_API_URL=${ONEGREP_API_URL} -- node --loader ts-node/esm src/main.ts",
     "inspector:sse": "npx -y @modelcontextprotocol/inspector",
-    "start": "tsx dist/esm/index.js --transport sse",
+    "start": "LOG_MODE=pino LOG_LEVEL=debug tsx dist/esm/index.js --transport sse",
     "check-types": "tsc -p tsconfig.check.json --noEmit",
     "build:types": "tsc -p tsconfig.types.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build": "echo 'build success'",
+    "licenses": "pnpm licenses list --prod --long > .licenses.txt",
+    "package": "mkdir -p pack && npm pack --pack-destination pack",
     "clean:dist": "rimraf ./dist",
     "clean:dist:types": "rimraf ./dist/types",
     "clean:dist:cjs": "rimraf ./dist/cjs",
     "clean:dist:esm": "rimraf ./dist/esm",
     "clean:modules": "rimraf ./node_modules",
-    "clean": "pnpm run clean:dist && pnpm run clean:modules"
+    "clean:pack": "rimraf ./pack"
   },
   "dependencies": {
     "@repo/utils": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.5.0",
-    "@repo/onegrep-sdk": "workspace:*",
     "@types/express": "4.17.17",
     "commander": "^13.1.0",
     "express": "4.18.2",
@@ -46,12 +48,21 @@
     "@repo/typescript-config": "workspace:*",
     "@swc/core": "1.10.16",
     "@swc/helpers": "0.5.15",
-    "dotenv": "^16.4.7",
     "nodemon": "3.1.7",
     "regenerator-runtime": "0.13.11",
     "ts-node": "10.9.2",
     "ts-node-dev": "^2.0.0",
     "tsup": "^8.3.6",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "dotenv": "^16.4.7",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0"
+  },
+  "peerDependencies": {
+    "onegrep-sdk": "workspace:*"
+  },
+  "ts-node": {
+    "swc": true,
+    "esm": true
   }
 }

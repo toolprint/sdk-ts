@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist/esm",
+    "incremental": true,
+    "tsBuildInfoFile": "dist/esm/tsconfig.tsbuildinfo",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"],
+  "exclude": ["**/*.test.ts", "node_modules"],
+  "swc": true,
+  "ts-node": {
+    "swc": true,
+    "esm": true
+  }
+}

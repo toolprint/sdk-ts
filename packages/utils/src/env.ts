@@ -9,10 +9,11 @@ const envSchema = z.object({
       z.literal('production')
     ])
     .default('development'),
+  LOG_MODE: z.enum(['silent', 'console', 'pino']).default('console'),
   LOG_LEVEL: z.string().default('info'),
-  LOG_MODE: z.enum(['stdout', 'file']).default('stdout'),
-  LOG_FILEPATH: z.string().optional(),
-  ONEGREP_API_KEY: z.string().min(1),
+  PINO_LOG_TRANSPORT: z.enum(['stdout', 'file']).default('stdout'),
+  PINO_LOG_FILEPATH: z.string().optional(),
+  ONEGREP_API_KEY: z.string().optional(),
   ONEGREP_API_URL: z.string().url().default('https://api.onegrep.dev')
 })
 

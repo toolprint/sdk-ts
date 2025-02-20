@@ -3,8 +3,8 @@ import {
   DynamicStructuredToolInput,
   StructuredTool
 } from '@langchain/core/tools'
-import { Toolbox } from '@repo/onegrep-sdk'
-import { ToolResource } from '@repo/onegrep-sdk'
+import { Toolbox } from 'onegrep-sdk'
+import { ToolResource } from 'onegrep-sdk'
 import { z } from 'zod'
 
 async function _call(resource: ToolResource, input: any): Promise<any> {

@@ -1,0 +1,92 @@
+{
+  "name": "@onegrep-sdk/n8n-nodes-onegrep",
+  "description": "OneGrep Node for n8n",
+  "version": "0.0.7",
+  "private": false,
+  "license": "MIT",
+  "author": {
+    "name": "OneGrep, Inc.",
+    "email": "support@onegrep.dev"
+  },
+  "keywords": [
+    "onegrep",
+    "n8n",
+    "n8n-community-node-package"
+  ],
+  "homepage": "https://onegrep.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onegrep/typescript-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/onegrep/typescript-sdk/issues"
+  },
+  "types": "dist/types/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "exports": {
+    "require": "./dist/cjs/index.js"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "outputs": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "check-types": "tsc -p tsconfig.check.json --noEmit",
+    "format": "prettier src package.json --write",
+    "lint": "eslint src package.json",
+    "lint:fix": "eslint src package.json --fix",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build:cjs": "tsup src/index.ts --tsconfig tsconfig.tsup.json --out-dir dist/cjs --format cjs --dts",
+    "build:esm": "echo 'ESM not supported for n8n nodes'",
+    "build": "echo 'build success'",
+    "licenses": "pnpm licenses list --prod --long > .licenses.txt",
+    "package": "mkdir -p pack && pnpm pack --pack-destination pack",
+    "prepack": "cp dist/cjs/index.js dist/cjs/OneGrepApi.credentials.cjs && cp dist/cjs/index.js dist/cjs/Onegrep.node.cjs",
+    "dev": "NODE_FUNCTION_ALLOW_EXTERNAL=* N8N_BLOCK_ENV_ACCESS_IN_NODE=false N8N_BLOCK_UNSAFE_FUNCTIONS=false n8n start",
+    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json",
+    "test:disabled": "vitest --config vitest.config.ts --disable-console-intercept ",
+    "test:watch:disabled": "vitest --config vitest.config.ts --disable-console-intercept --watch",
+    "clean:dist": "rimraf ./dist",
+    "clean:dist:types": "rimraf ./dist/types",
+    "clean:dist:cjs": "rimraf ./dist/cjs",
+    "clean:dist:esm": "rimraf ./dist/esm",
+    "clean:modules": "rimraf ./node_modules",
+    "clean:pack": "rimraf ./pack"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/cjs/OneGrepApi.credentials.cjs"
+    ],
+    "nodes": [
+      "dist/cjs/Onegrep.node.cjs"
+    ]
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.13.4",
+    "@types/eslint": "^8.56.0",
+    "onegrep-sdk": "workspace:*",
+    "dotenv": "^16.4.7",
+    "tsup": "^8.3.6",
+    "typescript": "latest",
+    "vitest": "^3.0.5",
+    "n8n": "*",
+    "n8n-workflow": "*",
+    "@typescript-eslint/parser": "^7.15.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.1"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*",
+    "onegrep-sdk": "*"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "engines": {
+    "node": ">=20,<=22"
+  }
+}

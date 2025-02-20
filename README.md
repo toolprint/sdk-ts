@@ -1,28 +1,51 @@
-# Turborepo starter
+# typescript-sdk
 
-This Turborepo starter is maintained by the Turborepo core team.
+[![Release](https://img.shields.io/github/v/release/OneGrep/typescript-sdk)](https://img.shields.io/github/v/release/OneGrep/typescript-sdk)
+[![Build status](https://img.shields.io/github/actions/workflow/status/OneGrep/typescript-sdk/main.yml?branch=main)](https://github.com/OneGrep/typescript-sdk/actions/workflows/main.yml?query=branch%3Amain)
+[![codecov](https://codecov.io/gh/OneGrep/typescript-sdk/branch/main/graph/badge.svg)](https://codecov.io/gh/OneGrep/typescript-sdk)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/OneGrep/typescript-sdk)](https://img.shields.io/github/commit-activity/m/OneGrep/typescript-sdk)
+[![License](https://img.shields.io/github/license/OneGrep/typescript-sdk)](https://img.shields.io/github/license/OneGrep/typescript-sdk)
 
-## Using this example
+OneGrep TypeScript SDK
 
-Run the following command:
+- **Github repository**: <https://github.com/onegrep/typescript-sdk/>
+- **Documentation** <https://onegrep.github.io/typescript-sdk/>
 
-```sh
-npx create-turbo@latest
-```
+## 🚀 Getting Started
+
+TODO: add getting started
+
+### Prerequisites
+
+- [Just](https://just.systems/) command runner
+- [Node.js](https://nodejs.org/) (v22 or higher)
+- [PNPM](https://pnpm.io/) (v10 or higher)
+
+### Installation
+
+## Initial setup
+
+TODO: add installation example
+
+## Run the Gateway
+
+TODO: add gateway setup example
 
 ## What's inside?
 
-This Turborepo includes the following packages/apps:
+This repository includes the following packages/apps:
 
-### Apps and Packages
+## 🛠 Tech Stack
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- **Build System**: [Turborepo](https://turborepo.org/)
+- **Package Manager**: [PNPM](https://pnpm.io/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Bundle**: [tsup](https://tsup.egoist.dev/)
+- **Task Runner**: [Just](https://just.systems/)
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## 📦 Project Structure
+
+TODO: add project structure
 
 ### Utilities
 
@@ -31,45 +54,14 @@ This Turborepo has some additional tools already setup for you:
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
+- [Husky](https://typicode.github.io/husky/#/) for git hooks
 
 ### Build
 
 To build all apps and packages, run the following command:
 
 ```
-cd my-turborepo
-pnpm build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
+just build
 ```
 
 ## Useful Links
@@ -82,3 +74,21 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
 - [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
 - [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+
+## 📚 Documentation
+
+For more detailed documentation about each package, please refer to their respective README files:
+
+- [OneGrep SDK](packages/onegrep-sdk/README.md)
+- [OneGrep Gateway](apps/onegrep-gateway/README.md)
+- [N8N Nodes](packages/n8n-nodes-onegrep/README.md)
+
+## Additional Notes
+
+- All packages in the repo that are part of a `pnpm pack` dependency chain must have a version (even if it's 0.0.0). [Related issue](https://github.com/pnpm/pnpm/issues/4164#issuecomment-1236762286)
+
+- Pino v7-9 depends on thread-stream, which is not bundled in CJS automatically. Additionally, for some runtimes (like n8n), which use CommonJS, it's not easy to load Pino with dynamic imports, so we don't bundle it directly and expose it as a peer dependency. If Pino is not present, we fallback to logging to the console (which is not ideal for the Gateway running in MCP stdio mode).
+
+## 📝 License
+
+[MIT](LICENSE)
