@@ -15,37 +15,9 @@
     "compile": {
       "dependsOn": ["^compile"]
     },
-    "build:types": {
-      "dependsOn": ["compile", "^build:types"],
-      "outputs": ["dist/types/**"]
-    },
-    "build:cjs": {
-      "dependsOn": ["@repo/utils#compile", "^build:cjs"],
-      "outputs": ["dist/cjs/**"]
-    },
-    "build:esm": {
-      "dependsOn": ["@repo/utils#compile", "^build:esm"],
-      "outputs": ["dist/esm/**"]
-    },
     "build": {
-      "dependsOn": ["build:types", "build:cjs", "build:esm"],
-      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
-      "cache": false
-    },
-    "@onegrep/gateway#build": {
-      "dependsOn": ["^build:types"]
-    },
-    "@onegrep/langchain#build": {
-      "dependsOn": ["^build:types"]
-    },
-    "@onegrep/n8n-nodes-onegrep#build": {
-      "dependsOn": ["^build:types", "^build:cjs", "prepack"],
-      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
-      "cache": false
-    },
-    "@onegrep/n8n-nodes-onegrep#prepack": {
-      "dependsOn": ["build:cjs"],
-      "outputs": ["dist/**/*"]
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"]
     },
     "lint": {
       "dependsOn": ["^lint"]

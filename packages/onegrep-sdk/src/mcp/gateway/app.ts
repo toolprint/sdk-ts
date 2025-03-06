@@ -5,36 +5,17 @@ import {
 } from '@modelcontextprotocol/sdk/server/index.js'
 import {
   CallToolRequestSchema,
-  GetPromptRequestSchema,
-  ListPromptsRequestSchema,
-  ListResourcesRequestSchema,
   ListToolsRequestSchema,
-  ReadResourceRequestSchema,
   Tool,
-  ListToolsResultSchema,
-  ListPromptsResultSchema,
-  ListResourcesResultSchema,
-  ReadResourceResultSchema,
-  ListResourceTemplatesRequestSchema,
-  ListResourceTemplatesResultSchema,
-  ResourceTemplate,
-  CompatibilityCallToolResultSchema,
-  GetPromptResultSchema,
   Implementation,
   CallToolResult
 } from '@modelcontextprotocol/sdk/types.js'
 
 import { clientFromConfig } from '../../client.js'
-import {
-  AndFilter,
-  createToolbox,
-  ServerNameFilter,
-  ToolNameFilter
-} from '../../toolbox.js'
 import { MCPToolResource } from '../resource.js'
 import { log } from '@repo/utils'
-import { z } from 'zod'
-import { ToolCallInput, ToolResource } from '../../types.js'
+
+import { ToolCallInput } from '../../types.js'
 import { MCPToolCache } from '../toolcache.js'
 import { ConnectedClientManager } from '../client.js'
 
@@ -84,7 +65,7 @@ export const createGateway = async () => {
   )
 
   // List Tools Handler
-  server.setRequestHandler(ListToolsRequestSchema, async (request) => {
+  server.setRequestHandler(ListToolsRequestSchema, async (_request) => {
     log.info(`Listing tools`)
     const toolResources = (await mcpToolCache.list()) as MCPToolResource[] // Cast to MCPToolResource[]
     log.info(`Found ${toolResources.length} tools`)

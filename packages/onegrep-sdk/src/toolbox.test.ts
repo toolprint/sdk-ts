@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeAll } from 'vitest'
 import {
   AndFilter,
   ServerNameFilter,
@@ -6,7 +6,6 @@ import {
   Toolbox,
   getToolbox
 } from './toolbox'
-import { MCPToolResource } from './mcp/resource'
 import { log } from '@repo/utils'
 import {
   ToolCallError,
@@ -20,7 +19,7 @@ import { jsonSchemaUtils } from './schema'
 describe('Toolbox Tests', () => {
   let toolbox: Toolbox
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     toolbox = await getToolbox()
   })
 

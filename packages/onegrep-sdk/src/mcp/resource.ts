@@ -10,17 +10,16 @@ import {
   ToolCallResponse,
   ToolCallError
 } from '../types.js'
-import { ToolCallOutput } from '../types.js'
 import { z } from 'zod'
 import { jsonSchemaUtils } from '../schema.js'
 import { parseMcpResult } from './toolcall.js'
 
 // TODO: Use this as the default output schema if no output schema is provided, but is indicated to be structured output
-const anyObjectJsonSchema = {
-  type: 'object',
-  properties: {},
-  additionalProperties: true
-}
+// const anyObjectJsonSchema = {
+//   type: 'object',
+//   properties: {},
+//   additionalProperties: true
+// }
 
 export class McpToolMetadata implements ToolMetadata {
   name: string

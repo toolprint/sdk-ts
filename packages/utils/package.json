@@ -3,12 +3,12 @@
   "version": "0.0.0",
   "type": "module",
   "author": "OneGrep, Inc.",
-  "types": "dist/types/index.d.ts",
-  "main": "dist/cjs/index.cjs",
-  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "exports": {
-    "require": "./dist/cjs/index.cjs",
-    "import": "./dist/esm/index.js"
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.js"
   },
   "files": [
     "dist/**/*"
@@ -18,27 +18,31 @@
   ],
   "scripts": {
     "check-types": "tsc --noEmit",
-    "build:types": "tsc --emitDeclarationOnly --declaration --declarationDir dist/types",
-    "build:cjs": "tsup src/index.ts --tsconfig tsconfig.json --out-dir dist/cjs --format cjs --dts",
-    "build:esm": "tsup src/index.ts --tsconfig tsconfig.json --out-dir dist/esm --format esm --dts",
+    "build": "rollup -c",
+    "test": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts --printConsoleTrace=true --silent=false ",
+    "test:watch": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts --printConsoleTrace=true --silent=false --watch",
     "clean:dist": "rimraf ./dist",
-    "clean:dist:types": "rimraf ./dist/types",
-    "clean:dist:cjs": "rimraf ./dist/cjs",
-    "clean:dist:esm": "rimraf ./dist/esm",
     "clean:modules": "rimraf ./node_modules"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.13.4",
     "typescript": "latest",
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup": "^4.34.9",
     "tsup": "^8.2.0"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "zod": "^3.24.2",
     "ts-log": "^2.2.7"
   },
   "peerDependencies": {
-    "dotenv": "^16.4.7",
+    "chalk": "^5.3.0",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0"
   }

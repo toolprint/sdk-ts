@@ -14,7 +14,8 @@ import {
 } from '@onegrep/sdk'
 import { z, ZodTypeAny } from 'zod'
 
-type ExtractZodShape<T> = T extends z.ZodObject<infer Shape> ? Shape : never
+// TODO: Is this needed?
+// type ExtractZodShape<T> = T extends z.ZodObject<infer Shape> ? Shape : never
 
 function ensureZodObject<T extends z.ZodTypeAny>(
   schema: T

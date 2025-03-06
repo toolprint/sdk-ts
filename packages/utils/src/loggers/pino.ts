@@ -1,17 +1,17 @@
 import { Logger } from 'ts-log'
-import { Env, getEnv } from './env'
+import { Env } from '../env'
 
-export async function getPinoLogger(env: Env): Promise<Logger> {
+export async function pinoLogger(env: Env): Promise<Logger> {
   const { default: pino } = await import('pino')
   type PinoLogger = import('pino').Logger
-
-  const path = await import('path')
-  const dirname = path.dirname(__filename)
 
   class LoggerInstance implements Logger {
     private logger: PinoLogger
 
     constructor(logger: PinoLogger) {
+      if (!logger) {
+        throw new Error('Pino Logger instance is required')
+      }
       this.logger = logger
     }
 
@@ -38,15 +38,9 @@ export async function getPinoLogger(env: Env): Promise<Logger> {
     [x: string]: any // Allow for additional properties
   }
 
-  type LogMode = 'stdout' | 'file'
+  type LogTransport = 'stdout' | 'file'
 
-  const DEFAULT_LOG_FILEPATH = path.join(
-    process.cwd(),
-    'logs',
-    'onegrep-sdk.log'
-  )
-
-  function prettyTransport() {
+  async function consoleTransport() {
     return {
       target: 'pino-pretty',
       options: {
@@ -58,38 +52,51 @@ export async function getPinoLogger(env: Env): Promise<Logger> {
     }
   }
 
-  function fileTransport(logFile: string) {
+  async function fileTransport(logFilepath?: string) {
+    // If no logFilepath is provided, use the default log filepath
+    // Dynamically load path module in case we don't actually need it
+    if (!logFilepath) {
+      const path = await import('path')
+
+      logFilepath = path.join(process.cwd(), 'onegrep.log')
+    }
+
     return {
       target: 'pino/file',
       options: {
-        destination: logFile,
+        destination: logFilepath,
         level: 'debug',
         mkdir: true
       }
     }
   }
 
-  function getLogger(
+  async function getLogger(
     logLevel: string,
-    logMode: LogMode,
+    logTransport: LogTransport,
     logFilepath?: string
-  ): PinoLogger {
-    return pino({
-      level: logLevel,
-      transport:
-        logMode === 'stdout'
-          ? prettyTransport()
-          : fileTransport(logFilepath || DEFAULT_LOG_FILEPATH)
-    })
+  ): Promise<PinoLogger> {
+    if (logTransport === 'stdout') {
+      return pino({
+        level: logLevel,
+        transport: await consoleTransport()
+      })
+    } else if (logTransport === 'file') {
+      return pino({
+        level: logLevel,
+        transport: await fileTransport(logFilepath)
+      })
+    }
+    throw new Error(`Invalid log transport: ${logTransport}`)
   }
 
-  function getLoggerFromEnv(env: Env): PinoLogger {
-    return getLogger(
+  async function getLoggerFromEnv(env: Env): Promise<PinoLogger> {
+    return await getLogger(
       env.LOG_LEVEL,
       env.PINO_LOG_TRANSPORT,
       env.PINO_LOG_FILEPATH
     )
   }
 
-  return new LoggerInstance(getLoggerFromEnv(env))
+  return new LoggerInstance(await getLoggerFromEnv(env))
 }

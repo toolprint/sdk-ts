@@ -14,23 +14,6 @@
   "files": [
     "dist"
   ],
-  "pkg": {
-    "scripts": "dist/**/*.js",
-    "targets": [
-      "node18-linux-x64",
-      "node18-macos-x64",
-      "node18-win-x64"
-    ],
-    "outputPath": "bin",
-    "assets": [
-      "node_modules/**/*",
-      "dist/**/*"
-    ],
-    "options": [
-      "experimental-modules",
-      "--es-module-specifier-resolution=node"
-    ]
-  },
   "scripts": {
     "prepare": "pnpm run package:sea",
     "dev": "rollup -c --watch",

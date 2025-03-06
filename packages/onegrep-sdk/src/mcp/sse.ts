@@ -1,4 +1,9 @@
-import { FetchLikeInit } from 'eventsource'
+import {
+  FetchLikeInit,
+  EventSourceInit,
+  FetchLike,
+  FetchLikeResponse
+} from 'eventsource'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import { RemoteClientConfig } from './types.js'
 import { log } from '@repo/utils'
@@ -30,17 +35,21 @@ export const createSSEClientTransport = (
 
   log.debug(`SSE headers: ${Object.keys(headers).join(', ')}`)
 
-  const fetchLikeWithHeaders = (url: string | URL, init?: FetchLikeInit) => {
-    return fetch(url, {
+  const fetchLikeWithHeaders: FetchLike = async (
+    url: string | URL,
+    init?: FetchLikeInit
+  ) => {
+    const response = await fetch(url, {
       ...init,
       headers: {
         ...init?.headers,
         ...headers
       }
     })
+    return response as FetchLikeResponse
   }
 
-  const eventSourceInit = {
+  const eventSourceInit: EventSourceInit = {
     withCredentials: false,
     fetch: fetchLikeWithHeaders
   }
@@ -64,7 +73,7 @@ export const createSSEClientTransport = (
     log.error(`SSE transport error: ${error}`)
   }
 
-  transport.onmessage = (message) => {
+  transport.onmessage = (_message) => {
     log.debug(`SSE transport message`)
   }
 

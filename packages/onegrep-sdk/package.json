@@ -13,12 +13,12 @@
   "bugs": {
     "url": "https://github.com/onegrep/typescript-sdk/issues"
   },
-  "types": "dist/types/index.d.ts",
-  "main": "dist/cjs/index.cjs",
-  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "exports": {
-    "require": "./dist/cjs/index.cjs",
-    "import": "./dist/esm/index.js"
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.js"
   },
   "files": [
     "dist/**/*"
@@ -28,43 +28,54 @@
   ],
   "scripts": {
     "check-types": "tsc -p tsconfig.check.json --noEmit",
-    "build:types": "tsc -p tsconfig.types.json",
-    "build:cjs": "tsup src/index.ts --tsconfig tsconfig.cjs.json --out-dir dist/cjs --format cjs --dts",
-    "build:esm": "tsup src/index.ts --tsconfig tsconfig.esm.json --out-dir dist/esm --format esm --dts",
-    "build": "echo 'build success'",
+    "lint": "eslint src package.json",
+    "lint:fix": "eslint src package.json --fix",
+    "build": "rollup -c",
     "licenses": "pnpm licenses list --prod --long > .licenses.txt",
     "package": "mkdir -p pack && pnpm pack --pack-destination pack",
     "test": "LOG_MODE=pino LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept ",
     "test:watch": "LOG_MODE=pino LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept --watch",
     "clean:dist": "rimraf ./dist",
-    "clean:dist:types": "rimraf ./dist/types",
-    "clean:dist:cjs": "rimraf ./dist/cjs",
-    "clean:dist:esm": "rimraf ./dist/esm",
-    "clean:modules": "rimraf ./node_modules"
+    "clean:modules": "rimraf ./node_modules",
+    "clean:pack": "rimraf ./pack"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
     "@repo/onegrep-api-client": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/utils": "workspace:*",
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/eslint": "^8.56.0",
+    "@types/node": "^22.13.4",
+    "chalk": "^5.3.0",
     "check-licenses": "^1.1.0",
     "dotenv": "^16.4.7",
+    "eslint": "^9.21.0",
     "rimraf": "^6.0.1",
-    "tsup": "^8.3.6",
+    "rollup": "^4.34.9",
+    "rollup-plugin-dts": "^6.1.1",
     "typescript": "latest",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.5",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "thread-stream": "^1.0.0"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.5.0",
-    "@types/node": "^22.13.4",
+    "@onegrep/json-schema-to-zod": "git+https://github.com/OneGrep/json-schema-to-zod.git#main&path:/packages/json-schema-to-zod",
     "@zodios/core": "^10.9.6",
     "ajv": "^8.17.1",
     "buffer": "^6.0.3",
     "eventsource": "^3.0.5",
-    "@onegrep/json-schema-to-zod": "git+https://github.com/OneGrep/json-schema-to-zod.git#main&path:/packages/json-schema-to-zod",
     "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
   "peerDependencies": {
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "chalk": "^5.3.0"
   }
 }

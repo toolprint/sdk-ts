@@ -1,11 +1,13 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import { createLangchainToolbox, LangchainToolbox } from './langchain'
+import { describe, it, expect, beforeAll } from 'vitest'
+import {
+  createLangchainToolbox,
+  LangchainToolbox
+} from '../src/extensions/langchain'
 import {
   StructuredTool,
   ToolInputParsingException
 } from '@langchain/core/tools'
 import {
-  RemoteClientConfig,
   Toolbox,
   ToolCallOutput,
   ToolCallResponse,
@@ -19,10 +21,10 @@ describe('Toolbox Tests', () => {
   let toolbox: Toolbox
   let langchainToolbox: LangchainToolbox
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const apiClient = clientFromConfig()
     toolbox = await createToolbox(apiClient)
-    langchainToolbox = await createLangchainToolbox(toolbox) // Initialize toolbox before each test
+    langchainToolbox = await createLangchainToolbox(toolbox) // Initialize toolbox before test suite
   })
 
   it('should get all tool resources', async () => {
