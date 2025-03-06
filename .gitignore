@@ -27,6 +27,7 @@ out/
 build
 dist
 pack
+bin
 
 # Licenses (for now, include for publishing?)
 .licenses.txt

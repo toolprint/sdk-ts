@@ -1,6 +1,6 @@
 {
-  "name": "onegrep-sdk",
-  "version": "0.0.3",
+  "name": "@onegrep/sdk",
+  "version": "0.0.1",
   "private": false,
   "type": "module",
   "license": "MIT",
@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/onegrep/typescript-sdk/issues"
   },
-  "types": "dist/types/onegrep-sdk/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.js",
   "exports": {
@@ -46,7 +46,6 @@
     "@repo/onegrep-api-client": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/utils": "workspace:*",
-    "@types/node": "^22.13.4",
     "check-licenses": "^1.1.0",
     "dotenv": "^16.4.7",
     "rimraf": "^6.0.1",
@@ -56,9 +55,13 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.5.0",
+    "@types/node": "^22.13.4",
     "@zodios/core": "^10.9.6",
+    "ajv": "^8.17.1",
+    "buffer": "^6.0.3",
     "eventsource": "^3.0.5",
-    "json-schema-to-zod": "^2.6.0",
+    "@onegrep/json-schema-to-zod": "git+https://github.com/OneGrep/json-schema-to-zod.git#main&path:/packages/json-schema-to-zod",
+    "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
   "peerDependencies": {

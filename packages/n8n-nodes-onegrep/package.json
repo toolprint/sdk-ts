@@ -1,5 +1,5 @@
 {
-  "name": "@onegrep-sdk/n8n-nodes-onegrep",
+  "name": "@onegrep/n8n-nodes-onegrep",
   "description": "OneGrep Node for n8n",
   "version": "0.0.7",
   "private": false,
@@ -68,7 +68,7 @@
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.13.4",
     "@types/eslint": "^8.56.0",
-    "onegrep-sdk": "workspace:*",
+    "@onegrep/sdk": "workspace:*",
     "dotenv": "^16.4.7",
     "tsup": "^8.3.6",
     "typescript": "latest",
@@ -81,12 +81,12 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*",
-    "onegrep-sdk": "*"
+    "@onegrep/sdk": "*"
   },
   "dependencies": {
     "zod": "^3.24.2"
   },
   "engines": {
-    "node": ">=20,<=22"
+    "node": ">=20 <=22"
   }
 }

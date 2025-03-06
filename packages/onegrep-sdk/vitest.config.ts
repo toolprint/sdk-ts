@@ -3,16 +3,27 @@ import { resolve } from 'path'
 
 export default defineConfig({
   root: '.',
-  esbuild: {
-    tsconfigRaw: '{}'
-  },
   test: {
+    typecheck: {
+      tsconfig: 'tsconfig.check.json'
+    },
     clearMocks: true,
     globals: true,
-    setupFiles: ['dotenv/config']
+    setupFiles: ['dotenv/config'],
+    testTimeout: 30000
   },
   resolve: {
-    alias: [{ find: '~', replacement: resolve(__dirname, 'src') }],
-    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
+    conditions: ['source'],
+    mainFields: ['source', 'module', 'main'],
+    alias: [
+      { find: '~', replacement: resolve(__dirname, 'src') },
+      {
+        find: '@onegrep/json-schema-to-zod',
+        replacement: resolve(
+          __dirname,
+          'node_modules/@onegrep/json-schema-to-zod'
+        )
+      }
+    ]
   }
 })

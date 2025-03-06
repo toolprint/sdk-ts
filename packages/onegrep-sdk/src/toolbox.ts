@@ -1,7 +1,7 @@
 import { clientFromConfig, OneGrepApiClient } from './client.js'
-import { createConnectedClient, ConnectedClient } from './mcp/gateway/client.js'
-import { ToolResource, toolResourcesFromClient } from './resource.js'
-import { log } from '@repo/utils'
+import { ConnectedClientManager } from './mcp/client.js'
+import { BaseToolbox, ToolCache, ToolResource } from './types.js'
+import { MCPToolCache } from './mcp/toolcache.js'
 
 export interface ToolFilter {
   (resource: ToolResource): boolean
@@ -9,13 +9,13 @@ export interface ToolFilter {
 
 export const ServerNameFilter = (serverName: string): ToolFilter => {
   return (resource: ToolResource): boolean => {
-    return resource.serverName() === serverName
+    return resource.metadata.integrationName === serverName
   }
 }
 
 export const ToolNameFilter = (toolName: string): ToolFilter => {
   return (resource: ToolResource): boolean => {
-    return resource.toolName() === toolName
+    return resource.metadata.name === toolName
   }
 }
 
@@ -25,63 +25,32 @@ export const AndFilter = (...filters: ToolFilter[]): ToolFilter => {
   }
 }
 
-export class Toolbox {
+export class Toolbox implements BaseToolbox<ToolResource> {
   apiClient: OneGrepApiClient
-  metaServerClient: ConnectedClient
-  hostServerClientMap: Map<string, ConnectedClient>
+  connectedClientManager: ConnectedClientManager
+  toolCache: ToolCache
 
   constructor(
     apiClient: OneGrepApiClient,
-    metaServerClient: ConnectedClient,
-    hostServerClientMap: Map<string, ConnectedClient>
+    connectedClientManager: ConnectedClientManager,
+    toolCache: ToolCache
   ) {
     this.apiClient = apiClient
-    this.metaServerClient = metaServerClient
-    this.hostServerClientMap = hostServerClientMap
+    this.connectedClientManager = connectedClientManager
+    this.toolCache = toolCache
   }
 
-  async cleanup(): Promise<void> {
-    const allClients = Array.from(this.hostServerClientMap.values())
-    allClients.push(this.metaServerClient)
-    await Promise.all(allClients.map(({ cleanup }) => cleanup()))
+  async listAll(): Promise<ToolResource[]> {
+    return this.toolCache.list()
   }
 
-  async getToolResources(): Promise<ToolResource[]> {
-    const allToolResources: ToolResource[] = []
-
-    const metaServerResources = await toolResourcesFromClient(
-      this.metaServerClient
-    )
-    log.debug(`Meta server resources count: ${metaServerResources.length}`)
-    allToolResources.push(...metaServerResources)
-
-    const toolResourcesMap = new Map<string, ToolResource[]>()
-    await Promise.all(
-      Array.from(this.hostServerClientMap.entries()).map(
-        async ([name, hostServerClient]) => {
-          const resources = await toolResourcesFromClient(hostServerClient)
-          toolResourcesMap.set(name, resources)
-        }
-      )
-    )
-    toolResourcesMap.forEach((resources, name) => {
-      log.debug(`Server: ${name}, Resource Count: ${resources.length}`)
-    })
-
-    toolResourcesMap.forEach((resources) => {
-      allToolResources.push(...resources)
-    })
-    log.debug(`All tool resources count: ${allToolResources.length}`)
-    return allToolResources
-  }
-
-  async filterToolResources(toolFilter: ToolFilter): Promise<ToolResource[]> {
-    const toolResources = await this.getToolResources()
+  async filter(toolFilter: ToolFilter): Promise<ToolResource[]> {
+    const toolResources = await this.listAll()
     return toolResources.filter(toolFilter)
   }
 
-  async matchUniqueToolResource(toolFilter: ToolFilter): Promise<ToolResource> {
-    const filteredToolResources = await this.filterToolResources(toolFilter)
+  async matchUnique(toolFilter: ToolFilter): Promise<ToolResource> {
+    const filteredToolResources = await this.filter(toolFilter)
     if (filteredToolResources.length === 0) {
       throw new Error('No tool resource found')
     }
@@ -90,27 +59,22 @@ export class Toolbox {
     }
     return filteredToolResources[0] as ToolResource
   }
+
+  async close(): Promise<void> {
+    await this.connectedClientManager.close()
+  }
 }
 
 export async function createToolbox(apiClient: OneGrepApiClient) {
-  const metaClientConfig =
-    await apiClient.get_meta_client_api_v1_clients_meta_get()
-  const metaServerClient = await createConnectedClient(metaClientConfig)
-  if (!metaServerClient) {
-    throw new Error('Failed to create meta server client')
+  // Initialize the connected client manager for all clients
+  const connectedClientManager = new ConnectedClientManager()
+  const toolCache = new MCPToolCache(apiClient, connectedClientManager)
+  const ok = await toolCache.refresh()
+  if (!ok) {
+    throw new Error('Toolcache initialization failed')
   }
 
-  const hostClientConfigs =
-    await apiClient.get_hosts_clients_api_v1_clients_hosts_get()
-  const hostServerClientMap = new Map<string, ConnectedClient>()
-  for (const hostClientConfig of hostClientConfigs) {
-    const connectedClient = await createConnectedClient(hostClientConfig)
-    if (connectedClient) {
-      hostServerClientMap.set(hostClientConfig.name, connectedClient)
-    }
-  }
-
-  return new Toolbox(apiClient, metaServerClient, hostServerClientMap)
+  return new Toolbox(apiClient, connectedClientManager, toolCache)
 }
 
 export async function getToolbox(): Promise<Toolbox> {

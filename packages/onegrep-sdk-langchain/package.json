@@ -1,5 +1,5 @@
 {
-  "name": "@onegrep-sdk/langchain",
+  "name": "@onegrep/langchain",
   "version": "0.0.1",
   "private": false,
   "type": "module",
@@ -55,6 +55,7 @@
     "vitest": "^3.0.5"
   },
   "dependencies": {
+    "@onegrep/sdk": "workspace:*",
     "@langchain/core": "^0.3.40",
     "@modelcontextprotocol/sdk": "^1.5.0",
     "eventsource": "^3.0.5",
@@ -62,8 +63,5 @@
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",
     "zod": "^3.24.2"
-  },
-  "peerDependencies": {
-    "onegrep-sdk": "workspace:*"
   }
 }

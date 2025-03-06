@@ -29,6 +29,9 @@ lint-fix:
 build:
     pnpm turbo run build
 
+rebuild:
+    pnpm turbo run build --force
+
 build-types:
     pnpm turbo run build:types
 
@@ -42,19 +45,19 @@ build-utils:
     pnpm turbo run build --filter=@repo/utils
 
 build-sdk:
-    pnpm turbo run build --filter=onegrep-sdk
+    pnpm turbo run build --filter=@onegrep/sdk
 
 check-types:
     pnpm turbo run check-types
 
 dev:
-    pnpm turbo run dev --filter=onegrep-gateway
+    pnpm turbo run dev --filter=@onegrep/gateway
 
 dev-n8n:
-    pnpm turbo run dev --filter=@onegrep-sdk/n8n-nodes-onegrep
+    pnpm turbo run dev --filter=@onegrep/sdk/n8n-nodes-onegrep
 
 gateway:
-    pnpm turbo run start --filter=onegrep-gateway
+    pnpm turbo run start --filter=@onegrep/gateway
 
 test:
     pnpm turbo run test
@@ -63,7 +66,7 @@ inspect:
     just inspect-sse
 
 inspect-sse:
-    pnpm turbo run dev --filter=onegrep-gateway inspector:sse
+    pnpm turbo run dev --filter=@onegrep/gateway inspector:sse
 
 inspect-stdio:
     pnpm turbo run inspector:stdio
@@ -79,6 +82,9 @@ commit-msg:
 
 pack:
     pnpm turbo run package
+
+pack-cli:
+    pnpm turbo run package:sea --filter=@onegrep/cli
 
 clean-dist:
     pnpm turbo run clean:dist

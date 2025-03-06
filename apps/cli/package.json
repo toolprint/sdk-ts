@@ -1,0 +1,70 @@
+{
+  "name": "@onegrep/cli",
+  "version": "0.1.0",
+  "description": "OneGrep CLI",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "pkg": {
+    "scripts": "dist/**/*.js",
+    "targets": [
+      "node18-linux-x64",
+      "node18-macos-x64",
+      "node18-win-x64"
+    ],
+    "outputPath": "bin",
+    "assets": [
+      "node_modules/**/*",
+      "dist/**/*"
+    ],
+    "options": [
+      "experimental-modules",
+      "--es-module-specifier-resolution=node"
+    ]
+  },
+  "scripts": {
+    "prepare": "pnpm run package:sea",
+    "dev": "rollup -c --watch",
+    "build": "rollup -c",
+    "start": "node dist/index.js",
+    "test": "vitest",
+    "format:write": "prettier --write .",
+    "format:check": "prettier --check .",
+    "licenses": "pnpm licenses list --prod --long > .licenses.txt",
+    "package:sea": "rimraf bin && mkdir -p bin && ./package-sea.sh"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.10.6",
+    "pkg": "^5.8.1",
+    "postject": "1.0.0-alpha.6",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.34.9",
+    "rollup-plugin-dts": "^6.1.1",
+    "type-fest": "^4.10.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.1"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "fs-extra": "^11.2.0",
+    "@onegrep/sdk": "workspace:*",
+    "ora": "^8.0.1",
+    "prompts": "^2.4.2"
+  }
+}
