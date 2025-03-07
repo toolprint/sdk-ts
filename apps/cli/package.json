@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "description": "OneGrep CLI",
   "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
   "type": "module",
   "main": "dist/index.js",
   "bin": "dist/index.js",
@@ -14,6 +11,14 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/onegrep/typescript-sdk",
+    "directory": "apps/cli"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "prepare": "pnpm run package:sea",
     "dev": "rollup -c --watch",
@@ -23,7 +28,9 @@
     "format:write": "prettier --write .",
     "format:check": "prettier --check .",
     "licenses": "pnpm licenses list --prod --long > .licenses.txt",
-    "package:sea": "rimraf bin && mkdir -p bin && ./package-sea.sh"
+    "package:sea": "rimraf bin && mkdir -p bin && ./package-sea.sh",
+    "version": "changeset version",
+    "publish:github": "changeset publish"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

@@ -40,7 +40,7 @@
     "build:types": "tsc -p tsconfig.types.json",
     "build:cjs": "tsup src/index.ts --tsconfig tsconfig.tsup.json --out-dir dist/cjs --format cjs --dts",
     "build:esm": "echo 'ESM not supported for n8n nodes'",
-    "build": "echo 'build success'",
+    "build": "pnpm run build:types && pnpm run build:cjs && pnpm run build:esm",
     "licenses": "pnpm licenses list --prod --long > .licenses.txt",
     "package": "mkdir -p pack && pnpm pack --pack-destination pack",
     "prepack": "cp dist/cjs/index.js dist/cjs/OneGrepApi.credentials.cjs && cp dist/cjs/index.js dist/cjs/Onegrep.node.cjs",

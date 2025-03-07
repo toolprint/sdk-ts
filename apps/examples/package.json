@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "description": "Show-Tools CLI",
   "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
   "type": "module",
   "main": "dist/index.js",
   "bin": "dist/index.js",

@@ -19,6 +19,9 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"]
     },
+    "@onegrep/sdk#build": {
+      "dependsOn": ["@repo/onegrep-api-client#build"]
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
@@ -47,10 +50,16 @@
       "cache": false,
       "persistent": true
     },
+    "@onegrep/n8n-nodes-onegrep#prepack": {
+      "dependsOn": ["build"]
+    },
     "package": {
       "cache": false,
       "dependsOn": ["build"],
       "outputs": ["pack/**/*"]
+    },
+    "@onegrep/n8n-nodes-onegrep#package": {
+      "dependsOn": ["prepack"]
     },
     "package:sea": {
       "cache": false,
@@ -58,6 +67,12 @@
       "outputs": ["bin/**/*"]
     },
     "licenses": {
+      "dependsOn": ["package"]
+    },
+    "version": {
+      "dependsOn": ["package"]
+    },
+    "publish:github": {
       "dependsOn": ["package"]
     },
     "clean": {

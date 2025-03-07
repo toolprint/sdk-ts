@@ -89,6 +89,18 @@ pack:
 pack-cli:
     pnpm turbo run package:sea --filter=@onegrep/cli
 
+version-sdk:
+    pnpm turbo run version --filter=@onegrep/sdk
+
+version-cli:
+    pnpm turbo run version --filter=@onegrep/cli
+
+publish-sdk-github:
+    pnpm turbo run publish:github --filter=@onegrep/sdk
+
+publish-cli-github:
+    pnpm turbo run publish:github --filter=@onegrep/cli
+
 clean-dist:
     pnpm turbo run clean:dist
 
