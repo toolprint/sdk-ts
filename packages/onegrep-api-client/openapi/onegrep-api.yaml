@@ -3,6 +3,15 @@ info:
   title: OneGrep API
   description: OneGrep's core API service
   version: 0.0.1
+servers:
+  - url: http://localhost:8000
+    description: Local
+  - url: http://localhost:8080
+    description: Docker
+  - url: https://test-sandbox.onegrep.dev
+    description: Sandbox
+  - url: https://api.onegrep.dev
+    description: Production
 paths:
   /health:
     get:
@@ -15,6 +24,98 @@ paths:
           content:
             application/json:
               schema: {}
+  /api/v1/audit/:
+    get:
+      tags:
+        - audit
+      summary: Get Audit Logs
+      description: |-
+        Gets audit logs visible to the user with pagination and filtering.
+
+        - Page numbers start at 1 (not 0)
+        - Results are sorted by timestamp (newest first)
+        - Optional filters can be applied for policy_id, action, and date range
+      operationId: get_audit_logs_api_v1_audit__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            description: Page number (1-indexed)
+            default: 1
+            title: Page
+          description: Page number (1-indexed)
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+            maximum: 500
+            minimum: 1
+            description: Items per page
+            default: 100
+            title: Page Size
+          description: Items per page
+        - name: policy_id
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: integer
+              - type: 'null'
+            description: Filter by policy ID
+            title: Policy Id
+          description: Filter by policy ID
+        - name: action
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by action type
+            title: Action
+          description: Filter by action type
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+                format: date-time
+              - type: 'null'
+            description: Filter logs after this date (ISO format)
+            title: Start Date
+          description: Filter logs after this date (ISO format)
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: string
+                format: date-time
+              - type: 'null'
+            description: Filter logs before this date (ISO format)
+            title: End Date
+          description: Filter logs before this date (ISO format)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse_AuditLog_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/clients/meta:
     get:
       tags:
@@ -22,18 +123,6 @@ paths:
       summary: Get Meta Client
       description: Gets the remote client config for the meta server.
       operationId: get_meta_client_api_v1_clients_meta_get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: profile_id
-          in: query
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: Profile Id
       responses:
         '200':
           description: Successful Response
@@ -41,12 +130,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RemoteClientConfig'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
   /api/v1/clients/hosts:
     get:
       tags:
@@ -54,34 +140,19 @@ paths:
       summary: Get Hosts Clients
       description: Gets all the remote client configs for the host servers.
       operationId: get_hosts_clients_api_v1_clients_hosts_get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: profile_id
-          in: query
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: Profile Id
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                type: array
                 items:
                   $ref: '#/components/schemas/RemoteClientConfig'
+                type: array
                 title: Response Get Hosts Clients Api V1 Clients Hosts Get
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
 components:
   schemas:
     AccessPolicyType:
@@ -163,9 +234,9 @@ components:
           $ref: '#/components/schemas/ActionApprovalRequest'
         policy:
           $ref: '#/components/schemas/Policy'
-        resource_name:
+        canonical_resource_name:
           type: string
-          title: Resource Name
+          title: Canonical Resource Name
         integration_name:
           type: string
           title: Integration Name
@@ -176,11 +247,26 @@ components:
       required:
         - approval
         - policy
-        - resource_name
+        - canonical_resource_name
         - integration_name
         - tool_name
       title: ApprovalAndPolicy
       description: Approval and policy
+    Attempt:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        error:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Error
+      type: object
+      required:
+        - success
+      title: Attempt
+      description: A single attempt at an action.
     AuditLog:
       properties:
         id:
@@ -211,28 +297,52 @@ components:
         - action
       title: AuditLog
       description: Model for audit logging
+    AuthenticationMethod:
+      type: string
+      enum:
+        - propelauth
+        - api_key
+      title: AuthenticationMethod
     AuthenticationStatus:
       properties:
-        authenticated:
+        credentials_provided:
           type: boolean
-          title: Authenticated
-        auth_method:
+          title: Credentials Provided
+        method:
           anyOf:
-            - type: string
-              enum:
-                - propelauth
-                - api_key
+            - $ref: '#/components/schemas/AuthenticationMethod'
             - type: 'null'
-          title: Auth Method
         user_id:
           anyOf:
             - type: string
             - type: 'null'
           title: User Id
+        is_authenticated:
+          type: boolean
+          title: Is Authenticated
       type: object
       required:
-        - authenticated
+        - credentials_provided
+        - is_authenticated
       title: AuthenticationStatus
+    BasePolicy:
+      properties:
+        event_name:
+          type: string
+          title: Event Name
+        description:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Description
+        access_policy:
+          $ref: '#/components/schemas/AccessPolicyType'
+      type: object
+      required:
+        - event_name
+        - access_policy
+      title: BasePolicy
+      description: Base model with shared policy fields
     HTTPValidationError:
       properties:
         detail:
@@ -278,12 +388,245 @@ components:
             - type: 'null'
           title: Serverisdefault
           default: false
+        gatewayScheme:
+          type: string
+          title: Gatewayscheme
+          default: http
       type: object
       required:
         - proxyDomain
         - orgID
         - serverID
       title: IngressConfig
+    IntegrationAuthScheme:
+      type: string
+      enum:
+        - token
+        - oauth_1_0
+        - oauth_2_0
+      title: IntegrationAuthScheme
+      description: Authentication schemes supported by server templates.
+    IntegrationConfigDetails:
+      properties:
+        name:
+          type: string
+          title: Name
+        configuration_state:
+          $ref: '#/components/schemas/IntegrationConfigurationState'
+        template:
+          $ref: '#/components/schemas/IntegrationTemplate'
+      type: object
+      required:
+        - name
+        - configuration_state
+        - template
+      title: IntegrationConfigDetails
+      description: >-
+        General details about an integration. Meant to be surfaceable to a
+        client.
+    IntegrationConfigToolDetails:
+      properties:
+        name:
+          type: string
+          title: Name
+        configuration_state:
+          $ref: '#/components/schemas/IntegrationConfigurationState'
+        tool_policies:
+          additionalProperties:
+            $ref: '#/components/schemas/BasePolicy'
+          type: object
+          title: Tool Policies
+      type: object
+      required:
+        - name
+        - configuration_state
+        - tool_policies
+      title: IntegrationConfigToolDetails
+      description: Details about a tool for an integration.
+    IntegrationConfigUpsertResult:
+      properties:
+        integration_config:
+          $ref: '#/components/schemas/IntegrationConfiguration'
+        state:
+          $ref: '#/components/schemas/IntegrationConfigurationState'
+      type: object
+      required:
+        - integration_config
+        - state
+      title: IntegrationConfigUpsertResult
+      description: Attempt to create or update an integration.
+    IntegrationConfiguration:
+      properties:
+        created_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Updated At
+        id:
+          anyOf:
+            - type: integer
+            - type: 'null'
+          title: Id
+        name:
+          type: string
+          title: Name
+        org_id:
+          type: string
+          title: Org Id
+        profile_id:
+          type: string
+          title: Profile Id
+        template:
+          $ref: '#/components/schemas/IntegrationTemplate'
+        configuration_state:
+          $ref: '#/components/schemas/IntegrationConfigurationState'
+      type: object
+      required:
+        - name
+        - org_id
+        - profile_id
+        - template
+        - configuration_state
+      title: IntegrationConfiguration
+      description: >-
+        Stores the configuration for an integration that should be maintained
+        for a given resource owner.
+    IntegrationConfigurationState:
+      type: string
+      enum:
+        - agent_local
+        - cloud_hosted_available
+        - cloud_hosted_configured
+      title: IntegrationConfigurationState
+      description: >-
+        The state of an integration from an account perspective (not runtime).
+
+        To determine the runtime state, we will have to check the server
+        configuration for
+
+        the integration separately depending on our infrastucture selection.
+    IntegrationDefaultPolicies:
+      properties:
+        tools:
+          items:
+            $ref: '#/components/schemas/BasePolicy'
+          type: array
+          title: Tools
+          description: Policies for tools in this integration.
+      type: object
+      required:
+        - tools
+      title: IntegrationDefaultPolicies
+      description: Default policies for an integration.
+    IntegrationOAuthAuthorizer:
+      type: string
+      enum:
+        - google
+        - meta
+      title: IntegrationOAuthAuthorizer
+    IntegrationSecret:
+      properties:
+        name:
+          type: string
+          title: Name
+        generation_link:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Generation Link
+        value:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Value
+      type: object
+      required:
+        - name
+      title: IntegrationSecret
+      description: Represents a secret required by a server template.
+    IntegrationTemplate:
+      properties:
+        version:
+          type: string
+          title: Version
+          description: The version of the integration template.
+        name:
+          type: string
+          title: Name
+        repository:
+          type: string
+          title: Repository
+        sha:
+          type: string
+          title: Sha
+        auth_scheme:
+          anyOf:
+            - $ref: '#/components/schemas/IntegrationAuthScheme'
+            - type: 'null'
+        oauth_authorizer:
+          anyOf:
+            - $ref: '#/components/schemas/IntegrationOAuthAuthorizer'
+            - type: 'null'
+        args:
+          oneOf:
+            - $ref: '#/components/schemas/MCPIntegrationArgs'
+          title: Args
+          discriminator:
+            propertyName: type
+            mapping:
+              mcp: '#/components/schemas/MCPIntegrationArgs'
+        secrets:
+          anyOf:
+            - items:
+                $ref: '#/components/schemas/IntegrationSecret'
+              type: array
+            - type: 'null'
+          title: Secrets
+        default_policies:
+          $ref: '#/components/schemas/IntegrationDefaultPolicies'
+      type: object
+      required:
+        - version
+        - name
+        - repository
+        - sha
+        - args
+        - default_policies
+      title: IntegrationTemplate
+      description: >-
+        Class representation of the server templates that we support. This
+        matches the structure
+
+        of server templates under resources/integrations/templates/*
+    IntegrationUpsertAttempt:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        error:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Error
+        config:
+          $ref: '#/components/schemas/IntegrationConfigUpsertResult'
+        runtime:
+          anyOf:
+            - {}
+            - type: 'null'
+          title: Runtime
+      type: object
+      required:
+        - success
+        - config
+      title: IntegrationUpsertAttempt
     KindMetadata:
       type: object
     LauncherConfig:
@@ -299,6 +642,30 @@ components:
         - configMapName
         - mountPath
       title: LauncherConfig
+    MCPIntegrationArgs:
+      properties:
+        type:
+          type: string
+          const: mcp
+          title: Type
+        command:
+          type: string
+          title: Command
+        args:
+          anyOf:
+            - items:
+                type: string
+              type: array
+            - type: 'null'
+          title: Args
+      type: object
+      required:
+        - type
+        - command
+      title: MCPIntegrationArgs
+      description: >-
+        Arguments specifically for an integration that is powered by an MCP
+        server.
     MCPServerConfig:
       properties:
         name:
@@ -339,21 +706,20 @@ components:
         - args
         - env_vars
       title: MCPServerConfig
-    NewPolicyRequest:
-      properties:
-        resource_name:
-          type: string
-          title: Resource Name
-        access_policy:
-          $ref: '#/components/schemas/AccessPolicyType'
-      type: object
-      required:
-        - resource_name
-        - access_policy
-      title: NewPolicyRequest
-      description: Request model for creating a new policy
     Organization:
       properties:
+        created_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Updated At
         id:
           type: string
           title: Id
@@ -363,23 +729,68 @@ components:
             - type: 'null'
           title: Owner Id
         created_by_user_id:
-          type: string
+          anyOf:
+            - type: string
+            - type: 'null'
           title: Created By User Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
       type: object
       required:
         - id
-        - created_by_user_id
       title: Organization
-      description: Model for storing organization information
+    PaginatedResponse_AuditLog_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/AuditLog'
+          type: array
+          title: Items
+        pagination:
+          $ref: '#/components/schemas/PaginationMetadata'
+      type: object
+      required:
+        - items
+        - pagination
+      title: PaginatedResponse[AuditLog]
+    PaginationMetadata:
+      properties:
+        page:
+          type: integer
+          title: Page
+        page_size:
+          type: integer
+          title: Page Size
+        total:
+          type: integer
+          title: Total
+        pages:
+          type: integer
+          title: Pages
+        has_next:
+          type: boolean
+          title: Has Next
+        has_prev:
+          type: boolean
+          title: Has Prev
+      type: object
+      required:
+        - page
+        - page_size
+        - total
+        - pages
+        - has_next
+        - has_prev
+      title: PaginationMetadata
+      description: Metadata for paginated results
     Policy:
       properties:
-        resource_name:
+        event_name:
           type: string
-          title: Resource Name
+          title: Event Name
+        description:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Description
         access_policy:
           $ref: '#/components/schemas/AccessPolicyType'
         id:
@@ -387,6 +798,9 @@ components:
             - type: integer
             - type: 'null'
           title: Id
+        canonical_resource_name:
+          type: string
+          title: Canonical Resource Name
         organization_id:
           type: string
           title: Organization Id
@@ -402,8 +816,9 @@ components:
           title: Updated At
       type: object
       required:
-        - resource_name
+        - event_name
         - access_policy
+        - canonical_resource_name
         - organization_id
       title: Policy
       description: Policy model that works with both SQL and in-memory storage
@@ -422,23 +837,30 @@ components:
         org_id:
           type: string
           title: Org Id
+          example: org-123
         name:
           type: string
           title: Name
+          example: my-server
         display_name:
           type: string
           title: Display Name
+          example: My Server
         description:
           anyOf:
             - type: string
             - type: 'null'
           title: Description
+          example: My Server Description
         ready:
           type: boolean
           title: Ready
+          default: false
+          example: true
         endpoint:
           type: string
           title: Endpoint
+          example: https://gateway.onegrep.dev
         required_headers:
           anyOf:
             - additionalProperties:
@@ -446,12 +868,13 @@ components:
               type: object
             - type: 'null'
           title: Required Headers
+          example:
+            X-MCP-MC: my-server
       type: object
       required:
         - org_id
         - name
         - display_name
-        - ready
       title: RemoteClientConfig
     Server:
       properties:
@@ -465,7 +888,9 @@ components:
         spec:
           $ref: '#/components/schemas/ServerSpec'
         status:
-          type: object
+          anyOf:
+            - type: object
+            - type: 'null'
           title: Status
         apiVersion:
           type: string
@@ -476,7 +901,6 @@ components:
       required:
         - metadata
         - spec
-        - status
         - apiVersion
       title: Server
     ServerSpec:
@@ -544,8 +968,7 @@ components:
         metadata:
           $ref: '#/components/schemas/KindMetadata'
         spec:
-          type: object
-          title: Spec
+          $ref: '#/components/schemas/IngressConfig'
         status:
           type: object
           title: Status
@@ -563,9 +986,21 @@ components:
       title: TraefikIngressRoute
     UserAccount:
       properties:
-        user_id:
+        created_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Updated At
+        id:
           type: string
-          title: User Id
+          title: Id
         belongs_to_organization_id:
           anyOf:
             - type: string
@@ -574,17 +1009,9 @@ components:
         api_key:
           type: string
           title: Api Key
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        last_active:
-          type: string
-          format: date-time
-          title: Last Active
       type: object
       required:
-        - user_id
+        - id
         - api_key
       title: UserAccount
       description: Model for storing user information including their API key

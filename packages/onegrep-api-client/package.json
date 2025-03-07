@@ -20,13 +20,13 @@
     "dist/**/*"
   ],
   "scripts": {
-    "openapi:trim": "openapi-endpoint-trimmer --url https://api.onegrep.dev/openapi.json --output ./openapi/onegrep-api.yaml -p /health,/api/v1/clients",
+    "openapi:trim": "openapi-endpoint-trimmer --url https://test-sandbox.onegrep.dev/openapi.json --output ./openapi/onegrep-api.yaml -p /health,/api/v1/clients,/api/v1/audit",
     "generate": "openapi-zod-client ./openapi/onegrep-api.yaml --output ./src/api.ts --export-schemas --export-types --strict-objects --default-status --with-docs",
     "check-types": "tsc -p tsconfig.check.json --noEmit",
     "build:types": "tsc -p tsconfig.types.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "echo 'build success'",
+    "build": "pnpm run clean:dist && pnpm run build:types && pnpm run build:cjs && pnpm run build:esm",
     "test": "vitest --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts --watch",
     "clean:dist": "rimraf ./dist",
@@ -40,6 +40,7 @@
     "@types/node": "^22.13.4",
     "openapi-endpoint-trimmer": "^2.0.1",
     "openapi-zod-client": "^1.18.3",
+    "rimraf": "^6.0.1",
     "typescript": "latest",
     "vitest": "^3.0.5"
   },

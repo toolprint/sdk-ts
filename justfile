@@ -29,6 +29,12 @@ lint-fix:
 build:
     pnpm turbo run build
 
+build-api-client:
+    pnpm turbo run build --force --filter=@repo/onegrep-api-client
+
+build-sdk:
+    pnpm turbo run build --force --filter=@onegrep/sdk
+
 rebuild:
     pnpm turbo run build --force
 
@@ -43,9 +49,6 @@ build-esm:
 
 build-utils:
     pnpm turbo run build --filter=@repo/utils
-
-build-sdk:
-    pnpm turbo run build --filter=@onegrep/sdk
 
 check-types:
     pnpm turbo run check-types
