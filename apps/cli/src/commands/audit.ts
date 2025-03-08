@@ -75,8 +75,14 @@ export const getAuditLogs = new Command()
   )
   .option('-i, --policy-id <string>', 'Policy ID to filter audit logs')
   .option('-a, --action <string>', 'Action to filter audit logs')
-  .option('-s, --start-date <datetime>', 'Start date to filter audit logs')
-  .option('-e, --end-date <datetime>', 'End date to filter audit logs')
+  .option(
+    '-s, --start-date <date-time> (ISO 8601)',
+    'Start date to filter audit logs'
+  )
+  .option(
+    '-e, --end-date <date-time> (ISO 8601)',
+    'End date to filter audit logs'
+  )
   .action(async (options) => {
     await fetchAuditLogs({
       page: options.page,
