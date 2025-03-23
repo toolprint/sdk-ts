@@ -7,12 +7,7 @@ import {
   StructuredTool,
   ToolInputParsingException
 } from '@langchain/core/tools'
-import {
-  Toolbox,
-  ToolCallOutput,
-  ToolCallResponse,
-  ToolResource
-} from '@onegrep/sdk'
+import { Toolbox, ToolCallOutput, ToolResource } from '@onegrep/sdk'
 import { createToolbox } from '@onegrep/sdk'
 import { clientFromConfig } from '@onegrep/sdk'
 import { log } from '@repo/utils'
@@ -20,6 +15,18 @@ import { log } from '@repo/utils'
 describe('Toolbox Tests', () => {
   let toolbox: Toolbox
   let langchainToolbox: LangchainToolbox
+
+  // ! Previous tool name and args which presumably were for a locally running `time` server.
+  // const toolName = 'API-get_integration_api_v1_integrations__integration_name__get'
+  // const args = {
+  //   integration_name: 'time'
+  // }
+
+  // ! Tool args that work with the test-sandbox.onegrep.dev `meta` server which is a running mock_mcp server (reference impl in onegrep-api repo)
+  const toolName = 'echo'
+  const toolArgs = {
+    text: 'Hello, world!'
+  }
 
   beforeAll(async () => {
     const apiClient = clientFromConfig()
@@ -42,23 +49,15 @@ describe('Toolbox Tests', () => {
     expect(tools.length).toBeGreaterThan(0)
     log.info(`Tool names: ${tools.map((tool) => tool.name).join(', ')}`)
 
-    const clientConfigTool = tools.find(
-      (tool) =>
-        tool.name ===
-        'API-get_integration_api_v1_integrations__integration_name__get' // ! Change to not be hard-coded, as this can change from the Meta Server
-    )
+    const clientConfigTool = tools.find((tool) => tool.name === toolName)
     if (!clientConfigTool) {
-      throw new Error(
-        'API-get_integration_api_v1_integrations__integration_name__get tool not found'
-      )
+      throw new Error(`${toolName} tool not found`)
     }
 
     log.info(`Structured tool: ${JSON.stringify(clientConfigTool)}`)
-    const args = {
-      integration_name: 'time'
-    }
 
-    const response: ToolCallOutput<any> = await clientConfigTool.invoke(args)
+    const response: ToolCallOutput<any> =
+      await clientConfigTool.invoke(toolArgs)
     expect(response).toBeDefined()
     expect(response).toBeTypeOf('object')
     expect(response.content.length).toBeGreaterThan(0)
@@ -74,15 +73,9 @@ describe('Toolbox Tests', () => {
     expect(tools.length).toBeGreaterThan(0)
     log.info(`Tool names: ${tools.map((tool) => tool.name).join(', ')}`)
 
-    const clientConfigTool = tools.find(
-      (tool) =>
-        tool.name ===
-        'API-get_integration_api_v1_integrations__integration_name__get' // ! Change to not be hard-coded, as this can change from the Meta Server
-    )
+    const clientConfigTool = tools.find((tool) => tool.name === toolName)
     if (!clientConfigTool) {
-      throw new Error(
-        'API-get_integration_api_v1_integrations__integration_name__get tool not found'
-      )
+      throw new Error(`${toolName} tool not found`)
     }
 
     log.info(`Structured tool: ${JSON.stringify(clientConfigTool)}`)
@@ -91,8 +84,8 @@ describe('Toolbox Tests', () => {
     }
 
     try {
-      const response: ToolCallResponse<any> =
-        await clientConfigTool.invoke(args)
+      // Expect this to throw an exception.
+      await clientConfigTool.invoke(args)
     } catch (error) {
       if (error instanceof ToolInputParsingException) {
         log.info(`Tool call error: ${error.message}`)

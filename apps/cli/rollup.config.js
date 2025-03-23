@@ -23,7 +23,8 @@ const config = defineConfig([
     plugins: [
       resolve({
         preferBuiltins: true,
-        moduleDirectories: ['node_modules']
+        moduleDirectories: ['node_modules'],
+        browser: false
       }),
       commonjs({
         transformMixedEsModules: true,

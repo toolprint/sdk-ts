@@ -20,7 +20,7 @@
     "dist/**/*"
   ],
   "scripts": {
-    "openapi:trim": "openapi-endpoint-trimmer --url https://test-sandbox.onegrep.dev/openapi.json --output ./openapi/onegrep-api.yaml -p /health,/api/v1/clients,/api/v1/audit",
+    "openapi:trim": "openapi-endpoint-trimmer --url https://test-sandbox.onegrep.dev/openapi.json --output ./openapi/onegrep-api.yaml -p /health,/api/v1/clients,/api/v1/audit,/api/v1/integrations,/api/v1/policies",
     "generate": "openapi-zod-client ./openapi/onegrep-api.yaml --output ./src/api.ts --export-schemas --export-types --strict-objects --default-status --with-docs",
     "check-types": "tsc -p tsconfig.check.json --noEmit",
     "build:types": "tsc -p tsconfig.types.json",

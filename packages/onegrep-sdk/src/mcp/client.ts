@@ -1,6 +1,6 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { log } from '@repo/utils'
-import { createSSEClientTransport } from './sse.js'
+import { createSSEClientTransport } from './transport/sse.js'
 import { RemoteClientConfig, RemoteToolCallArgs } from './types.js'
 import {
   CallToolRequest,

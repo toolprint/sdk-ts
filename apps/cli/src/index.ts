@@ -4,45 +4,58 @@ import { Command } from 'commander'
 import { logger } from './utils/logger'
 
 import { version } from '../package.json'
-import { listIntegrations, runTool } from 'commands/tools'
+import { toolsCommand } from 'commands/tools'
+import { clearTerminal } from 'utils/helpers'
 
 /**
- * Validates that required environment variables are set
- * @param skipValidation Whether to skip environment validation
+ * Validates that required configuration is available
+ * @param command The Command instance
  */
-function validateEnvironment(command: Command) {
-  const required_env_vars = ['ONEGREP_API_KEY', 'ONEGREP_API_URL']
-  const missing_vars = required_env_vars.filter(
-    (env_var) => !process.env[env_var]
-  )
+function validateConfiguration(command: Command) {
+  logger.info(`Validating configuration...`)
+  const requiredEnvVars = ['ONEGREP_API_KEY', 'ONEGREP_API_URL']
 
-  if (missing_vars.length > 0) {
-    logger.error(
-      `Missing required environment variables: ${missing_vars.join(', ')}`
+  let isMissingEnvVars = false
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      logger.error(`Missing required environment variable: ${envVar}`)
+      isMissingEnvVars = true
+    }
+  }
+
+  if (isMissingEnvVars) {
+    console.info(
+      `Please set the required environment variables (${requiredEnvVars.join(
+        ', '
+      )}) in your .env file or export them in your shell`
     )
-    logger.info(
-      '\nYou can set environment variables in two ways:\n\t1) export ONEGREP_API_KEY=your_api_key && export ONEGREP_API_URL=https://api.onegrep.com\n\t2) Set vars in a .env file.'
-    )
-    command.help()
+
     process.exit(1)
+  }
+
+  if (command.opts().debug) {
+    logger.info(`API URL: ${process.env.ONEGREP_API_URL}`)
+    logger.info(`API Key: ${process.env.ONEGREP_API_KEY?.slice(0, 3)}...`)
   }
 }
 
 function main() {
+  clearTerminal()
+
   const cli = new Command()
     .name('onegrep-cli')
     .description(
       'Use the OneGrep CLI to debug and manage your OneGrep Toolbox.'
     )
     .version(version || '0.0.1')
+    .option('--debug', 'Enable debug mode', false)
     .hook('preAction', (command) => {
-      validateEnvironment(command)
+      validateConfiguration(command)
     })
 
   cli.addCommand(healthcheck)
   cli.addCommand(getAuditLogs)
-  cli.addCommand(listIntegrations)
-  cli.addCommand(runTool)
+  cli.addCommand(toolsCommand)
 
   cli.parse()
 }

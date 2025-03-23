@@ -35,6 +35,9 @@ build-api-client:
 build-sdk:
     pnpm turbo run build --force --filter=@onegrep/sdk
 
+build-cli:
+    pnpm turbo run build --force --filter=@onegrep/cli
+
 rebuild:
     pnpm turbo run build --force
 
@@ -61,6 +64,12 @@ dev-n8n:
 
 gateway:
     pnpm turbo run start --filter=@onegrep/gateway
+
+test-sdk:
+    pnpm turbo run test --filter=@onegrep/sdk
+
+test-langchain:
+    pnpm turbo run test --filter=@onegrep/langchain -- -v
 
 test:
     pnpm turbo run test
@@ -119,4 +128,8 @@ clean-modules:
 clean:
     pnpm turbo run clean
 
+link-cli-local:
+    cd apps/cli && pnpm run build && pnpm link --global
 
+unlink-cli-local:
+    pnpm unlink --global @onegrep/cli

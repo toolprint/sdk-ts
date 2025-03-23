@@ -88,98 +88,10 @@ type ValidationError = {
   msg: string
   type: string
 }
-type IntegrationConfigDetails = {
-  name: string
-  configuration_state: IntegrationConfigurationState
-  template: IntegrationTemplate
-}
-type IntegrationConfigurationState =
-  /**
- * The state of an integration from an account perspective (not runtime).
-To determine the runtime state, we will have to check the server configuration for
-the integration separately depending on our infrastucture selection.
- *
- * @enum agent_local, cloud_hosted_available, cloud_hosted_configured
- */
-  'agent_local' | 'cloud_hosted_available' | 'cloud_hosted_configured'
-type IntegrationTemplate = {
-  /**
-   * The version of the integration template.
-   */
-  version: string
-  name: string
-  repository: string
-  sha: string
-  auth_scheme?:
-    | ((IntegrationAuthScheme | null) | Array<IntegrationAuthScheme | null>)
-    | undefined
-  oauth_authorizer?:
-    | (
-        | (IntegrationOAuthAuthorizer | null)
-        | Array<IntegrationOAuthAuthorizer | null>
-      )
-    | undefined
-  args: MCPIntegrationArgs
-  secrets?:
-    | (
-        | (Array<IntegrationSecret> | null)
-        | Array<Array<IntegrationSecret> | null>
-      )
-    | undefined
-  default_policies: IntegrationDefaultPolicies
-}
-type IntegrationAuthScheme =
-  /**
-   * Authentication schemes supported by server templates.
-   *
-   * @enum token, oauth_1_0, oauth_2_0
-   */
-  'token' | 'oauth_1_0' | 'oauth_2_0'
-type IntegrationOAuthAuthorizer =
-  /**
-   * @enum google, meta
-   */
-  'google' | 'meta'
-type MCPIntegrationArgs = {
-  type: string
-  command: string
-  args?: ((Array<string> | null) | Array<Array<string> | null>) | undefined
-}
-type IntegrationSecret = {
-  name: string
-  generation_link?: ((string | null) | Array<string | null>) | undefined
-  value?: ((string | null) | Array<string | null>) | undefined
-}
-type IntegrationDefaultPolicies = {
-  /**
-   * Policies for tools in this integration.
-   */
-  tools: Array<BasePolicy>
-}
-type IntegrationConfigToolDetails = {
-  name: string
-  configuration_state: IntegrationConfigurationState
-  tool_policies: {}
-}
-type IntegrationConfigUpsertResult = {
-  integration_config: IntegrationConfiguration
-  state: IntegrationConfigurationState
-}
-type IntegrationConfiguration = {
-  created_at?: ((string | null) | Array<string | null>) | undefined
-  updated_at?: ((string | null) | Array<string | null>) | undefined
-  id?: ((number | null) | Array<number | null>) | undefined
-  name: string
-  org_id: string
-  profile_id: string
-  template: IntegrationTemplate
-  configuration_state: IntegrationConfigurationState
-}
-type IntegrationUpsertAttempt = {
-  success: boolean
-  error?: ((string | null) | Array<string | null>) | undefined
-  config: IntegrationConfigUpsertResult
-  runtime?: ((unknown | null) | Array<unknown | null>) | undefined
+type NewPolicyRequest = {
+  integration_name: string
+  event_name: string
+  access_policy: AccessPolicyType
 }
 type PaginatedResponse_AuditLog_ = {
   items: Array<AuditLog>
@@ -273,6 +185,18 @@ type IngressConfig = {
    */
   string | undefined
 }
+type ToolDetails = {
+  integration_name: string
+  tool_name: string
+  policy: BasePolicy
+  custom_properties?:
+    | ((ToolCustomProperties | null) | Array<ToolCustomProperties | null>)
+    | undefined
+}
+type ToolCustomProperties = {
+  tool_name: string
+  tags?: {} | undefined
+}
 type TraefikIngressRoute = {
   kind?: /**
    * @default "IngressRoute"
@@ -286,8 +210,72 @@ type TraefikIngressRoute = {
   [key: string]: any
 }
 
+const AccessPolicyType = z.enum(['ALWAYS', 'NEVER', 'REQUIRES_PERMISSION'])
+const Policy: z.ZodType<Policy> = z
+  .object({
+    event_name: z.string(),
+    description: z.union([z.string(), z.null()]).optional(),
+    access_policy: AccessPolicyType,
+    id: z.union([z.number(), z.null()]).optional(),
+    canonical_resource_name: z.string(),
+    organization_id: z.string(),
+    created_at: z.string().datetime({ offset: true }).optional(),
+    updated_at: z.union([z.string(), z.null()]).optional()
+  })
+  .strict()
+  .passthrough()
+const ValidationError: z.ZodType<ValidationError> = z
+  .object({
+    loc: z.array(z.union([z.string(), z.number()])),
+    msg: z.string(),
+    type: z.string()
+  })
+  .strict()
+  .passthrough()
+const HTTPValidationError: z.ZodType<HTTPValidationError> = z
+  .object({ detail: z.array(ValidationError) })
+  .partial()
+  .strict()
+  .passthrough()
+const NewPolicyRequest: z.ZodType<NewPolicyRequest> = z
+  .object({
+    integration_name: z.string(),
+    event_name: z.string(),
+    access_policy: AccessPolicyType
+  })
+  .strict()
+  .passthrough()
+const X_ONEGREP_PROFILE_ID = z.union([z.string(), z.null()]).optional()
+const ActionApprovalState = z.enum(['pending', 'approved', 'rejected'])
+const ActionApprovalRequest: z.ZodType<ActionApprovalRequest> = z
+  .object({
+    id: z.union([z.number(), z.null()]),
+    policy_id: z.number().int(),
+    state: ActionApprovalState.optional(),
+    created_at: z.string().datetime({ offset: true }).optional(),
+    last_updated_at: z.string().datetime({ offset: true }).optional(),
+    updated_by_user_id: z.string(),
+    payload: z
+      .union([z.object({}).partial().strict().passthrough(), z.null()])
+      .optional()
+  })
+  .strict()
+  .passthrough()
+const ApprovalAndPolicy: z.ZodType<ApprovalAndPolicy> = z
+  .object({
+    approval: ActionApprovalRequest,
+    policy: Policy,
+    canonical_resource_name: z.string(),
+    integration_name: z.string(),
+    tool_name: z.string()
+  })
+  .strict()
+  .passthrough()
+const PolicyCheckResult = z
+  .object({ approved: z.boolean() })
+  .strict()
+  .passthrough()
 const policy_id = z.union([z.number(), z.null()]).optional()
-const action = z.union([z.string(), z.null()]).optional()
 const AuditLog: z.ZodType<AuditLog> = z
   .object({
     id: z.union([z.number(), z.null()]).optional(),
@@ -314,19 +302,6 @@ const PaginatedResponse_AuditLog_: z.ZodType<PaginatedResponse_AuditLog_> = z
   .object({ items: z.array(AuditLog), pagination: PaginationMetadata })
   .strict()
   .passthrough()
-const ValidationError: z.ZodType<ValidationError> = z
-  .object({
-    loc: z.array(z.union([z.string(), z.number()])),
-    msg: z.string(),
-    type: z.string()
-  })
-  .strict()
-  .passthrough()
-const HTTPValidationError: z.ZodType<HTTPValidationError> = z
-  .object({ detail: z.array(ValidationError) })
-  .partial()
-  .strict()
-  .passthrough()
 const RemoteClientConfig = z
   .object({
     org_id: z.string(),
@@ -339,7 +314,46 @@ const RemoteClientConfig = z
   })
   .strict()
   .passthrough()
-const AccessPolicyType = z.enum(['ALWAYS', 'NEVER', 'REQUIRES_PERMISSION'])
+const BasePolicy: z.ZodType<BasePolicy> = z
+  .object({
+    event_name: z.string(),
+    description: z.union([z.string(), z.null()]).optional(),
+    access_policy: AccessPolicyType
+  })
+  .strict()
+  .passthrough()
+const ToolCustomProperties: z.ZodType<ToolCustomProperties> = z
+  .object({
+    tool_name: z.string(),
+    tags: z.object({}).partial().strict().passthrough().optional()
+  })
+  .strict()
+  .passthrough()
+const ToolDetails: z.ZodType<ToolDetails> = z
+  .object({
+    integration_name: z.string(),
+    tool_name: z.string(),
+    policy: BasePolicy,
+    custom_properties: z.union([ToolCustomProperties, z.null()]).optional()
+  })
+  .strict()
+  .passthrough()
+const ToolCustomTagsParams = z
+  .object({
+    integration_name: z.string(),
+    tool_name: z.string(),
+    tags: z.object({}).partial().strict().passthrough()
+  })
+  .strict()
+  .passthrough()
+const ToolCustomTagSelectionParams = z
+  .object({
+    integration_name: z.string(),
+    tool_name: z.string(),
+    tags: z.array(z.string())
+  })
+  .strict()
+  .passthrough()
 const UserAccount: z.ZodType<UserAccount> = z
   .object({
     created_at: z.union([z.string(), z.null()]).optional(),
@@ -368,51 +382,6 @@ const AccountInformation: z.ZodType<AccountInformation> = z
   })
   .strict()
   .passthrough()
-const ActionApprovalState = z.enum(['pending', 'approved', 'rejected'])
-const ActionApprovalRequest: z.ZodType<ActionApprovalRequest> = z
-  .object({
-    id: z.union([z.number(), z.null()]),
-    policy_id: z.number().int(),
-    state: ActionApprovalState.optional(),
-    created_at: z.string().datetime({ offset: true }).optional(),
-    last_updated_at: z.string().datetime({ offset: true }).optional(),
-    updated_by_user_id: z.string(),
-    payload: z
-      .union([z.object({}).partial().strict().passthrough(), z.null()])
-      .optional()
-  })
-  .strict()
-  .passthrough()
-const Policy: z.ZodType<Policy> = z
-  .object({
-    event_name: z.string(),
-    description: z.union([z.string(), z.null()]).optional(),
-    access_policy: AccessPolicyType,
-    id: z.union([z.number(), z.null()]).optional(),
-    canonical_resource_name: z.string(),
-    organization_id: z.string(),
-    created_at: z.string().datetime({ offset: true }).optional(),
-    updated_at: z.union([z.string(), z.null()]).optional()
-  })
-  .strict()
-  .passthrough()
-const ApprovalAndPolicy: z.ZodType<ApprovalAndPolicy> = z
-  .object({
-    approval: ActionApprovalRequest,
-    policy: Policy,
-    canonical_resource_name: z.string(),
-    integration_name: z.string(),
-    tool_name: z.string()
-  })
-  .strict()
-  .passthrough()
-const Attempt = z
-  .object({
-    success: z.boolean(),
-    error: z.union([z.string(), z.null()]).optional()
-  })
-  .strict()
-  .passthrough()
 const AuthenticationMethod = z.enum(['propelauth', 'api_key'])
 const AuthenticationStatus: z.ZodType<AuthenticationStatus> = z
   .object({
@@ -420,14 +389,6 @@ const AuthenticationStatus: z.ZodType<AuthenticationStatus> = z
     method: z.union([AuthenticationMethod, z.null()]).optional(),
     user_id: z.union([z.string(), z.null()]).optional(),
     is_authenticated: z.boolean()
-  })
-  .strict()
-  .passthrough()
-const BasePolicy: z.ZodType<BasePolicy> = z
-  .object({
-    event_name: z.string(),
-    description: z.union([z.string(), z.null()]).optional(),
-    access_policy: AccessPolicyType
   })
   .strict()
   .passthrough()
@@ -447,95 +408,6 @@ const IngressConfig: z.ZodType<IngressConfig> = z
       .default('Header'),
     serverIsDefault: z.union([z.boolean(), z.null()]).optional().default(false),
     gatewayScheme: z.string().optional().default('http')
-  })
-  .strict()
-  .passthrough()
-const IntegrationAuthScheme = z.enum(['token', 'oauth_1_0', 'oauth_2_0'])
-const IntegrationConfigurationState = z.enum([
-  'agent_local',
-  'cloud_hosted_available',
-  'cloud_hosted_configured'
-])
-const IntegrationOAuthAuthorizer = z.enum(['google', 'meta'])
-const MCPIntegrationArgs: z.ZodType<MCPIntegrationArgs> = z
-  .object({
-    type: z.string(),
-    command: z.string(),
-    args: z.union([z.array(z.string()), z.null()]).optional()
-  })
-  .strict()
-  .passthrough()
-const IntegrationSecret: z.ZodType<IntegrationSecret> = z
-  .object({
-    name: z.string(),
-    generation_link: z.union([z.string(), z.null()]).optional(),
-    value: z.union([z.string(), z.null()]).optional()
-  })
-  .strict()
-  .passthrough()
-const IntegrationDefaultPolicies: z.ZodType<IntegrationDefaultPolicies> = z
-  .object({ tools: z.array(BasePolicy) })
-  .strict()
-  .passthrough()
-const IntegrationTemplate: z.ZodType<IntegrationTemplate> = z
-  .object({
-    version: z.string(),
-    name: z.string(),
-    repository: z.string(),
-    sha: z.string(),
-    auth_scheme: z.union([IntegrationAuthScheme, z.null()]).optional(),
-    oauth_authorizer: z
-      .union([IntegrationOAuthAuthorizer, z.null()])
-      .optional(),
-    args: MCPIntegrationArgs,
-    secrets: z.union([z.array(IntegrationSecret), z.null()]).optional(),
-    default_policies: IntegrationDefaultPolicies
-  })
-  .strict()
-  .passthrough()
-const IntegrationConfigDetails: z.ZodType<IntegrationConfigDetails> = z
-  .object({
-    name: z.string(),
-    configuration_state: IntegrationConfigurationState,
-    template: IntegrationTemplate
-  })
-  .strict()
-  .passthrough()
-const IntegrationConfigToolDetails: z.ZodType<IntegrationConfigToolDetails> = z
-  .object({
-    name: z.string(),
-    configuration_state: IntegrationConfigurationState,
-    tool_policies: z.record(BasePolicy)
-  })
-  .strict()
-  .passthrough()
-const IntegrationConfiguration: z.ZodType<IntegrationConfiguration> = z
-  .object({
-    created_at: z.union([z.string(), z.null()]).optional(),
-    updated_at: z.union([z.string(), z.null()]).optional(),
-    id: z.union([z.number(), z.null()]).optional(),
-    name: z.string(),
-    org_id: z.string(),
-    profile_id: z.string(),
-    template: IntegrationTemplate,
-    configuration_state: IntegrationConfigurationState
-  })
-  .strict()
-  .passthrough()
-const IntegrationConfigUpsertResult: z.ZodType<IntegrationConfigUpsertResult> =
-  z
-    .object({
-      integration_config: IntegrationConfiguration,
-      state: IntegrationConfigurationState
-    })
-    .strict()
-    .passthrough()
-const IntegrationUpsertAttempt: z.ZodType<IntegrationUpsertAttempt> = z
-  .object({
-    success: z.boolean(),
-    error: z.union([z.string(), z.null()]).optional(),
-    config: IntegrationConfigUpsertResult,
-    runtime: z.union([z.unknown(), z.null()]).optional()
   })
   .strict()
   .passthrough()
@@ -561,10 +433,6 @@ const MCPServerConfig = z
     args: z.array(z.string()),
     env_vars: z.record(z.string())
   })
-  .strict()
-  .passthrough()
-const PolicyCheckResult = z
-  .object({ approved: z.boolean() })
   .strict()
   .passthrough()
 const ServerSpec: z.ZodType<ServerSpec> = z
@@ -612,43 +480,35 @@ const TraefikIngressRoute: z.ZodType<TraefikIngressRoute> = z
   .passthrough()
 
 export const schemas = {
+  AccessPolicyType,
+  Policy,
+  ValidationError,
+  HTTPValidationError,
+  NewPolicyRequest,
+  X_ONEGREP_PROFILE_ID,
+  ActionApprovalState,
+  ActionApprovalRequest,
+  ApprovalAndPolicy,
+  PolicyCheckResult,
   policy_id,
-  action,
   AuditLog,
   PaginationMetadata,
   PaginatedResponse_AuditLog_,
-  ValidationError,
-  HTTPValidationError,
   RemoteClientConfig,
-  AccessPolicyType,
+  BasePolicy,
+  ToolCustomProperties,
+  ToolDetails,
+  ToolCustomTagsParams,
+  ToolCustomTagSelectionParams,
   UserAccount,
   Organization,
   AccountInformation,
-  ActionApprovalState,
-  ActionApprovalRequest,
-  Policy,
-  ApprovalAndPolicy,
-  Attempt,
   AuthenticationMethod,
   AuthenticationStatus,
-  BasePolicy,
   IngressConfig,
-  IntegrationAuthScheme,
-  IntegrationConfigurationState,
-  IntegrationOAuthAuthorizer,
-  MCPIntegrationArgs,
-  IntegrationSecret,
-  IntegrationDefaultPolicies,
-  IntegrationTemplate,
-  IntegrationConfigDetails,
-  IntegrationConfigToolDetails,
-  IntegrationConfiguration,
-  IntegrationConfigUpsertResult,
-  IntegrationUpsertAttempt,
   KindMetadata,
   LauncherConfig,
   MCPServerConfig,
-  PolicyCheckResult,
   ServerSpec,
   Server,
   TraefikIngressRoute
@@ -684,17 +544,17 @@ const endpoints = makeApi([
       {
         name: 'action',
         type: 'Query',
-        schema: action
+        schema: X_ONEGREP_PROFILE_ID
       },
       {
         name: 'start_date',
         type: 'Query',
-        schema: action
+        schema: X_ONEGREP_PROFILE_ID
       },
       {
         name: 'end_date',
         type: 'Query',
-        schema: action
+        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: PaginatedResponse_AuditLog_,
@@ -721,6 +581,331 @@ const endpoints = makeApi([
     description: `Gets the remote client config for the meta server.`,
     requestFormat: 'json',
     response: RemoteClientConfig
+  },
+  {
+    method: 'get',
+    path: '/api/v1/integrations/:integration_name/tools',
+    alias:
+      'get_integration_tools_api_v1_integrations__integration_name__tools_get',
+    description: `Returns details for a tool in an integration available to a user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'integration_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: z.array(ToolDetails),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/integrations/:integration_name/tools/:tool_name',
+    alias:
+      'get_tool_details_api_v1_integrations__integration_name__tools__tool_name__get',
+    description: `Returns the details for a tool in an integration.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'integration_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'tool_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: ToolDetails,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/integrations/:integration_name/tools/:tool_name/custom/tags',
+    alias:
+      'upsert_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_post',
+    description: `Upserts custom tags for a tool in an integration. Will not delete any existing tags but will update any
+overlapping tags that are already set.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: ToolCustomTagsParams
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: ToolDetails,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'delete',
+    path: '/api/v1/integrations/:integration_name/tools/:tool_name/custom/tags',
+    alias:
+      'delete_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_delete',
+    description: `Deletes custom tags for a tool in an integration.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: ToolCustomTagSelectionParams
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: ToolDetails,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/policies/',
+    alias: 'get_all_policies_api_v1_policies__get',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'skip',
+        type: 'Query',
+        schema: z.number().int().optional().default(0)
+      },
+      {
+        name: 'limit',
+        type: 'Query',
+        schema: z.number().int().optional().default(100)
+      }
+    ],
+    response: z.array(Policy),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/policies/',
+    alias: 'create_policy_api_v1_policies__post',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: NewPolicyRequest
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: Policy,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/policies/:policy_id',
+    alias: 'get_policy_api_v1_policies__policy_id__get',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'policy_id',
+        type: 'Path',
+        schema: z.number().int()
+      }
+    ],
+    response: Policy,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'put',
+    path: '/api/v1/policies/:policy_id',
+    alias: 'update_policy_api_v1_policies__policy_id__put',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: z.object({}).partial().strict().passthrough()
+      },
+      {
+        name: 'policy_id',
+        type: 'Path',
+        schema: z.number().int()
+      }
+    ],
+    response: Policy,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/policies/:policy_id/:audit_id/status',
+    alias:
+      'check_policy_status_api_v1_policies__policy_id___audit_id__status_post',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'policy_id',
+        type: 'Path',
+        schema: z.number().int()
+      },
+      {
+        name: 'audit_id',
+        type: 'Path',
+        schema: z.number().int()
+      }
+    ],
+    response: z.unknown(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/policies/approvals',
+    alias: 'get_approval_requests_api_v1_policies_approvals_get',
+    description: `Get all approval requests visible to the user with their associated policies and resource details.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'page',
+        type: 'Query',
+        schema: z.number().int().optional().default(0)
+      },
+      {
+        name: 'page_size',
+        type: 'Query',
+        schema: z.number().int().optional().default(100)
+      }
+    ],
+    response: z.array(ApprovalAndPolicy),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/policies/resources/:resource_name/approval',
+    alias:
+      'check_resource_for_approval_api_v1_policies_resources__resource_name__approval_get',
+    description: `Checks the policy that is associated with a resource if it requires approval, if yes, this will create an approval request. If the policy indicates that
+it does require approval, this will wait for the user to approve or reject the request before returning back the final
+response and HTTP CODE. 200 &#x3D; approved or didn&#x27;t require approval, 403 &#x3D; rejected by the user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'resource_name',
+        type: 'Path',
+        schema: z.string()
+      }
+    ],
+    response: z.unknown(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/policies/resources/check',
+    alias: 'check_resource_access_get_api_v1_policies_resources_check_get',
+    requestFormat: 'json',
+    response: z.object({ approved: z.boolean() }).strict().passthrough()
+  },
+  {
+    method: 'post',
+    path: '/api/v1/policies/resources/check',
+    alias: 'check_resource_access_api_v1_policies_resources_check_post',
+    description: `Generic endpoint to check resource access.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: z.object({ approved: z.boolean() }).strict().passthrough(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
   },
   {
     method: 'get',

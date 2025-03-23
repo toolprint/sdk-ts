@@ -1,22 +1,23 @@
-import chalk from 'chalk'
 import { Command } from 'commander'
 import { logger } from '../utils/logger'
 import { getToolbox } from '@onegrep/sdk'
 import { getSpinner } from 'utils/helpers'
 
 async function runHealthcheck() {
-  const apiUrl = process.env.ONEGREP_API_URL
-  logger.info(`Checking connectivity with: ${chalk.bold(apiUrl)}`)
-
   const spinner = getSpinner('Checking connectivity...', 'yellow')
   spinner.start()
-
   const toolbox = await getToolbox()
-  spinner.succeed(`Connected to ${chalk.bold(apiUrl)}`)
 
-  toolbox.close().catch((error) => {
-    logger.error(`Error closing toolbox: ${error}`)
-  })
+  try {
+    await toolbox.apiClient.health_health_get()
+    spinner.succeed('Successfully connected to the OneGrep API')
+  } catch (error) {
+    spinner.fail('Failed to connect to the OneGrep API')
+    logger.error(`Error getting toolbox: ${error}`)
+  } finally {
+    spinner.stop()
+    await toolbox.close()
+  }
 }
 
 export const healthcheck = new Command()

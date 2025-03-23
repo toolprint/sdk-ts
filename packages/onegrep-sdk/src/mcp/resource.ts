@@ -1,14 +1,19 @@
 import { RemoteClientConfig, RemoteToolCallArgs } from './types.js'
 import { ConnectedClientManager } from './client.js'
-import { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js'
+import {
+  CallToolResult,
+  Tool as MCPTool
+} from '@modelcontextprotocol/sdk/types.js'
 import {
   ToolResource,
-  ExtraProperties,
   JsonSchema,
   ToolMetadata,
   ToolCallInput,
   ToolCallResponse,
-  ToolCallError
+  ToolCallError,
+  ToolCustomProperties,
+  ToolDetails,
+  BasePolicy
 } from '../types.js'
 import { z } from 'zod'
 import { jsonSchemaUtils } from '../schema.js'
@@ -23,20 +28,26 @@ import { log } from '@repo/utils'
 // }
 
 export class McpToolMetadata implements ToolMetadata {
+  // Core metadata
   name: string
   description: string
-  iconUrl?: URL
   integrationName: string
+
+  // Schema properties
   inputSchema: JsonSchema
   outputSchema?: JsonSchema
-  extraProperties?: ExtraProperties
+
+  // Cosmetic properties
+  extraProperties?: ToolCustomProperties
+  iconUrl?: URL
 
   private _zodInputType: z.ZodTypeAny
   private _zodOutputType: z.ZodTypeAny
 
   constructor(
-    tool: Tool,
+    tool: MCPTool,
     integrationName: string,
+    toolDetails: ToolDetails,
     inputSchema: JsonSchema,
     outputSchema?: JsonSchema
   ) {
@@ -44,9 +55,11 @@ export class McpToolMetadata implements ToolMetadata {
     this.description = tool.description || 'Tool ' + tool.name
     this.iconUrl = undefined
     this.integrationName = integrationName
+    this.extraProperties = toolDetails.custom_properties as
+      | ToolCustomProperties
+      | undefined
     this.inputSchema = inputSchema
     this.outputSchema = outputSchema
-    this.extraProperties = undefined
 
     this._zodInputType = jsonSchemaUtils.toZodType(inputSchema)
     this._zodOutputType = outputSchema
@@ -65,7 +78,14 @@ export class McpToolMetadata implements ToolMetadata {
 
 export class MCPToolResource implements ToolResource {
   id: string
+
+  // Core resource properties
+  policy: BasePolicy
+
+  // Core tool metadata
   metadata: ToolMetadata
+
+  // Connection manager
   clientConfig: RemoteClientConfig
   connectedClientManager: ConnectedClientManager
 
@@ -74,11 +94,14 @@ export class MCPToolResource implements ToolResource {
   constructor(
     id: string,
     metadata: ToolMetadata,
+    toolDetails: ToolDetails,
     clientConfig: RemoteClientConfig,
     connectedClientManager: ConnectedClientManager
   ) {
     this.id = id
     this.metadata = metadata
+    this.policy = toolDetails.policy
+
     this.clientConfig = clientConfig
     this.connectedClientManager = connectedClientManager
     this._outputZodType = metadata.zodOutputType()
@@ -148,21 +171,32 @@ export class MCPToolResource implements ToolResource {
   }
 }
 
-export const toolResourceFromTool = (
-  tool: Tool,
+/**
+ * Helper function that generates a MCPToolResource from an MCPTool as well as other metadata pertaining to the tool.
+ */
+export const toolResourceFromMcpTool = (
+  tool: MCPTool,
+  toolDetails: ToolDetails,
   clientConfig: RemoteClientConfig,
   connectedClientManager: ConnectedClientManager
-) => {
+): MCPToolResource => {
   // TODO: Why is this hacky re-parsing of the input schema necessary? Breaks if you try to pass it directly.
   const inputSchemaString = JSON.stringify(tool.inputSchema)
   const inputSchema = JSON.parse(inputSchemaString) as JsonSchema
 
   // TODO: This should match the Policy ID format
   const id = `${clientConfig.name}::${tool.name}`
-  const toolMetadata = new McpToolMetadata(tool, clientConfig.name, inputSchema)
+  const toolMetadata = new McpToolMetadata(
+    tool,
+    clientConfig.name,
+    toolDetails,
+    inputSchema
+  )
+
   return new MCPToolResource(
     id,
     toolMetadata,
+    toolDetails,
     clientConfig,
     connectedClientManager
   )
