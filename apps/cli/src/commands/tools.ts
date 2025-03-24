@@ -10,7 +10,7 @@ import {
   Toolbox,
   ToolNameFilter
 } from '@onegrep/sdk'
-import { select, input, confirm } from '@inquirer/prompts'
+import { select, input, confirm, checkbox } from '@inquirer/prompts'
 import Table from 'cli-table3'
 import { highlight } from 'cli-highlight'
 
@@ -123,8 +123,9 @@ if (tool) {
   logger.log(codeTable.toString())
 }
 
-async function coerceParameterValue(value: any, type: string) {
+async function coerceValueToType(value: any, type: string) {
   logger.debug(`Coercing parameter value: ${value} to type: ${type}`)
+  type = type.toLowerCase().trim()
 
   try {
     if (type === 'string') {
@@ -182,7 +183,7 @@ async function collectParameters(
         default: propDefault as string
       })
 
-      const coercedValue = await coerceParameterValue(paramValue, propType)
+      const coercedValue = await coerceValueToType(paramValue, propType)
 
       params.args[propName] = coercedValue
     } else {
@@ -200,7 +201,7 @@ async function collectParameters(
           default: propDefault as string
         })
 
-        const coercedValue = await coerceParameterValue(paramValue, propType)
+        const coercedValue = await coerceValueToType(paramValue, propType)
 
         params.args[propName] = coercedValue
       }
@@ -374,24 +375,24 @@ async function displayToolProperties(selectedTool: ToolResource) {
   }
 }
 
-async function setCustomProperties(toolbox: Toolbox, tool: ToolResource) {
-  logger.info(
-    `Setting custom properties for tool: ${chalk.bold.green(tool.metadata.name)}`
-  )
-
+async function collectCustomTags(): Promise<{
+  tags: Record<string, any>
+  confirmAdd: boolean
+}> {
   // Collect custom properties
   const newTags: Record<string, any> = {}
   let addingProps = true
 
   logger.log('\n' + chalk.bold.blueBright('Add custom properties:'))
-  logger.log(
-    chalk.dim('Enter properties as key-value pairs. Empty key to finish.')
-  )
+  logger.log(chalk.dim('Enter tags as key-value pairs. Empty key to finish.'))
 
   while (addingProps) {
     // Get property key
+    console.info(
+      chalk.dim('↓ Press Enter with empty input to finish adding tags ↓')
+    )
     const propKey = await input({
-      message: 'Enter property key (or empty to finish):'
+      message: 'Enter a tag name (Ex. description, owner, etc.):'
     })
 
     // Break the loop if empty key
@@ -405,22 +406,34 @@ async function setCustomProperties(toolbox: Toolbox, tool: ToolResource) {
       message: `Enter value for ${chalk.cyan(propKey)}:`
     })
 
+    const propType = await select({
+      message: `Select type for ${chalk.cyan(propKey)}:`,
+      choices: [
+        { name: 'String', value: 'string' },
+        { name: 'Number', value: 'number' },
+        { name: 'Boolean', value: 'boolean' }
+      ],
+      default: 'string'
+    })
+
+    const coercedValue = await coerceValueToType(propValue, propType)
+
     // Add to custom properties
-    newTags[propKey] = propValue
+    newTags[propKey] = coercedValue
 
     logger.info(
-      `Added property: ${chalk.cyan(propKey)} = ${chalk.yellow(propValue)}`
+      `Added tag: ${chalk.cyan(propKey)} = ${chalk.yellow(propValue)}`
     )
   }
 
   // If no properties were added
   if (Object.keys(newTags).length === 0) {
     logger.info('No custom properties added.')
-    return
+    return { tags: {}, confirmAdd: false }
   }
 
   // Show summary table of properties to be added
-  logger.log('\n' + chalk.bold.blueBright('Custom properties to be added:'))
+  logger.log('\n' + chalk.bold.blueBright('Custom tags to be added:'))
 
   const propsTable = new Table({
     head: [chalk.blueBright('Key'), chalk.blueBright('Value')],
@@ -445,9 +458,23 @@ async function setCustomProperties(toolbox: Toolbox, tool: ToolResource) {
 
   // Confirm with user
   const confirmAdd = await confirm({
-    message: 'Do you want to add these custom properties to the tool?',
+    message: 'Looks good?',
     default: true
   })
+
+  if (confirmAdd) {
+    return { tags: newTags, confirmAdd: true }
+  }
+
+  return { tags: {}, confirmAdd: false }
+}
+
+async function setCustomProperties(toolbox: Toolbox, tool: ToolResource) {
+  logger.info(
+    `Setting custom tags for tool: ${chalk.bold.green(tool.metadata.name)}`
+  )
+
+  const { tags, confirmAdd } = await collectCustomTags()
 
   if (confirmAdd) {
     try {
@@ -456,7 +483,7 @@ async function setCustomProperties(toolbox: Toolbox, tool: ToolResource) {
         {
           integration_name: tool.metadata.integrationName,
           tool_name: tool.metadata.name,
-          tags: newTags
+          tags: tags
         },
         {
           params: {
@@ -466,9 +493,7 @@ async function setCustomProperties(toolbox: Toolbox, tool: ToolResource) {
         }
       )
 
-      logger.info(
-        chalk.green('✓ Custom properties successfully added to the tool.')
-      )
+      logger.info(chalk.green('✓ Custom tags successfully added to the tool.'))
 
       const spinner = getSpinner('Refreshing integration...', 'yellow')
       spinner.start()
@@ -480,10 +505,256 @@ async function setCustomProperties(toolbox: Toolbox, tool: ToolResource) {
       )
       await displayToolProperties(refreshedTool[0])
     } catch (error) {
-      logger.error(`Failed to update custom properties: ${error}`)
+      logger.error(`Failed to update custom tags: ${error}`)
     }
   } else {
-    logger.info('Custom properties update cancelled.')
+    logger.info('Custom tags update cancelled.')
+  }
+}
+
+/** Helper function to refresh all the helper data structures in case of changes. */
+async function get_refreshed_toolset(toolbox: Toolbox): Promise<{
+  tools: ToolResource[]
+  toolsByIntegration: Record<string, ToolResource[]>
+  integrations: string[]
+  integrationDescriptions: Record<string, string>
+}> {
+  let spinner = getSpinner('Refreshing toolset...', 'yellow')
+  spinner.start()
+
+  const toolResources: Array<ToolResource> = await toolbox.listAll()
+  const toolsByIntegration: Record<string, ToolResource[]> = {}
+  const integrations: string[] = []
+  const integrationDescriptions: Record<string, string> = {} // Store integration descriptions
+
+  toolResources.forEach((tool) => {
+    const integrationName = tool.metadata.integrationName
+    // Access description safely - it might be stored in a custom property or we can extract it elsewhere
+    const integrationDescription = ''
+
+    if (!toolsByIntegration[integrationName]) {
+      toolsByIntegration[integrationName] = []
+      integrations.push(integrationName)
+      integrationDescriptions[integrationName] = integrationDescription
+    }
+
+    toolsByIntegration[integrationName].push(tool)
+  })
+
+  spinner.succeed('Toolset refreshed successfully')
+
+  return {
+    tools: toolResources,
+    toolsByIntegration: toolsByIntegration,
+    integrations: integrations,
+    integrationDescriptions: integrationDescriptions
+  }
+}
+
+/**
+ * Explore tools from a specific integration
+ */
+async function exploreIntegrationTools(
+  toolbox: Toolbox,
+  toolsForIntegration: ToolResource[]
+): Promise<{
+  exitCompletely: boolean
+}> {
+  let exitCompletely = false
+  let continueExploringTools = true
+
+  while (continueExploringTools && !exitCompletely) {
+    // Select a tool to explore
+    const selectedToolName = await select({
+      message: 'Select a tool to explore:',
+      choices: [
+        ...toolsForIntegration.map((tool) => {
+          // Format the tool name and description nicely
+          const name = chalk.bold(tool.metadata.name)
+          const description = tool.metadata.description
+            ? chalk.dim(` - ${tool.metadata.description}`)
+            : ''
+
+          return {
+            name: `${name}${description}`,
+            value: tool.metadata.name
+          }
+        }),
+        { name: 'Return to integration options', value: 'back-to-integration' },
+        { name: 'Exit', value: 'exit' }
+      ]
+    })
+
+    if (selectedToolName === 'exit') {
+      logger.info('Exiting tool explorer')
+      exitCompletely = true
+      break
+    }
+
+    if (selectedToolName === 'back-to-integration') {
+      break
+    }
+
+    const selectedTool = toolsForIntegration.find(
+      (tool) => tool.metadata.name === selectedToolName
+    )!
+
+    // Tool exploration loop
+    let continueWithCurrentTool = true
+
+    while (continueWithCurrentTool && !exitCompletely) {
+      clearTerminal()
+      await displayToolProperties(selectedTool)
+
+      // Let user choose what to do with this specific tool
+      const toolAction = await select({
+        message: 'What would you like to do with this tool?',
+        choices: [
+          { name: 'See an example of tool usage', value: 'example' },
+          { name: 'Run this tool now', value: 'run' },
+          { name: 'Set custom properties', value: 'set-custom-properties' },
+          { name: 'Select a different tool', value: 'different-tool' },
+          {
+            name: 'Return to integration options',
+            value: 'back-to-integration'
+          },
+          { name: 'Exit', value: 'exit' }
+        ]
+      })
+
+      if (toolAction === 'exit') {
+        logger.info('Exiting tool explorer')
+        exitCompletely = true
+        break
+      }
+
+      if (toolAction === 'back-to-integration') {
+        continueWithCurrentTool = false
+        break
+      }
+
+      if (toolAction === 'different-tool') {
+        continueWithCurrentTool = false
+        continue // Go back to tool selection
+      }
+
+      if (toolAction === 'example') {
+        await showToolUsageExample(selectedTool)
+
+        // After showing example, ask if they want to run the tool
+        const shouldRun = await confirm({
+          message: 'Would you like to run this tool now?'
+        })
+
+        if (shouldRun) {
+          await runSelectedTool(selectedTool)
+        }
+      } else if (toolAction === 'run') {
+        await runSelectedTool(selectedTool)
+      } else if (toolAction === 'set-custom-properties') {
+        await setCustomProperties(toolbox, selectedTool)
+      }
+
+      // If we're still exploring this tool, ask to continue
+      if (continueWithCurrentTool && !exitCompletely) {
+        const keepExploringTool = await confirm({
+          message: 'Continue working with this tool?',
+          default: true
+        })
+
+        if (!keepExploringTool) {
+          continueWithCurrentTool = false
+        }
+      }
+    } // End current tool loop
+  } // End tool selection loop
+
+  return { exitCompletely }
+}
+
+/**
+ * Interactive loop to modify properties of multiple tools at the same time.
+ */
+async function modifyMultipleTools(
+  toolbox: Toolbox,
+  integrationName: string,
+  tools: ToolResource[]
+): Promise<boolean> {
+  while (true) {
+    const selectedOption = await select({
+      message: 'Select an option:',
+      choices: [
+        {
+          name: 'Set custom tags on multiple tools',
+          value: 'set-custom-tags'
+        },
+        { name: 'Return to integration options', value: 'back-to-integration' },
+        { name: 'Exit', value: 'exit' }
+      ]
+    })
+
+    if (selectedOption === 'exit') {
+      return true
+    }
+
+    if (selectedOption === 'back-to-integration') {
+      return false
+    }
+
+    if (selectedOption === 'set-custom-tags') {
+      logger.warn(
+        `Setting custom tags on ${tools.length} tools at once. Proceed with caution.`
+      )
+
+      const allOption = 'SELECT_ALL_TOOLS'
+      const selectedToolNames = await checkbox({
+        message: 'Select tools to modify (space to select, enter to confirm):',
+        choices: [
+          { name: chalk.bold.blueBright('Select All'), value: allOption },
+          ...tools.map((tool) => ({
+            name: `${tool.metadata.name}${tool.metadata.description ? chalk.dim(` - ${tool.metadata.description}`) : ''}`,
+            value: tool.metadata.name
+          }))
+        ],
+        validate: (selected) => {
+          if (selected.length === 0) return 'Please select at least one tool'
+          return true
+        }
+      })
+
+      // Handle "Select All" option
+      let toolsToModify: string[]
+      if (selectedToolNames.includes(allOption)) {
+        toolsToModify = tools.map((tool) => tool.metadata.name)
+        logger.info(`Selected all ${toolsToModify.length} tools`)
+      } else {
+        toolsToModify = selectedToolNames
+        logger.info(`Selected ${toolsToModify.length} tools for modification`)
+      }
+
+      const { tags, confirmAdd } = await collectCustomTags()
+
+      if (confirmAdd) {
+        let spinner = getSpinner(
+          `Setting ${Object.keys(tags).length} custom properties on ${toolsToModify.length} tools...`,
+          'yellow'
+        )
+        spinner.start()
+
+        await toolbox.apiClient.upsert_multiple_tool_custom_tags_api_v1_integrations__integration_name__tools_custom_tags_post(
+          {
+            tool_names: toolsToModify,
+            tags: tags
+          },
+          {
+            params: { integration_name: integrationName }
+          }
+        )
+
+        await toolbox.refreshIntegration(integrationName)
+        spinner.succeed('Custom tags updated on all tools')
+      }
+    }
   }
 }
 
@@ -498,60 +769,45 @@ async function runToolsExperience() {
   spinner.succeed('Toolbox setup complete')
 
   try {
-    // Get all tools - do this only once
-    spinner = getSpinner('Discovering available tools...', 'yellow')
-    spinner.start()
-    const toolResources: Array<ToolResource> = await toolbox.listAll()
-    spinner.succeed(
-      `Found ${toolResources.length} tools across various integrations`
-    )
+    // Main integration exploration loop
+    let continueExploringIntegrations = true
 
-    // Organize tools by integration - do this only once
-    const toolsByIntegration: Record<string, ToolResource[]> = {}
-    const integrations: string[] = []
-    const integrationDescriptions: Record<string, string> = {} // Store integration descriptions
+    while (continueExploringIntegrations) {
+      clearTerminal()
 
-    toolResources.forEach((tool) => {
-      const integrationName = tool.metadata.integrationName
-      // Access description safely - it might be stored in a custom property or we can extract it elsewhere
-      const integrationDescription = ''
+      // Refresh toolset at the beginning of each integration exploration
+      let { tools, toolsByIntegration, integrations, integrationDescriptions } =
+        await get_refreshed_toolset(toolbox)
 
-      if (!toolsByIntegration[integrationName]) {
-        toolsByIntegration[integrationName] = []
-        integrations.push(integrationName)
-        integrationDescriptions[integrationName] = integrationDescription
+      // If no integrations found
+      if (tools.length === 0) {
+        logger.error('No integrations or tools found in your toolbox.')
+        return
       }
 
-      toolsByIntegration[integrationName].push(tool)
-    })
-
-    // If no integrations found
-    if (integrations.length === 0) {
-      logger.error('No integrations or tools found in your toolbox.')
-      return
-    }
-
-    // Main tool exploration loop
-    let continueExploring = true
-    while (continueExploring) {
-      let selectedIntegration: string
-      let selectedTool: ToolResource
-
-      // 1. Select an integration (now with descriptions and tool counts)
-      selectedIntegration = await select({
+      // 1. Select an integration
+      const selectedIntegration = await select({
         message: 'Select an integration:',
-        choices: integrations.map((integration) => {
-          const toolCount = toolsByIntegration[integration].length
-          const description = integrationDescriptions[integration]
+        choices: [
+          ...integrations.map((integration) => {
+            const toolCount = toolsByIntegration[integration].length
+            const description = integrationDescriptions[integration]
 
-          return {
-            name: `${integration} ${chalk.gray(`(${toolCount} tools)`)}${
-              description ? chalk.dim(` - ${description}`) : ''
-            }`,
-            value: integration
-          }
-        })
+            return {
+              name: `${integration} ${chalk.gray(`(${toolCount} tools)`)}${
+                description ? chalk.dim(` - ${description}`) : ''
+              }`,
+              value: integration
+            }
+          }),
+          { name: 'Exit', value: 'exit' }
+        ]
       })
+
+      if (selectedIntegration === 'exit') {
+        logger.info('Exiting tool explorer')
+        break
+      }
 
       logger.info(
         `Selected integration: ${chalk.bold.green(selectedIntegration)} with ${
@@ -559,88 +815,43 @@ async function runToolsExperience() {
         } tools available`
       )
 
-      // 2. Select a tool from the chosen integration
-      const toolsForIntegration = toolsByIntegration[selectedIntegration]
-
-      const selectedToolName = await select({
-        message: 'Select a tool:',
-        choices: toolsForIntegration.map((tool) => {
-          // Format the tool name and description nicely
-          const name = chalk.bold(tool.metadata.name)
-          const description = tool.metadata.description
-            ? chalk.dim(` - ${tool.metadata.description}`)
-            : ''
-
-          return {
-            name: `${name}${description}`,
-            value: tool.metadata.name
-          }
-        })
-      })
-
-      selectedTool = toolsForIntegration.find(
-        (tool) => tool.metadata.name === selectedToolName
-      )!
-      await displayToolProperties(selectedTool)
-
-      // 5. Let user choose what to do next
-      const nextAction = await select({
-        message: 'What would you like to do?',
+      const toolExplorationSelection = await select({
+        message: 'Select an option:',
         choices: [
-          { name: 'See an example of tool usage', value: 'example' },
-          { name: 'Run this tool now', value: 'run' },
-          { name: 'Select another tool', value: 'another' },
-          { name: 'Set custom properties', value: 'set-custom-properties' },
-          { name: 'Exit', value: 'exit' }
+          { name: 'Explore a single tool', value: 'explore-tools' },
+          { name: 'Modify multiple tools', value: 'modify-tools' }
         ]
       })
 
-      if (nextAction === 'exit') {
-        logger.info('Exiting tool search')
-        continueExploring = false
-        continue // Break out of the current iteration and check continueExploring
-      }
+      if (toolExplorationSelection === 'explore-tools') {
+        const toolsForIntegration = toolsByIntegration[selectedIntegration]
 
-      if (nextAction === 'another') {
-        clearTerminal()
-        // Just continue to the next iteration of the loop
-        continue
-      }
+        // Call the extracted function for exploring tools within an integration
+        const { exitCompletely } = await exploreIntegrationTools(
+          toolbox,
+          toolsForIntegration
+        )
 
-      if (nextAction === 'example') {
-        await showToolUsageExample(selectedTool)
-
-        // After showing example, ask if they want to run the tool
-        const shouldRun = await confirm({
-          message: 'Would you like to run this tool now?'
-        })
-
-        if (!shouldRun) {
-          // Ask if they want to explore another tool
-          const exploreAnother = await confirm({
-            message: 'Would you like to explore another tool?'
-          })
-
-          continueExploring = exploreAnother
-          continue
+        if (exitCompletely) {
+          break
         }
-
-        // Run the tool if they want to after seeing the example
-        await runSelectedTool(selectedTool)
-      } else if (nextAction === 'run') {
-        // Run the tool directly
-        await runSelectedTool(selectedTool)
-      } else if (nextAction === 'set-custom-properties') {
-        await setCustomProperties(toolbox, selectedTool)
       }
 
-      // After running a tool, ask if they want to explore more tools
-      const runAnother = await confirm({
-        message: 'Would you like to explore another tool?'
-      })
+      if (toolExplorationSelection === 'modify-tools') {
+        const exitCompletely = await modifyMultipleTools(
+          toolbox,
+          selectedIntegration,
+          toolsByIntegration[selectedIntegration]!
+        )
 
-      continueExploring = runAnother
-    }
+        if (exitCompletely) {
+          break
+        }
+      }
+
+      // If not switching integrations, we'll show the integration menu again
+      continueExploringIntegrations = true
+    } // End integration exploration loop
   } catch (error) {
     logger.error(`Error in tool search: ${error}`)
   } finally {

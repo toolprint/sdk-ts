@@ -622,6 +622,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/integrations/{integration_name}/tools/custom/tags:
+    post:
+      tags:
+        - integrations
+      summary: Upsert Multiple Tool Custom Tags
+      description: Upserts custom tags for multiple tools in an integration.
+      operationId: >-
+        upsert_multiple_tool_custom_tags_api_v1_integrations__integration_name__tools_custom_tags_post
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: integration_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Integration Name
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultipleToolCustomTagsParams'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ToolDetails'
+                title: >-
+                  Response Upsert Multiple Tool Custom Tags Api V1 Integrations 
+                  Integration Name  Tools Custom Tags Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
     AccessPolicyType:
@@ -907,6 +957,22 @@ components:
         - args
         - env_vars
       title: MCPServerConfig
+    MultipleToolCustomTagsParams:
+      properties:
+        tool_names:
+          items:
+            type: string
+          type: array
+          title: Tool Names
+        tags:
+          type: object
+          title: Tags
+      type: object
+      required:
+        - tool_names
+        - tags
+      title: MultipleToolCustomTagsParams
+      description: Params to change the tags for multiple tools in an integration.
     NewPolicyRequest:
       properties:
         integration_name:

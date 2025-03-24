@@ -354,6 +354,13 @@ const ToolCustomTagSelectionParams = z
   })
   .strict()
   .passthrough()
+const MultipleToolCustomTagsParams = z
+  .object({
+    tool_names: z.array(z.string()),
+    tags: z.object({}).partial().strict().passthrough()
+  })
+  .strict()
+  .passthrough()
 const UserAccount: z.ZodType<UserAccount> = z
   .object({
     created_at: z.union([z.string(), z.null()]).optional(),
@@ -500,6 +507,7 @@ export const schemas = {
   ToolDetails,
   ToolCustomTagsParams,
   ToolCustomTagSelectionParams,
+  MultipleToolCustomTagsParams,
   UserAccount,
   Organization,
   AccountInformation,
@@ -692,6 +700,39 @@ overlapping tags that are already set.`,
       }
     ],
     response: ToolDetails,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/integrations/:integration_name/tools/custom/tags',
+    alias:
+      'upsert_multiple_tool_custom_tags_api_v1_integrations__integration_name__tools_custom_tags_post',
+    description: `Upserts custom tags for multiple tools in an integration.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: MultipleToolCustomTagsParams
+      },
+      {
+        name: 'integration_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: z.array(ToolDetails),
     errors: [
       {
         status: 422,
