@@ -23,9 +23,9 @@ async function validateAuthenticationState(authProvider: AuthzProvider) {
   } catch (error) {
     logger.debug(`Authentication check failed: ${error}`)
     logger.log(
-      'Authentication check failed. Run the following command to set up your account:'
+      'Authentication check failed. Run the following command to setup your account:'
     )
-    logger.log(`$> ${chalk.bold.green('onegrep-cli')} account setup\n\n`)
+    logger.log(`$> ${chalk.bold.green('onegrep-cli')} account\n\n`)
   }
 }
 
@@ -78,7 +78,7 @@ async function main() {
   } catch (err) {
     logger.error(`Error setting up CLI: ${err}`)
     logger.log(
-      `If you are running into authentication issues, run ${chalk.bold.blue('onegrep-cli account setup')} to setup your environment.`
+      `If you are running into authentication issues, run ${chalk.bold.blue('onegrep-cli account')} and select setup to configure your environment.`
     )
     process.exit(1)
   }

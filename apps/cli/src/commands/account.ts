@@ -10,7 +10,7 @@ import { ConfigProvider } from 'providers/config/provider'
 export function outputAuthenticationPrompt() {
   logger.log('\n\nYou are not authenticated.')
   logger.log(
-    `Please run ${chalk.bold.blue('onegrep-cli account login')} to authenticate.\n\n`
+    `Please run ${chalk.bold.blue('onegrep-cli account')} and select login to authenticate.\n\n`
   )
 }
 
@@ -34,18 +34,24 @@ export function outputApiKeyInstructions() {
  * Ensures API URL is set before proceeding with auth operations
  * @returns true if API URL is set (either already or by user input)
  */
-async function forceSetApiUrl(
-  configProvider: ConfigProvider
+async function forceCheckApiUrl(
+  configProvider: ConfigProvider,
+  forceSet: boolean = false
 ): Promise<boolean> {
   const currentUrl = configProvider.getConfig().identity?.apiUrl
 
-  if (!currentUrl) {
-    logger.info(
-      chalk.yellow('API URL is not set. You need to set it before proceeding.')
-    )
+  if (!currentUrl || forceSet) {
+    if (!currentUrl) {
+      logger.info(
+        chalk.yellow(
+          'API URL is not set. You need to set it before proceeding.'
+        )
+      )
+    }
+
     const apiUrl = await input({
-      message: 'Enter the API URL:',
-      default: 'https://test-sandbox.onegrep.dev',
+      message: 'What would you like your API URL to be?',
+      default: currentUrl ?? 'https://test-sandbox.onegrep.dev',
       validate: (value) => {
         if (!value.trim()) return 'API URL is required'
         try {
@@ -79,7 +85,7 @@ async function handleAccountCreation(params: {
 
   try {
     // Ensure API URL is set first
-    if (!(await forceSetApiUrl(params.configProvider))) {
+    if (!(await forceCheckApiUrl(params.configProvider))) {
       return
     }
 
@@ -128,45 +134,18 @@ async function handleAccountCreation(params: {
  */
 async function handleSetApiKey(params: { configProvider: ConfigProvider }) {
   // Ensure API URL is set first
-  if (!(await forceSetApiUrl(params.configProvider))) {
+  if (!(await forceCheckApiUrl(params.configProvider))) {
     return
   }
 
   outputApiKeyInstructions()
 }
 
-/**
- * Handles setting the API URL
- */
-async function setOrUpdateApiUrl(params: { configProvider: ConfigProvider }) {
-  try {
-    const currentUrl = params.configProvider.getConfig().identity?.apiUrl
-
-    if (currentUrl) {
-      logger.info(`Current API URL: ${chalk.cyan(currentUrl)}`)
-      const changeUrl = await confirm({
-        message: 'Do you want to change the API URL?',
-        default: false
-      })
-
-      if (!changeUrl) {
-        return
-      }
-    }
-
-    await forceSetApiUrl(params.configProvider)
-  } catch (error) {
-    logger.error(
-      `Failed to update API URL: ${error instanceof Error ? error.message : String(error)}`
-    )
-  }
-}
-
 async function loginUser(params: {
   authProvider: AuthzProvider
   configProvider: ConfigProvider
 }) {
-  await forceSetApiUrl(params.configProvider)
+  await forceCheckApiUrl(params.configProvider)
   const spinner = getSpinner('Authenticating...')
 
   // Invoke the authentication flow
@@ -190,7 +169,7 @@ async function handleLogin(params: {
 }) {
   try {
     // Ensure API URL is set first
-    if (!(await forceSetApiUrl(params.configProvider))) {
+    if (!(await forceCheckApiUrl(params.configProvider))) {
       return
     }
 
@@ -293,7 +272,7 @@ async function handleAccountStatus(params: {
   configProvider: ConfigProvider
   authProvider: AuthzProvider
 }) {
-  logger.log('\n\n')
+  clearTerminal()
   const spinner = getSpinner('Checking account status...')
 
   try {
@@ -351,6 +330,23 @@ async function handleAccountStatus(params: {
 
     if (!isAuthenticated) {
       outputAuthenticationPrompt()
+      return
+    }
+
+    // Finally give them the option to see their API key.
+    const showApiKey = await confirm({
+      message: '\nWould you like to see your API key?',
+      default: false
+    })
+    if (showApiKey) {
+      logger.log(
+        chalk.bold.redBright(
+          `[WARNING] Keep your API key secret. To prevent it from being stored in your shell history, run:`
+        )
+      )
+      logger.log(chalk.yellow(`export HISTIGNORE="ONEGREP_API_KEY*"\n`))
+
+      logger.log(`\n\nONEGREP_API_KEY = ${config.identity!.apiKey!}\n`)
     }
   } catch (error) {
     // Force stop the spinner in case it's still running
@@ -369,33 +365,32 @@ async function handleAccountSetup(params: {
     clearTerminal()
     logger.info(chalk.bold.blueBright('OneGrep Account Setup'))
 
-    await setOrUpdateApiUrl({ configProvider: params.configProvider })
-
     // Now show the account setup options
     const option = await select({
-      message: 'How would you like to setup your account?',
+      message: 'Account Setup Options',
       choices: [
         {
           name: 'Create a new account (I have an invitation code)',
           value: 'create-account'
         },
         {
-          name: 'I have an API Key',
-          value: 'api-key'
-        },
-        {
           name: 'Update my API URL',
           value: 'api-url'
         },
         {
+          name: 'Use an existing API Key',
+          value: 'api-key'
+        },
+        {
           name: 'Go back',
-          value: 'back'
+          value: 'go-back'
         }
       ]
     })
 
     switch (option) {
       case 'create-account':
+        await forceCheckApiUrl(params.configProvider, true)
         await handleAccountCreation(params)
         await handleAccountStatus({
           configProvider: params.configProvider,
@@ -406,10 +401,9 @@ async function handleAccountSetup(params: {
         await handleSetApiKey(params)
         break
       case 'api-url':
-        await setOrUpdateApiUrl(params)
+        await forceCheckApiUrl(params.configProvider, true)
         break
-      case 'back':
-        logger.info('Operation cancelled.')
+      case 'go-back':
         return
     }
   } catch (error) {
@@ -432,45 +426,59 @@ export function getAccountsCommand(params: {
     'Manage your OneGrep account and authentication'
   )
 
-  // Setup command
-  accountCommand
-    .command('setup')
-    .description('Set up your OneGrep account')
-    .action(async () => {
-      await handleAccountSetup(params)
-    })
+  accountCommand.action(async () => {
+    clearTerminal()
 
-  // Set API URL command
-  accountCommand
-    .command('set-url')
-    .description('Set or update the API URL')
-    .action(async () => {
-      await setOrUpdateApiUrl(params)
-    })
+    while (true) {
+      logger.log(
+        chalk.bold.blueBright(
+          '\n\nSelect an option to manage your OneGrep account\n'
+        )
+      )
+      const option = await select({
+        message: '',
+        choices: [
+          {
+            name: 'Setup or update my account',
+            value: 'setup'
+          },
+          {
+            name: 'See my authentication status',
+            value: 'status'
+          },
+          {
+            name: 'Login',
+            value: 'login'
+          },
+          {
+            name: 'Logout',
+            value: 'logout'
+          },
+          {
+            name: 'Exit',
+            value: 'exit'
+          }
+        ]
+      })
 
-  // Login command
-  accountCommand
-    .command('login')
-    .description('Authenticate with OneGrep')
-    .action(async () => {
-      await handleLogin(params)
-    })
-
-  // Logout command
-  accountCommand
-    .command('logout')
-    .description('Log out from OneGrep')
-    .action(async () => {
-      await handleLogout(params)
-    })
-
-  // Status command to view account details
-  accountCommand
-    .command('status')
-    .description('View your account status and details')
-    .action(async () => {
-      await handleAccountStatus(params)
-    })
+      switch (option) {
+        case 'setup':
+          await handleAccountSetup(params)
+          break
+        case 'status':
+          await handleAccountStatus(params)
+          break
+        case 'login':
+          await handleLogin(params)
+          break
+        case 'logout':
+          await handleLogout(params)
+          break
+        case 'exit':
+          process.exit(0)
+      }
+    }
+  })
 
   return accountCommand
 }
