@@ -3,7 +3,7 @@ import {
   createToolbox,
   ServerNameFilter,
   ToolNameFilter,
-  createApiKeyClient,
+  createApiClientFromParams,
   ToolCallResponse
 } from '@onegrep/sdk'
 import {
@@ -105,7 +105,10 @@ export class Onegrep implements INodeType {
     // Set the API key in the environment
     process.env.ONEGREP_API_KEY = apiKey
 
-    const apiClient = createApiKeyClient(apiKey, 'https://api.onegrep.dev')
+    const apiClient = createApiClientFromParams({
+      baseUrl: 'https://api.onegrep.dev',
+      apiKey: apiKey
+    })
     const toolbox = await createToolbox(apiClient)
 
     // const channel = this.getNodeParameter('channel', 0) as string

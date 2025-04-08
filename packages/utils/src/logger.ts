@@ -18,6 +18,9 @@ async function getLoggerFromEnv(env: Env): Promise<Logger> {
     logger = consoleLogger()
   } else if (env.LOG_MODE === 'pino') {
     logger = await pinoLogger(env)
+  } else if (env.LOG_MODE === 'debug') {
+    // ! Debug mode is not supported in the utils package, so we use the silent logger.
+    logger = silentLogger()
   } else {
     throw new Error(`Invalid log mode: ${env.LOG_MODE}`)
   }

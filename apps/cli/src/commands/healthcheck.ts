@@ -1,14 +1,16 @@
 import { Command } from 'commander'
 import { logger } from '../utils/logger'
-import { getToolbox } from '@onegrep/sdk'
+import { getToolbox, Toolbox } from '@onegrep/sdk'
 import { getSpinner } from 'utils/helpers'
 
 async function runHealthcheck() {
   const spinner = getSpinner('Checking connectivity...', 'yellow')
   spinner.start()
-  const toolbox = await getToolbox()
+
+  let toolbox: Toolbox | undefined
 
   try {
+    toolbox = await getToolbox()
     await toolbox.apiClient.health_health_get()
     spinner.succeed('Successfully connected to the OneGrep API')
   } catch (error) {
@@ -16,7 +18,7 @@ async function runHealthcheck() {
     logger.error(`Error getting toolbox: ${error}`)
   } finally {
     spinner.stop()
-    await toolbox.close()
+    await toolbox?.close()
   }
 }
 

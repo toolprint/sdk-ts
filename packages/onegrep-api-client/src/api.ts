@@ -302,6 +302,48 @@ const PaginatedResponse_AuditLog_: z.ZodType<PaginatedResponse_AuditLog_> = z
   .object({ items: z.array(AuditLog), pagination: PaginationMetadata })
   .strict()
   .passthrough()
+const AuthenticationMethod = z.enum(['propelauth', 'api_key'])
+const AuthenticationStatus: z.ZodType<AuthenticationStatus> = z
+  .object({
+    credentials_provided: z.boolean(),
+    method: z.union([AuthenticationMethod, z.null()]).optional(),
+    user_id: z.union([z.string(), z.null()]).optional(),
+    is_authenticated: z.boolean()
+  })
+  .strict()
+  .passthrough()
+const UserAccount: z.ZodType<UserAccount> = z
+  .object({
+    created_at: z.union([z.string(), z.null()]).optional(),
+    updated_at: z.union([z.string(), z.null()]).optional(),
+    id: z.string(),
+    belongs_to_organization_id: z.union([z.string(), z.null()]).optional(),
+    api_key: z.string()
+  })
+  .strict()
+  .passthrough()
+const Organization: z.ZodType<Organization> = z
+  .object({
+    created_at: z.union([z.string(), z.null()]).optional(),
+    updated_at: z.union([z.string(), z.null()]).optional(),
+    id: z.string(),
+    owner_id: z.union([z.string(), z.null()]).optional(),
+    created_by_user_id: z.union([z.string(), z.null()]).optional()
+  })
+  .strict()
+  .passthrough()
+const AccountInformation: z.ZodType<AccountInformation> = z
+  .object({
+    user_id: z.string(),
+    account: UserAccount,
+    organization: Organization
+  })
+  .strict()
+  .passthrough()
+const AccountCreateRequest = z
+  .object({ invitation_code: z.string(), email: z.string() })
+  .strict()
+  .passthrough()
 const RemoteClientConfig = z
   .object({
     org_id: z.string(),
@@ -358,44 +400,6 @@ const MultipleToolCustomTagsParams = z
   .object({
     tool_names: z.array(z.string()),
     tags: z.object({}).partial().strict().passthrough()
-  })
-  .strict()
-  .passthrough()
-const UserAccount: z.ZodType<UserAccount> = z
-  .object({
-    created_at: z.union([z.string(), z.null()]).optional(),
-    updated_at: z.union([z.string(), z.null()]).optional(),
-    id: z.string(),
-    belongs_to_organization_id: z.union([z.string(), z.null()]).optional(),
-    api_key: z.string()
-  })
-  .strict()
-  .passthrough()
-const Organization: z.ZodType<Organization> = z
-  .object({
-    created_at: z.union([z.string(), z.null()]).optional(),
-    updated_at: z.union([z.string(), z.null()]).optional(),
-    id: z.string(),
-    owner_id: z.union([z.string(), z.null()]).optional(),
-    created_by_user_id: z.union([z.string(), z.null()]).optional()
-  })
-  .strict()
-  .passthrough()
-const AccountInformation: z.ZodType<AccountInformation> = z
-  .object({
-    user_id: z.string(),
-    account: UserAccount,
-    organization: Organization
-  })
-  .strict()
-  .passthrough()
-const AuthenticationMethod = z.enum(['propelauth', 'api_key'])
-const AuthenticationStatus: z.ZodType<AuthenticationStatus> = z
-  .object({
-    credentials_provided: z.boolean(),
-    method: z.union([AuthenticationMethod, z.null()]).optional(),
-    user_id: z.union([z.string(), z.null()]).optional(),
-    is_authenticated: z.boolean()
   })
   .strict()
   .passthrough()
@@ -501,6 +505,12 @@ export const schemas = {
   AuditLog,
   PaginationMetadata,
   PaginatedResponse_AuditLog_,
+  AuthenticationMethod,
+  AuthenticationStatus,
+  UserAccount,
+  Organization,
+  AccountInformation,
+  AccountCreateRequest,
   RemoteClientConfig,
   BasePolicy,
   ToolCustomProperties,
@@ -508,11 +518,6 @@ export const schemas = {
   ToolCustomTagsParams,
   ToolCustomTagSelectionParams,
   MultipleToolCustomTagsParams,
-  UserAccount,
-  Organization,
-  AccountInformation,
-  AuthenticationMethod,
-  AuthenticationStatus,
   IngressConfig,
   KindMetadata,
   LauncherConfig,
@@ -523,6 +528,69 @@ export const schemas = {
 }
 
 const endpoints = makeApi([
+  {
+    method: 'get',
+    path: '/api/v1/account/',
+    alias: 'get_account_information_api_v1_account__get',
+    requestFormat: 'json',
+    response: AccountInformation
+  },
+  {
+    method: 'post',
+    path: '/api/v1/account/',
+    alias: 'create_account_api_v1_account__post',
+    description: `Creates a new account for the authenticated user with an API key and organization.`,
+    requestFormat: 'json',
+    response: AccountInformation
+  },
+  {
+    method: 'delete',
+    path: '/api/v1/account/',
+    alias: 'delete_account_api_v1_account__delete',
+    requestFormat: 'json',
+    response: z.boolean()
+  },
+  {
+    method: 'get',
+    path: '/api/v1/account/api-key',
+    alias: 'get_api_key_api_v1_account_api_key_get',
+    description: `Returns the API key information for the authenticated user.`,
+    requestFormat: 'json',
+    response: UserAccount
+  },
+  {
+    method: 'get',
+    path: '/api/v1/account/auth/status',
+    alias: 'get_auth_status_api_v1_account_auth_status_get',
+    description: `Returns the authentications state of the caller. Will read their API Key or JWT and then determine
+if a OneGrep account exists. If yes, then it will be considered authenticated.
+
+# ! NOTE: The User may have a valid JWT but if they do not have a OneGrep account, they will not be considered authenticated.`,
+    requestFormat: 'json',
+    response: AuthenticationStatus
+  },
+  {
+    method: 'post',
+    path: '/api/v1/account/invitation-code',
+    alias: 'create_account_by_invitation_api_v1_account_invitation_code_post',
+    description: `Creates a new account given an authenticated user and a valid invitation code.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: AccountCreateRequest
+      }
+    ],
+    response: AccountInformation,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
   {
     method: 'get',
     path: '/api/v1/audit/',
