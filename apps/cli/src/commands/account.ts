@@ -167,6 +167,8 @@ async function handleLogin(params: {
   authProvider: AuthzProvider
   configProvider: ConfigProvider
 }) {
+  logger.log(chalk.bold.magenta('Account Login'))
+
   try {
     // Ensure API URL is set first
     if (!(await forceCheckApiUrl(params.configProvider))) {
@@ -238,6 +240,8 @@ async function handleLogin(params: {
  * Handles the logout flow
  */
 async function handleLogout(params: { configProvider: ConfigProvider }) {
+  logger.log(chalk.bold.magenta('Account Logout'))
+
   try {
     const purgeApiUrl = await confirm({
       message: `Would you also like to clear your configured API URL (${params.configProvider.getConfig().identity?.apiUrl})?`,
@@ -272,6 +276,8 @@ async function handleAccountStatus(params: {
   configProvider: ConfigProvider
   authProvider: AuthzProvider
 }) {
+  logger.log(chalk.bold.magenta('Account Status'))
+
   clearTerminal()
   const spinner = getSpinner('Checking account status...')
 
@@ -361,6 +367,8 @@ async function handleAccountSetup(params: {
   configProvider: ConfigProvider
   authProvider: AuthzProvider
 }) {
+  logger.log(chalk.bold.magenta('Account Setup'))
+
   try {
     clearTerminal()
     logger.info(chalk.bold.blueBright('OneGrep Account Setup'))

@@ -1,9 +1,10 @@
 import { Command } from 'commander'
-import { logger } from '../utils/logger'
+import { chalk, logger } from '../utils/logger'
 import { getToolbox, Toolbox } from '@onegrep/sdk'
 import { getSpinner } from 'utils/helpers'
 
 async function runHealthcheck() {
+  logger.log(chalk.bold.magenta('Healthcheck'))
   const spinner = getSpinner('Checking connectivity...', 'yellow')
   spinner.start()
 
