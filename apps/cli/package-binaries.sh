@@ -4,7 +4,8 @@ set -e
 # Configuration
 VERSION=$(node -e "console.log(require('./package.json').version)")
 OUTPUT_DIR="./bin"
-NODE_VERSION="20.11.1" # Choose a stable LTS version
+# Read Node version from .npmrc file
+NODE_VERSION=$(grep "use-node-version" ../../.npmrc | cut -d "=" -f2)
 
 # Create output directory
 mkdir -p $OUTPUT_DIR
@@ -12,12 +13,12 @@ mkdir -p $OUTPUT_DIR
 # Use specific paths that we know exist
 ARM64_NODE="$OUTPUT_DIR/node-v$NODE_VERSION-darwin-arm64/bin/node"
 if [ ! -f "$ARM64_NODE" ]; then
-  ARM64_NODE="$OUTPUT_DIR/node-20.11.1-darwin-arm64/node-v20.11.1-darwin-arm64/bin/node"
+  ARM64_NODE="$OUTPUT_DIR/node-$NODE_VERSION-darwin-arm64/node-v$NODE_VERSION-darwin-arm64/bin/node"
 fi
 
 X64_NODE="$OUTPUT_DIR/node-v$NODE_VERSION-darwin-x64/bin/node"
 if [ ! -f "$X64_NODE" ]; then
-  X64_NODE="$OUTPUT_DIR/node-20.11.1-darwin-x64/node-v20.11.1-darwin-x64/bin/node"
+  X64_NODE="$OUTPUT_DIR/node-$NODE_VERSION-darwin-x64/node-v$NODE_VERSION-darwin-x64/bin/node"
 fi
 
 LINUX_NODE="$OUTPUT_DIR/node-v$NODE_VERSION-linux-x64/bin/node"
@@ -41,9 +42,9 @@ download_node_if_needed() {
   fi
 }
 
-# Generate the SEA blob
+# Generate the SEA blob and silences Node experimental warnings
 echo "Generating SEA blob..."
-node --experimental-sea-config sea-config.json
+NODE_NO_WARNINGS=1 node --experimental-sea-config sea-config.json
 
 # Build for macOS arm64
 echo "Building for macOS arm64..."

@@ -1,1 +1,5 @@
-{ "main": "dist/index.cjs", "output": "bin/sea-prep.blob" }
+{
+  "main": "dist/index.cjs",
+  "output": "bin/sea-prep.blob",
+  "disableExperimentalSEAWarning": true
+}
