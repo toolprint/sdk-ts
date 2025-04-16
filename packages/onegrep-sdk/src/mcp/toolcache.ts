@@ -1,6 +1,6 @@
 import { OneGrepApiClient } from '../client.js'
 import { ConnectedClientManager } from './client.js'
-import { ToolCache, ToolDetails, ToolId, ToolResource } from '../types.js'
+import { ToolCache, ApiToolResource, ToolId, ToolResource } from '../types.js'
 import { MCPToolResource, toolResourceFromMcpTool } from './resource.js'
 import { log } from '@repo/utils'
 import { RemoteClientConfig } from './types.js'
@@ -34,8 +34,8 @@ export class MCPToolCache implements ToolCache {
   /** A helper function that fetches all the tool details for all the tools for an integration and then converts it into a Map of tool name to tool details. */
   private async getToolDetailsByToolName(
     integrationName: string
-  ): Promise<Map<string, ToolDetails>> {
-    const toolDetails: ToolDetails[] =
+  ): Promise<Map<string, ApiToolResource>> {
+    const toolDetails: ApiToolResource[] =
       await this.apiClient.get_integration_tools_api_v1_integrations__integration_name__tools_get(
         {
           params: {
@@ -44,7 +44,7 @@ export class MCPToolCache implements ToolCache {
         }
       )
 
-    const toolDetailsMap = new Map<string, ToolDetails>()
+    const toolDetailsMap = new Map<string, ApiToolResource>()
 
     toolDetails.forEach((toolDetails) => {
       toolDetailsMap.set(toolDetails.tool_name, toolDetails)
@@ -85,25 +85,25 @@ export class MCPToolCache implements ToolCache {
 
     const [mcpTools, toolDetailsMap] = (await Promise.all(promises)) as [
       Tool[],
-      Map<string, ToolDetails>
+      Map<string, ApiToolResource>
     ]
 
     // Group tools and tool details by tool name
     const toolDataMap = new Map<
       string,
-      { tool: MCPTool; details: ToolDetails }
+      { tool: MCPTool; apiToolResource: ApiToolResource }
     >()
     mcpTools.forEach((tool) => {
       toolDataMap.set(tool.name, {
         tool,
-        details: toolDetailsMap.get(tool.name)!
+        apiToolResource: toolDetailsMap.get(tool.name)!
       })
     })
 
     // Now we can create the tool resources for this integration.
     const resources: Array<MCPToolResource> = []
     toolDataMap.forEach((toolData) => {
-      if (toolData.details === undefined) {
+      if (toolData.apiToolResource === undefined) {
         // ! Failsafe to ensure that any new tools that are discoverable BUT do not have guardrails are not rendered.
         log.warn(
           `Tool details not found for tool ${toolData.tool.name}. Will not render this tool.`
@@ -112,7 +112,7 @@ export class MCPToolCache implements ToolCache {
         resources.push(
           toolResourceFromMcpTool(
             toolData.tool,
-            toolData.details,
+            toolData.apiToolResource,
             integrationClientConfig,
             this.connectedClientManager
           )

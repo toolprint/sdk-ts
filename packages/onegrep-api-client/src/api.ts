@@ -185,9 +185,11 @@ type IngressConfig = {
    */
   string | undefined
 }
-type ToolDetails = {
+type ToolResource = {
   integration_name: string
   tool_name: string
+  description?: ((string | null) | Array<string | null>) | undefined
+  id: string
   policy: BasePolicy
   custom_properties?:
     | ((ToolCustomProperties | null) | Array<ToolCustomProperties | null>)
@@ -371,32 +373,36 @@ const ToolCustomProperties: z.ZodType<ToolCustomProperties> = z
   })
   .strict()
   .passthrough()
-const ToolDetails: z.ZodType<ToolDetails> = z
+const ToolResource: z.ZodType<ToolResource> = z
   .object({
     integration_name: z.string(),
     tool_name: z.string(),
+    description: z.union([z.string(), z.null()]).optional(),
+    id: z.string(),
     policy: BasePolicy,
     custom_properties: z.union([ToolCustomProperties, z.null()]).optional()
   })
   .strict()
   .passthrough()
-const ToolCustomTagsParams = z
+const ToolCustomTagsParamsRequest = z
   .object({
     integration_name: z.string(),
     tool_name: z.string(),
+    description: z.union([z.string(), z.null()]).optional(),
     tags: z.object({}).partial().strict().passthrough()
   })
   .strict()
   .passthrough()
-const ToolCustomTagSelectionParams = z
+const ToolCustomTagSelectionParamsRequest = z
   .object({
     integration_name: z.string(),
     tool_name: z.string(),
+    description: z.union([z.string(), z.null()]).optional(),
     tags: z.array(z.string())
   })
   .strict()
   .passthrough()
-const MultipleToolCustomTagsParams = z
+const MultipleToolCustomTagsParamsRequest = z
   .object({
     tool_names: z.array(z.string()),
     tags: z.object({}).partial().strict().passthrough()
@@ -514,10 +520,10 @@ export const schemas = {
   RemoteClientConfig,
   BasePolicy,
   ToolCustomProperties,
-  ToolDetails,
-  ToolCustomTagsParams,
-  ToolCustomTagSelectionParams,
-  MultipleToolCustomTagsParams,
+  ToolResource,
+  ToolCustomTagsParamsRequest,
+  ToolCustomTagSelectionParamsRequest,
+  MultipleToolCustomTagsParamsRequest,
   IngressConfig,
   KindMetadata,
   LauncherConfig,
@@ -677,7 +683,7 @@ if a OneGrep account exists. If yes, then it will be considered authenticated.
         schema: X_ONEGREP_PROFILE_ID
       }
     ],
-    response: z.array(ToolDetails),
+    response: z.array(ToolResource),
     errors: [
       {
         status: 422,
@@ -710,7 +716,7 @@ if a OneGrep account exists. If yes, then it will be considered authenticated.
         schema: X_ONEGREP_PROFILE_ID
       }
     ],
-    response: ToolDetails,
+    response: ToolResource,
     errors: [
       {
         status: 422,
@@ -731,7 +737,7 @@ overlapping tags that are already set.`,
       {
         name: 'body',
         type: 'Body',
-        schema: ToolCustomTagsParams
+        schema: ToolCustomTagsParamsRequest
       },
       {
         name: 'X-ONEGREP-PROFILE-ID',
@@ -739,7 +745,7 @@ overlapping tags that are already set.`,
         schema: X_ONEGREP_PROFILE_ID
       }
     ],
-    response: ToolDetails,
+    response: ToolResource,
     errors: [
       {
         status: 422,
@@ -759,7 +765,7 @@ overlapping tags that are already set.`,
       {
         name: 'body',
         type: 'Body',
-        schema: ToolCustomTagSelectionParams
+        schema: ToolCustomTagSelectionParamsRequest
       },
       {
         name: 'X-ONEGREP-PROFILE-ID',
@@ -767,7 +773,7 @@ overlapping tags that are already set.`,
         schema: X_ONEGREP_PROFILE_ID
       }
     ],
-    response: ToolDetails,
+    response: ToolResource,
     errors: [
       {
         status: 422,
@@ -787,7 +793,7 @@ overlapping tags that are already set.`,
       {
         name: 'body',
         type: 'Body',
-        schema: MultipleToolCustomTagsParams
+        schema: MultipleToolCustomTagsParamsRequest
       },
       {
         name: 'integration_name',
@@ -800,7 +806,7 @@ overlapping tags that are already set.`,
         schema: X_ONEGREP_PROFILE_ID
       }
     ],
-    response: z.array(ToolDetails),
+    response: z.array(ToolResource),
     errors: [
       {
         status: 422,

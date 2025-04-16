@@ -1,7 +1,7 @@
 /** Command set for authentication and account management operations. */
 import { Command } from 'commander'
 import { chalk, logger } from '../utils/logger'
-import { clearTerminal, getSpinner } from '../utils/helpers'
+import { clearTerminal, getSpinner, isDefined } from '../utils/helpers'
 import { select, input, confirm } from '@inquirer/prompts'
 import Table from 'cli-table3'
 import AuthzProvider from '../providers/auth/provider'
@@ -40,8 +40,8 @@ async function forceCheckApiUrl(
 ): Promise<boolean> {
   const currentUrl = configProvider.getConfig().identity?.apiUrl
 
-  if (!currentUrl || forceSet) {
-    if (!currentUrl) {
+  if (!isDefined(currentUrl) || forceSet) {
+    if (!isDefined(currentUrl)) {
       logger.info(
         chalk.yellow(
           'API URL is not set. You need to set it before proceeding.'

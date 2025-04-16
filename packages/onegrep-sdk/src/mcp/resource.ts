@@ -12,7 +12,7 @@ import {
   ToolCallResponse,
   ToolCallError,
   ToolCustomProperties,
-  ToolDetails,
+  ApiToolResource,
   BasePolicy
 } from '../types.js'
 import { z } from 'zod'
@@ -47,7 +47,7 @@ export class McpToolMetadata implements ToolMetadata {
   constructor(
     tool: MCPTool,
     integrationName: string,
-    toolDetails: ToolDetails,
+    apiToolResource: ApiToolResource,
     inputSchema: JsonSchema,
     outputSchema?: JsonSchema
   ) {
@@ -55,7 +55,7 @@ export class McpToolMetadata implements ToolMetadata {
     this.description = tool.description || 'Tool ' + tool.name
     this.iconUrl = undefined
     this.integrationName = integrationName
-    this.extraProperties = toolDetails.custom_properties as
+    this.extraProperties = apiToolResource.custom_properties as
       | ToolCustomProperties
       | undefined
     this.inputSchema = inputSchema
@@ -94,7 +94,7 @@ export class MCPToolResource implements ToolResource {
   constructor(
     id: string,
     metadata: ToolMetadata,
-    toolDetails: ToolDetails,
+    toolDetails: ApiToolResource,
     clientConfig: RemoteClientConfig,
     connectedClientManager: ConnectedClientManager
   ) {
@@ -176,7 +176,7 @@ export class MCPToolResource implements ToolResource {
  */
 export const toolResourceFromMcpTool = (
   tool: MCPTool,
-  toolDetails: ToolDetails,
+  apiToolResource: ApiToolResource,
   clientConfig: RemoteClientConfig,
   connectedClientManager: ConnectedClientManager
 ): MCPToolResource => {
@@ -185,18 +185,18 @@ export const toolResourceFromMcpTool = (
   const inputSchema = JSON.parse(inputSchemaString) as JsonSchema
 
   // TODO: This should match the Policy ID format
-  const id = `${clientConfig.name}::${tool.name}`
+  const id = apiToolResource.id
   const toolMetadata = new McpToolMetadata(
     tool,
     clientConfig.name,
-    toolDetails,
+    apiToolResource,
     inputSchema
   )
 
   return new MCPToolResource(
     id,
     toolMetadata,
-    toolDetails,
+    apiToolResource,
     clientConfig,
     connectedClientManager
   )

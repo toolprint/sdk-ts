@@ -8,7 +8,7 @@ export function getSpinner(text: string, color: Color = 'yellow') {
 }
 
 export function isDefined(value: any) {
-  return value !== undefined && value !== null
+  return value !== undefined && value !== null && value !== 'undefined'
 }
 
 export function clearTerminal() {

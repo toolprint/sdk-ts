@@ -605,7 +605,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ToolDetails'
+                  $ref: '#/components/schemas/ToolResource'
                 title: >-
                   Response Get Integration Tools Api V1 Integrations 
                   Integration Name  Tools Get
@@ -653,7 +653,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ToolDetails'
+                $ref: '#/components/schemas/ToolResource'
         '422':
           description: Validation Error
           content:
@@ -689,14 +689,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ToolCustomTagsParams'
+              $ref: '#/components/schemas/ToolCustomTagsParamsRequest'
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ToolDetails'
+                $ref: '#/components/schemas/ToolResource'
         '422':
           description: Validation Error
           content:
@@ -727,14 +727,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ToolCustomTagSelectionParams'
+              $ref: '#/components/schemas/ToolCustomTagSelectionParamsRequest'
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ToolDetails'
+                $ref: '#/components/schemas/ToolResource'
         '422':
           description: Validation Error
           content:
@@ -772,7 +772,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MultipleToolCustomTagsParams'
+              $ref: '#/components/schemas/MultipleToolCustomTagsParamsRequest'
       responses:
         '200':
           description: Successful Response
@@ -781,7 +781,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ToolDetails'
+                  $ref: '#/components/schemas/ToolResource'
                 title: >-
                   Response Upsert Multiple Tool Custom Tags Api V1 Integrations 
                   Integration Name  Tools Custom Tags Post
@@ -1089,7 +1089,7 @@ components:
         - args
         - env_vars
       title: MCPServerConfig
-    MultipleToolCustomTagsParams:
+    MultipleToolCustomTagsParamsRequest:
       properties:
         tool_names:
           items:
@@ -1103,7 +1103,7 @@ components:
       required:
         - tool_names
         - tags
-      title: MultipleToolCustomTagsParams
+      title: MultipleToolCustomTagsParamsRequest
       description: Params to change the tags for multiple tools in an integration.
     NewPolicyRequest:
       properties:
@@ -1393,30 +1393,7 @@ components:
       description: >-
         Custom properties for a tool in an integration that are set by the user
         or agent.
-
-
-        #? Why are we excluding certain fields? Because these fields are
-        redundant at serialization time because this object is always a
-        sub-object
-
-        #? of ToolDetails or some other wrapper class.
-
-
-        #? How does this decision affect OpenAPI schema generation? - It
-        excludes the fields from the generated schema.
-
-        #? How does it affect SQLModel? - It does not affect SQLModel.
-
-
-        #? An alternate path to exclusion at the model level is using
-        response_model_exclude={propA, propB, propC} approach but this is not
-        preferred
-
-        #? because it opens up the possibility of different response models that
-        share the same object type to have different fields getting excluded
-
-        #? and that is inherently confusing and brittle.
-    ToolCustomTagSelectionParams:
+    ToolCustomTagSelectionParamsRequest:
       properties:
         integration_name:
           type: string
@@ -1424,6 +1401,11 @@ components:
         tool_name:
           type: string
           title: Tool Name
+        description:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Description
         tags:
           items:
             type: string
@@ -1434,11 +1416,11 @@ components:
         - integration_name
         - tool_name
         - tags
-      title: ToolCustomTagSelectionParams
+      title: ToolCustomTagSelectionParamsRequest
       description: >-
         Params that generalize the selection the tags for a tool in an
         integration.
-    ToolCustomTagsParams:
+    ToolCustomTagsParamsRequest:
       properties:
         integration_name:
           type: string
@@ -1446,6 +1428,11 @@ components:
         tool_name:
           type: string
           title: Tool Name
+        description:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Description
         tags:
           type: object
           title: Tags
@@ -1454,13 +1441,13 @@ components:
         - integration_name
         - tool_name
         - tags
-      title: ToolCustomTagsParams
+      title: ToolCustomTagsParamsRequest
       description: >-
         Params to change the tags for a tool in an integration. Will upsert any
         tags that already
 
         exist. Will not delete any other tags. This is only net additive.
-    ToolDetails:
+    ToolResource:
       properties:
         integration_name:
           type: string
@@ -1468,6 +1455,14 @@ components:
         tool_name:
           type: string
           title: Tool Name
+        description:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Description
+        id:
+          type: string
+          title: Id
         policy:
           $ref: '#/components/schemas/BasePolicy'
         custom_properties:
@@ -1478,14 +1473,10 @@ components:
       required:
         - integration_name
         - tool_name
+        - id
         - policy
-      title: ToolDetails
-      description: >-
-        Details about a tool in an integration. This doesn't need to be stored
-        in the database because this
-
-        object is meant to be used as a response object and is derived at
-        runtime based on other states.
+      title: ToolResource
+      description: A broad summary of details about a tool akin to a ToolResource.
     TraefikIngressRoute:
       properties:
         kind:
