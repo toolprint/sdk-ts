@@ -1,11 +1,11 @@
 /** Command set for authentication and account management operations. */
 import { Command } from 'commander'
-import { chalk, logger } from '../utils/logger'
-import { clearTerminal, getSpinner, isDefined } from '../utils/helpers'
+import { chalk, logger } from '../utils/logger.js'
+import { clearTerminal, getSpinner, isDefined } from '../utils/helpers.js'
 import { select, input, confirm } from '@inquirer/prompts'
 import Table from 'cli-table3'
-import AuthzProvider from '../providers/auth/provider'
-import { ConfigProvider } from 'providers/config/provider'
+import AuthzProvider from '../providers/auth/provider.js'
+import { ConfigProvider } from '../providers/config/provider.js'
 
 export function outputAuthenticationPrompt() {
   logger.log('\n\nYou are not authenticated.')

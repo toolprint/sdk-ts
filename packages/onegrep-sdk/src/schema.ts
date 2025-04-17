@@ -1,5 +1,5 @@
 import { Ajv } from 'ajv'
-import { JsonSchema, ToolResource } from './types'
+import { JsonSchema, ToolResource } from './types.js'
 import {
   jsonSchemaToZod,
   JsonSchema as ToZodJsonSchema

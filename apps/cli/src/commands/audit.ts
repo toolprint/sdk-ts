@@ -1,8 +1,7 @@
 import { Command } from 'commander'
-import { logger } from '../utils/logger'
-import { getSpinner, isDefined } from 'utils/helpers'
+import { chalk, logger } from '../utils/logger.js'
+import { getSpinner, isDefined } from '../utils/helpers.js'
 import { getToolbox, Toolbox } from '@onegrep/sdk'
-import chalk from 'chalk'
 
 /**
  * Fetches audit logs with the specified pagination options

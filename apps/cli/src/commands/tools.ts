@@ -1,6 +1,6 @@
 import { Command } from 'commander'
-import { chalk, logger } from '../utils/logger'
-import { clearTerminal, getSpinner, isDefined } from '../utils/helpers'
+import { chalk, logger } from '../utils/logger.js'
+import { clearTerminal, getSpinner, isDefined } from '../utils/helpers.js'
 import {
   getToolbox,
   ToolResource,

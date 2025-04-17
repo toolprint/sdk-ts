@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import ora from 'ora'
 import { Command } from 'commander'
-import { logger } from '../utils/logger'
+import { logger } from '../utils/logger.js'
 
 import { getToolbox, JsonSchema, ToolResource } from '@onegrep/sdk'
 

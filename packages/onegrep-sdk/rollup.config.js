@@ -67,7 +67,8 @@ const config = defineConfig([
       'ajv',
       'buffer',
       '@zodios/core',
-      '@modelcontextprotocol/sdk'
+      '@modelcontextprotocol/sdk',
+      '@blaxel/sdk'
     ], // Add any external dependencies here
     treeshake: true
   },

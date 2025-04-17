@@ -1,4 +1,4 @@
-import { clientFromConfig } from './client'
+import { clientFromConfig } from './client.js'
 import { describe, it, expect } from 'vitest'
 import { log } from '@repo/utils'
 

@@ -1,17 +1,18 @@
-import { healthcheck } from './commands/healthcheck'
-import { getAuditLogs } from './commands/audit'
+import { healthcheck } from './commands/healthcheck.js'
+import { getAuditLogs } from './commands/audit.js'
 import { Command } from 'commander'
-import { chalk, logger } from './utils/logger'
-
-import { version } from '../package.json'
-import { toolsCommand } from 'commands/tools'
-import { clearTerminal } from 'utils/helpers'
-import { ConfigProvider } from 'providers/config/provider'
-import AuthzProvider from 'providers/auth/provider'
+import { chalk, logger } from './utils/logger.js'
+import { toolsCommand } from './commands/tools.js'
+import { clearTerminal, getPackageVersion } from './utils/helpers.js'
+import { ConfigProvider } from './providers/config/provider.js'
+import AuthzProvider from './providers/auth/provider.js'
 import {
   getAccountsCommand,
   outputAuthenticationPrompt
-} from 'commands/account'
+} from './commands/account.js'
+
+// Get the version from package.json
+const version = getPackageVersion()
 
 // Authentication validation function that checks if user is authenticated
 async function validateAuthenticationState(authProvider: AuthzProvider) {

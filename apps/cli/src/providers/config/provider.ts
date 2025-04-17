@@ -2,9 +2,9 @@ import * as dotenv from 'dotenv'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
-import { Config, Identity, OAuth2Config } from './models'
-import { isDefined } from 'utils/helpers'
-import { logger } from 'utils/logger'
+import { Config, Identity, OAuth2Config } from './models.js'
+import { isDefined } from '../../utils/helpers.js'
+import { logger } from '../../utils/logger.js'
 
 /** Responsible for providing the runtime configuration for the CLI that is comprised of
  * any locally cached data that is needed in order to interact with the user's resources.

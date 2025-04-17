@@ -5,14 +5,14 @@ import {
   // ToolNameFilter,
   Toolbox,
   getToolbox
-} from './toolbox'
+} from './toolbox.js'
 import { log } from '@repo/utils'
 import {
   ToolCallError,
   // ToolCallOutput,
   ToolCallResponse,
   ToolResource
-} from './types'
+} from './types.js'
 // import Ajv from 'ajv'
 // import { jsonSchemaUtils } from './schema'
 

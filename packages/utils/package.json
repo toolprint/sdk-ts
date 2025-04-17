@@ -7,6 +7,7 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "exports": {
+    "types": "./dist/index.d.ts",
     "require": "./dist/index.cjs",
     "import": "./dist/index.js"
   },
@@ -26,24 +27,25 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.13.4",
-    "typescript": "latest",
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.2",
-    "rollup-plugin-dts": "^6.1.1",
+    "@types/node": "^22.13.4",
     "rollup": "^4.34.9",
-    "tsup": "^8.2.0"
+    "rollup-plugin-dts": "^6.1.1",
+    "tsup": "^8.2.0",
+    "typescript": "latest",
+    "@types/pino": "^6.3.12"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
-    "zod": "^3.24.2",
-    "ts-log": "^2.2.7"
+    "ts-log": "^2.2.7",
+    "zod": "^3.24.2"
   },
   "peerDependencies": {
     "chalk": "^5.3.0",
-    "pino": "^9.6.0",
-    "pino-pretty": "^13.0.0"
+    "pino": "6",
+    "pino-pretty": "^9.0.0"
   }
 }

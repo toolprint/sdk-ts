@@ -2,10 +2,10 @@ import * as client from 'openid-client'
 import * as open from 'open' // Static import at the top
 import * as http from 'http'
 import { URL } from 'url'
-import { ConfigProvider } from 'providers/config/provider'
-import { OAuth2Config } from 'providers/config/models'
-import { isDefined } from 'utils/helpers'
-import { chalk, logger } from 'utils/logger'
+import { ConfigProvider } from '../config/provider.js'
+import { OAuth2Config } from '../config/models.js'
+import { isDefined } from '../../utils/helpers.js'
+import { chalk, logger } from '../../utils/logger.js'
 import {
   AccountInformation,
   createApiClientFromParams,

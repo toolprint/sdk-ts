@@ -1,14 +1,14 @@
 import { Logger } from 'ts-log'
-import { Env } from '../env'
+import { Env } from '../env.js'
+import pino from 'pino'
+import path from 'path'
+import fs from 'fs'
 
 export async function pinoLogger(env: Env): Promise<Logger> {
-  const { default: pino } = await import('pino')
-  type PinoLogger = import('pino').Logger
-
   class LoggerInstance implements Logger {
-    private logger: PinoLogger
+    private logger: pino.Logger
 
-    constructor(logger: PinoLogger) {
+    constructor(logger: pino.Logger) {
       if (!logger) {
         throw new Error('Pino Logger instance is required')
       }
@@ -40,57 +40,47 @@ export async function pinoLogger(env: Env): Promise<Logger> {
 
   type LogTransport = 'stdout' | 'file'
 
-  async function consoleTransport() {
-    return {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        colorizeObjects: true,
-        levelFirst: true,
-        translateTime: 'HH:MM:ss'
-      }
-    }
-  }
-
-  async function fileTransport(logFilepath?: string) {
-    // If no logFilepath is provided, use the default log filepath
-    // Dynamically load path module in case we don't actually need it
-    if (!logFilepath) {
-      const path = await import('path')
-
-      logFilepath = path.join(process.cwd(), 'onegrep.log')
-    }
-
-    return {
-      target: 'pino/file',
-      options: {
-        destination: logFilepath,
-        level: 'debug',
-        mkdir: true
-      }
-    }
-  }
-
   async function getLogger(
     logLevel: string,
     logTransport: LogTransport,
     logFilepath?: string
-  ): Promise<PinoLogger> {
-    if (logTransport === 'stdout') {
-      return pino({
-        level: logLevel,
-        transport: await consoleTransport()
-      })
-    } else if (logTransport === 'file') {
-      return pino({
-        level: logLevel,
-        transport: await fileTransport(logFilepath)
-      })
+  ): Promise<pino.Logger> {
+    const options: pino.LoggerOptions = {
+      level: logLevel
+      // Other options can be added here
     }
+
+    if (logTransport === 'stdout') {
+      // For stdout in Pino v6, we can just use standard output
+      // Pino-pretty can be used as a separate process with pipe
+      return pino(options)
+    } else if (logTransport === 'file') {
+      // For file, create the directory if it doesn't exist
+      if (logFilepath) {
+        const dir = path.dirname(logFilepath)
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true })
+        }
+
+        // Create a destination stream for the file
+        const fileStream = fs.createWriteStream(logFilepath, { flags: 'a' })
+        return pino(options, fileStream)
+      } else {
+        const defaultLogPath = path.join(process.cwd(), 'onegrep.log')
+        const dir = path.dirname(defaultLogPath)
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true })
+        }
+
+        const fileStream = fs.createWriteStream(defaultLogPath, { flags: 'a' })
+        return pino(options, fileStream)
+      }
+    }
+
     throw new Error(`Invalid log transport: ${logTransport}`)
   }
 
-  async function getLoggerFromEnv(env: Env): Promise<PinoLogger> {
+  async function getLoggerFromEnv(env: Env): Promise<pino.Logger> {
     return await getLogger(
       env.LOG_LEVEL,
       env.PINO_LOG_TRANSPORT,

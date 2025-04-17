@@ -1,7 +1,7 @@
 import { Command } from 'commander'
-import { chalk, logger } from '../utils/logger'
+import { chalk, logger } from '../utils/logger.js'
 import { getToolbox, Toolbox } from '@onegrep/sdk'
-import { getSpinner } from 'utils/helpers'
+import { getSpinner } from '../utils/helpers.js'
 
 async function runHealthcheck() {
   logger.log(chalk.bold.magenta('Healthcheck'))

@@ -1,6 +1,6 @@
 {
   "name": "@onegrep/cli",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "OneGrep CLI",
   "license": "MIT",
   "type": "module",
@@ -22,7 +22,6 @@
     "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
-    "prepare": "pnpm run package:sea",
     "dev": "rollup -c --watch",
     "build": "rollup -c",
     "start": "node dist/index.js",
@@ -30,7 +29,6 @@
     "format:write": "prettier --write .",
     "format:check": "prettier --check .",
     "licenses": "pnpm licenses list --prod --long > .licenses.txt",
-    "package:sea": "rimraf bin && mkdir -p bin && ./package-sea.sh",
     "version": "changeset version",
     "publish:github": "changeset publish"
   },

@@ -1,4 +1,5 @@
 import ora, { type Color } from 'ora'
+import pkg from '../../package.json' with { type: 'json' }
 
 export function getSpinner(text: string, color: Color = 'yellow') {
   return ora({
@@ -15,4 +16,12 @@ export function clearTerminal() {
   /** Uses ANSI escape codes to clear the terminal so that it is not platform dependent. */
   process.stdout.write('\x1b[2J') // Clear the entire screen
   process.stdout.write('\x1b[H') // Move cursor to the home position (top-left corner)
+}
+
+/**
+ * Utility to get the package version from package.json
+ * @returns The version string from package.json
+ */
+export function getPackageVersion(): string {
+  return pkg.version
 }

@@ -1,5 +1,5 @@
-import { SerializableModel } from 'providers/models'
-import { isDefined } from 'utils/helpers'
+import { SerializableModel } from '../models.js'
+import { isDefined } from '../../utils/helpers.js'
 import { z } from 'zod'
 
 const _AUTHZ_DEFAULTS = {

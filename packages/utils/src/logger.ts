@@ -1,6 +1,6 @@
 import { dummyLogger, Logger } from 'ts-log'
-import { pinoLogger } from './loggers/pino'
-import { Env, getEnv } from './env'
+import { pinoLogger } from './loggers/pino.js'
+import { Env, getEnv } from './env.js'
 
 export function silentLogger(): Logger {
   return dummyLogger
