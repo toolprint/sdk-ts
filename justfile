@@ -98,8 +98,8 @@ pack:
 version-sdk:
     pnpm turbo run version --filter=@onegrep/sdk
 
-publish-sdk-github:
-    pnpm turbo run publish:github --filter=@onegrep/sdk
+publish-sdk:
+    pnpm turbo run publish:npm --filter=@onegrep/sdk
 
 clean-dist:
     pnpm turbo run clean:dist

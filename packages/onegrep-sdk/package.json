@@ -1,6 +1,6 @@
 {
   "name": "@onegrep/sdk",
-  "version": "0.2.0",
+  "version": "0.0.1",
   "private": false,
   "type": "module",
   "license": "MIT",
@@ -29,7 +29,7 @@
     "directory": "packages/onegrep-sdk"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "scripts": {
     "check-types": "tsc -p tsconfig.check.json --noEmit",
@@ -42,7 +42,7 @@
     "licenses": "pnpm licenses list --prod --long > .licenses.txt",
     "package": "mkdir -p pack && pnpm pack --pack-destination pack",
     "version": "changeset version",
-    "publish:github": "changeset publish",
+    "publish:npm": "changeset publish",
     "clean:dist": "rimraf ./dist",
     "clean:modules": "rimraf ./node_modules",
     "clean:pack": "rimraf ./pack"
@@ -72,7 +72,6 @@
     "vitest": "^3.0.5"
   },
   "dependencies": {
-    "@blaxel/sdk": "0.1.9",
     "@modelcontextprotocol/sdk": "^1.5.0",
     "@onegrep/json-schema-to-zod": "1.2.1",
     "@zodios/core": "^10.9.6",
@@ -85,6 +84,7 @@
   },
   "peerDependencies": {
     "chalk": "^5.3.0",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "@blaxel/sdk": "0.1.9"
   }
 }
