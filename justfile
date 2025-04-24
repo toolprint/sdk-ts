@@ -27,7 +27,7 @@ lint-fix:
     pnpm turbo run lint:fix
 
 build:
-    pnpm turbo run build --filter=!@onegrep/cli
+    pnpm turbo run build
 
 build-api-client:
     pnpm turbo run build --force --filter=@repo/onegrep-api-client
@@ -35,12 +35,8 @@ build-api-client:
 build-sdk:
     pnpm turbo run build --force --filter=@onegrep/sdk
 
-# ! Deprecated
-build-cli:
-    pnpm turbo run build --force --filter=@onegrep/cli
-
 rebuild:
-    pnpm turbo run build --force --filter=!@onegrep/cli
+    pnpm turbo run build --force
 
 build-types:
     pnpm turbo run build:types
@@ -99,20 +95,11 @@ commit-msg:
 pack:
     pnpm turbo run package
 
-pack-cli:
-    pnpm turbo run package:sea --filter=@onegrep/cli
-
 version-sdk:
     pnpm turbo run version --filter=@onegrep/sdk
 
-version-cli:
-    pnpm turbo run version --filter=@onegrep/cli
-
 publish-sdk-github:
     pnpm turbo run publish:github --filter=@onegrep/sdk
-
-publish-cli-github:
-    pnpm turbo run publish:github --filter=@onegrep/cli
 
 clean-dist:
     pnpm turbo run clean:dist
@@ -131,9 +118,3 @@ clean-modules:
 
 clean:
     pnpm turbo run clean
-
-link-cli-local:
-    cd apps/cli && pnpm run build && pnpm link --global
-
-unlink-cli-local:
-    pnpm unlink --global @onegrep/cli
