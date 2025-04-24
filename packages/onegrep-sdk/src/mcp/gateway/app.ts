@@ -11,7 +11,7 @@ import {
   CallToolResult
 } from '@modelcontextprotocol/sdk/types.js'
 
-import { clientFromConfig } from '../../client.js'
+import { clientFromConfig } from '../../core/api/client.js'
 import { MCPToolResource } from '../resource.js'
 import { log } from '@repo/utils'
 
@@ -59,10 +59,7 @@ export const createGateway = async () => {
   const server: Server = gateway.server
 
   const connectedClientManager = new ConnectedClientManager()
-  const mcpToolCache = new MCPToolCache(
-    clientFromConfig(),
-    connectedClientManager
-  )
+  const mcpToolCache = new MCPToolCache(clientFromConfig())
 
   // List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async (_request) => {

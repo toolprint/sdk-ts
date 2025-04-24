@@ -27,7 +27,7 @@ lint-fix:
     pnpm turbo run lint:fix
 
 build:
-    pnpm turbo run build
+    pnpm turbo run build --filter=!@onegrep/cli
 
 build-api-client:
     pnpm turbo run build --force --filter=@repo/onegrep-api-client
@@ -35,11 +35,12 @@ build-api-client:
 build-sdk:
     pnpm turbo run build --force --filter=@onegrep/sdk
 
+# ! Deprecated
 build-cli:
     pnpm turbo run build --force --filter=@onegrep/cli
 
 rebuild:
-    pnpm turbo run build --force
+    pnpm turbo run build --force --filter=!@onegrep/cli
 
 build-types:
     pnpm turbo run build:types
@@ -67,6 +68,9 @@ gateway:
 
 test-sdk:
     pnpm turbo run test --filter=@onegrep/sdk
+
+test-sdk-blaxel:
+    cd packages/onegrep-sdk && pnpm test-debug src/blaxel/toolcache.test.ts --run --testNamePattern="BlaxelToolCacheTests"
 
 test-langchain:
     pnpm turbo run test --filter=@onegrep/langchain -- -v

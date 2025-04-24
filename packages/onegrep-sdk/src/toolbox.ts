@@ -1,7 +1,7 @@
-import { clientFromConfig, OneGrepApiClient } from './client.js'
-import { ConnectedClientManager } from './mcp/client.js'
+import { clientFromConfig, OneGrepApiClient } from './core/api/client.js'
 import { BaseToolbox, ToolCache, ToolResource } from './types.js'
 import { MCPToolCache } from './mcp/toolcache.js'
+import { BlaxelToolCache } from 'blaxel/toolcache.js'
 
 export interface ToolFilter {
   (resource: ToolResource): boolean
@@ -27,16 +27,10 @@ export const AndFilter = (...filters: ToolFilter[]): ToolFilter => {
 
 export class Toolbox implements BaseToolbox<ToolResource> {
   apiClient: OneGrepApiClient
-  connectedClientManager: ConnectedClientManager
   toolCache: ToolCache
 
-  constructor(
-    apiClient: OneGrepApiClient,
-    connectedClientManager: ConnectedClientManager,
-    toolCache: ToolCache
-  ) {
+  constructor(apiClient: OneGrepApiClient, toolCache: ToolCache) {
     this.apiClient = apiClient
-    this.connectedClientManager = connectedClientManager
     this.toolCache = toolCache
   }
 
@@ -69,21 +63,38 @@ export class Toolbox implements BaseToolbox<ToolResource> {
   }
 
   async close(): Promise<void> {
-    await this.connectedClientManager.close()
+    await this.toolCache.cleanup()
+    // await this.connectedClientManager.close()
   }
 }
 
 export async function createToolbox(apiClient: OneGrepApiClient) {
-  // Initialize the connected client manager for all clients
-  const connectedClientManager = new ConnectedClientManager()
-  const toolCache = new MCPToolCache(apiClient, connectedClientManager)
-  const ok = await toolCache.refresh()
+  // TODO: Get infra parameters from the API to determine which ToolCache to initialize
+  // TODO: this will be populated from an api endpoint.
+  const providerConfig = {
+    providerName: 'blaxel'
+  }
+
+  let toolCache: ToolCache | undefined
+
+  switch (providerConfig.providerName) {
+    case 'mcp':
+      toolCache = new MCPToolCache(apiClient)
+      break
+    case 'blaxel':
+      toolCache = new BlaxelToolCache(apiClient)
+      break
+    default:
+      throw new Error(`Unsupported provider: ${providerConfig.providerName}`)
+  }
+
+  const ok = await toolCache!.refresh()
 
   if (!ok) {
     throw new Error('Toolcache initialization failed')
   }
 
-  return new Toolbox(apiClient, connectedClientManager, toolCache)
+  return new Toolbox(apiClient, toolCache)
 }
 
 export async function getToolbox(): Promise<Toolbox> {

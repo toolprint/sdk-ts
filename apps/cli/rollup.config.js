@@ -12,11 +12,13 @@ const config = defineConfig([
       {
         file: 'dist/index.js',
         format: 'esm',
+        inlineDynamicImports: true,
         sourcemap: true
       },
       {
         file: 'dist/index.cjs',
         format: 'cjs',
+        inlineDynamicImports: true,
         sourcemap: true
       }
     ],

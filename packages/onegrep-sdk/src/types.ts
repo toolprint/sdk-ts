@@ -96,6 +96,7 @@ export interface ToolCache {
   refreshIntegration(integrationName: string): Promise<boolean>
   get(key: ToolId): Promise<ToolResource | undefined>
   list(): Promise<ToolResource[]>
+  cleanup(): Promise<void>
 }
 
 export interface ToolResourceFilter {

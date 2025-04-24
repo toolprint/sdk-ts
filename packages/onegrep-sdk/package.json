@@ -36,6 +36,7 @@
     "lint": "eslint src package.json",
     "lint:fix": "eslint src package.json --fix",
     "build": "rollup -c",
+    "test-debug": "LOG_MODE=debug vitest --config vitest.config.ts ",
     "test": "LOG_MODE=pino LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept ",
     "test:watch": "LOG_MODE=pino LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept --watch",
     "licenses": "pnpm licenses list --prod --long > .licenses.txt",
@@ -71,7 +72,7 @@
     "vitest": "^3.0.5"
   },
   "dependencies": {
-    "@blaxel/sdk": "^0.1.8",
+    "@blaxel/sdk": "0.1.9",
     "@modelcontextprotocol/sdk": "^1.5.0",
     "@onegrep/json-schema-to-zod": "1.2.1",
     "@zodios/core": "^10.9.6",

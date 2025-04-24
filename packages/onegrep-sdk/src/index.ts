@@ -1,4 +1,4 @@
-export * from './client.js'
+export * from './core/api/client.js'
 export * from './schema.js'
 export * from './toolbox.js'
 export * from './types.js'
