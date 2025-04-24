@@ -5,6 +5,7 @@ import dts from 'rollup-plugin-dts'
 import json from '@rollup/plugin-json'
 import terser from '@rollup/plugin-terser'
 import { defineConfig } from 'rollup'
+import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
 const config = defineConfig([
   {
@@ -24,6 +25,7 @@ const config = defineConfig([
       }
     ],
     plugins: [
+      peerDepsExternal(),
       resolve({
         preferBuiltins: true,
         moduleDirectories: ['node_modules']
@@ -44,20 +46,20 @@ const config = defineConfig([
         compact: true,
         namedExports: true,
         include: ['package.json', '**/package.json', '**/*.json']
-      }),
-      terser({
-        format: {
-          comments: false,
-          ecma: 2020
-        },
-        compress: {
-          dead_code: true,
-          drop_console: false,
-          drop_debugger: true,
-          keep_classnames: false,
-          keep_fnames: false
-        }
       })
+      // terser({
+      //   format: {
+      //     comments: false,
+      //     ecma: 2020
+      //   },
+      //   compress: {
+      //     dead_code: true,
+      //     drop_console: false,
+      //     drop_debugger: true,
+      //     keep_classnames: false,
+      //     keep_fnames: false
+      //   }
+      // })
     ],
     external: [
       'chalk',

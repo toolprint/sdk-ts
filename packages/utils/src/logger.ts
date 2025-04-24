@@ -1,5 +1,4 @@
 import { dummyLogger, Logger } from 'ts-log'
-import { pinoLogger } from './loggers/pino.js'
 import { Env, getEnv } from './env.js'
 
 export function silentLogger(): Logger {
@@ -17,7 +16,7 @@ async function getLoggerFromEnv(env: Env): Promise<Logger> {
   } else if (env.LOG_MODE === 'console') {
     logger = consoleLogger()
   } else if (env.LOG_MODE === 'pino') {
-    logger = await pinoLogger(env)
+    logger = consoleLogger()
   } else if (env.LOG_MODE === 'debug') {
     // ! Debug mode is not supported in the utils package, so we use the silent logger.
     logger = silentLogger()

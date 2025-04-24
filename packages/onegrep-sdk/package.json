@@ -1,7 +1,6 @@
 {
   "name": "@onegrep/sdk",
-  "version": "0.0.1",
-  "private": false,
+  "version": "0.0.2",
   "type": "module",
   "license": "MIT",
   "author": "OneGrep, Inc.",
@@ -37,8 +36,8 @@
     "lint:fix": "eslint src package.json --fix",
     "build": "rollup -c",
     "test-debug": "LOG_MODE=debug vitest --config vitest.config.ts ",
-    "test": "LOG_MODE=pino LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept ",
-    "test:watch": "LOG_MODE=pino LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept --watch",
+    "test": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept ",
+    "test:watch": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept --watch",
     "licenses": "pnpm licenses list --prod --long > .licenses.txt",
     "package": "mkdir -p pack && pnpm pack --pack-destination pack",
     "version": "changeset version",
@@ -67,6 +66,7 @@
     "rimraf": "^6.0.1",
     "rollup": "^4.34.9",
     "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
     "thread-stream": "^1.0.0",
     "typescript": "latest",
     "vitest": "^3.0.5"
@@ -83,8 +83,8 @@
     "zod": "^3.24.2"
   },
   "peerDependencies": {
+    "@blaxel/sdk": "0.1.9",
     "chalk": "^5.3.0",
-    "dotenv": "^16.4.7",
-    "@blaxel/sdk": "0.1.9"
+    "dotenv": "^16.4.7"
   }
 }
