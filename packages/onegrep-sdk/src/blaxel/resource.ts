@@ -1,11 +1,11 @@
 import {
   ApiToolResource,
-  BasePolicy,
+  Policy,
   JsonSchema,
   ToolCallError,
   ToolCallInput,
   ToolCallResponse,
-  ToolCustomProperties,
+  ToolProperties,
   ToolId,
   ToolMetadata,
   ToolResource
@@ -15,6 +15,7 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 import { z } from 'zod'
 import { parseMcpResult } from '../mcp/toolcall.js'
 import { BlaxelClient } from './client.js'
+import { jsonSchemaUtils } from '../schema.js'
 
 export class BlaxelToolMetadata implements ToolMetadata {
   // Blaxel metadata
@@ -31,7 +32,7 @@ export class BlaxelToolMetadata implements ToolMetadata {
   outputSchema?: JsonSchema
 
   // Cosmetic properties
-  extraProperties?: ToolCustomProperties
+  extraProperties?: ToolProperties
   iconUrl?: URL
 
   _zodInputType: z.ZodTypeAny
@@ -70,11 +71,11 @@ export class BlaxelToolMetadata implements ToolMetadata {
 
     this.inputSchema = blaxelTool.inputSchema
     this.outputSchema = undefined
-    this._zodInputType = blaxelTool.inputSchema
+    this._zodInputType = jsonSchemaUtils.toZodType(blaxelTool.inputSchema)
     this._zodOutputType = z.any()
 
-    this.extraProperties = apiToolResource.custom_properties as
-      | ToolCustomProperties
+    this.extraProperties = apiToolResource.properties as
+      | ToolProperties
       | undefined
   }
 
@@ -95,7 +96,7 @@ export class BlaxelToolMetadata implements ToolMetadata {
 export class BlaxelToolResource implements ToolResource {
   id: ToolId
   metadata: ToolMetadata
-  policy: BasePolicy
+  policy: Policy
 
   private blaxelClient: BlaxelClient
   private blaxelMcpServerName: string

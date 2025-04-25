@@ -30,7 +30,7 @@ function parseOutputContent(
 ): ObjectResultContent {
   try {
     const parsedJson: Record<string, any> = JSON.parse(content.text)
-    console.debug(`Parsed JSON: ${JSON.stringify(parsedJson)}`)
+    // console.debug(`Parsed JSON: ${JSON.stringify(parsedJson)}`)
     const validator = jsonSchemaUtils.getValidator(outputSchema)
     const valid = validator(parsedJson)
     if (!valid) {
@@ -147,7 +147,7 @@ export function parseMcpResult<T>(
     // Create a function that safely parses the content into the zod output type
     const toZod = () => {
       const outputZodType = toolMetadata.zodOutputType()
-      console.debug(`Content: ${JSON.stringify(content)}`)
+      // console.debug(`Content: ${JSON.stringify(content)}`)
       const zodOutput =
         mode === 'single'
           ? outputZodType.safeParse(content[0].data)

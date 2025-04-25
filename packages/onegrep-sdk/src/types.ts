@@ -30,8 +30,10 @@ export interface BinaryResultContent extends ResultContent {
 export type ToolCallResultContent = Array<ResultContent>
 
 export type AccountInformation = z.infer<typeof schemas.AccountInformation>
-export type BasePolicy = z.infer<typeof schemas.BasePolicy>
-export type ToolCustomProperties = z.infer<typeof schemas.ToolCustomProperties>
+// export type BasePolicy = z.infer<typeof schemas.BasePolicy>
+export type Policy = z.infer<typeof schemas.Policy>
+// export type ToolCustomProperties = z.infer<typeof schemas.ToolCustomProperties>
+export type ToolProperties = z.infer<typeof schemas.ToolProperties>
 export type ApiToolResource = z.infer<typeof schemas.ToolResource>
 
 export interface ToolCallApproval {}
@@ -66,7 +68,7 @@ export interface ToolMetadata {
   integrationName: string
 
   // Cosmetic properties
-  extraProperties?: ToolCustomProperties
+  extraProperties?: ToolProperties
   iconUrl?: URL
 
   // Schema properties
@@ -83,7 +85,7 @@ export interface ToolMetadata {
 export interface ToolResource {
   id: ToolId
   metadata: ToolMetadata
-  policy: BasePolicy
+  policy: Policy
 
   // TODO: This is a temporary method to set the output schema
   setOutputSchema(outputSchema: JsonSchema): void

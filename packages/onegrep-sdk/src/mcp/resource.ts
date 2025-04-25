@@ -11,9 +11,9 @@ import {
   ToolCallInput,
   ToolCallResponse,
   ToolCallError,
-  ToolCustomProperties,
+  ToolProperties,
   ApiToolResource,
-  BasePolicy
+  Policy
 } from '../types.js'
 import { z } from 'zod'
 import { jsonSchemaUtils } from '../schema.js'
@@ -38,7 +38,7 @@ export class McpToolMetadata implements ToolMetadata {
   outputSchema?: JsonSchema
 
   // Cosmetic properties
-  extraProperties?: ToolCustomProperties
+  extraProperties?: ToolProperties
   iconUrl?: URL
 
   private _zodInputType: z.ZodTypeAny
@@ -55,8 +55,8 @@ export class McpToolMetadata implements ToolMetadata {
     this.description = tool.description || 'Tool ' + tool.name
     this.iconUrl = undefined
     this.integrationName = integrationName
-    this.extraProperties = apiToolResource.custom_properties as
-      | ToolCustomProperties
+    this.extraProperties = apiToolResource.properties as
+      | ToolProperties
       | undefined
     this.inputSchema = inputSchema
     this.outputSchema = outputSchema
@@ -80,7 +80,7 @@ export class MCPToolResource implements ToolResource {
   id: string
 
   // Core resource properties
-  policy: BasePolicy
+  policy: Policy
 
   // Core tool metadata
   metadata: ToolMetadata

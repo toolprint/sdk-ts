@@ -9,8 +9,9 @@ describe('BlaxelToolCacheTests', () => {
       baseUrl: process.env.ONEGREP_BASE_URL!
     })
     const tc = new BlaxelToolCache(apiClient)
-
     await tc.refresh()
+    const tools = await tc.list()
+    console.log(JSON.stringify(tools, null, 2))
     expect(true).toBe(true)
-  })
+  }, 60000) // 60 second timeout
 })

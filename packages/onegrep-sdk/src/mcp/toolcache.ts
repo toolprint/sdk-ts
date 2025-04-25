@@ -174,19 +174,21 @@ export class MCPToolCache implements ToolCache {
   }
 
   private async refreshClientConfigs(): Promise<void> {
-    /** Refreshes the client configs in the toolcache. */
-    const metaClientConfig =
-      await this.apiClient.get_meta_client_api_v1_clients_meta_get()
-    // log.debug(`Meta client config: ${JSON.stringify(metaClientConfig)}`)
+    return
+    // TODO: Fix with new provider approach
+    // /** Refreshes the client configs in the toolcache. */
+    // const metaClientConfig =
+    //   await this.apiClient.get_meta_client_api_v1_clients_meta_get()
+    // // log.debug(`Meta client config: ${JSON.stringify(metaClientConfig)}`)
 
-    const hostClientConfigs =
-      await this.apiClient.get_hosts_clients_api_v1_clients_hosts_get()
-    log.debug(
-      `Host client configs: ${JSON.stringify(hostClientConfigs, null, 2)}`
-    )
+    // const hostClientConfigs =
+    //   await this.apiClient.get_hosts_clients_api_v1_clients_hosts_get()
+    // log.debug(
+    //   `Host client configs: ${JSON.stringify(hostClientConfigs, null, 2)}`
+    // )
 
-    this.allConfigs = [metaClientConfig, ...hostClientConfigs]
-    log.info(`${this.allConfigs.length} integrations configs refreshed`)
+    // this.allConfigs = [metaClientConfig, ...hostClientConfigs]
+    // log.info(`${this.allConfigs.length} integrations configs refreshed`)
   }
 
   /**

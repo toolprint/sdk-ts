@@ -168,7 +168,7 @@ importers:
         version: 0.1.9(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1))
       '@onegrep/sdk':
         specifier: ^0.0.1
-        version: link:../../packages/onegrep-sdk
+        version: 0.0.1(@blaxel/sdk@0.1.9(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1)))(axios@1.7.9)(chalk@5.4.1)(dotenv@16.4.7)
       '@zodios/core':
         specifier: ^10.9.6
         version: 10.9.6(axios@1.7.9)(zod@3.24.3)
@@ -274,7 +274,7 @@ importers:
         version: 5.8.3
       vitest:
         specifier: ^3.0.5
-        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2(encoding@0.1.13)))(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1)
+        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2))(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1)
 
   packages/onegrep-api-client:
     dependencies:
@@ -311,7 +311,7 @@ importers:
         version: 5.8.3
       vitest:
         specifier: ^3.0.5
-        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2(encoding@0.1.13)))(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1)
+        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2))(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1)
 
   packages/onegrep-sdk:
     dependencies:
@@ -414,7 +414,7 @@ importers:
         version: 5.8.3
       vitest:
         specifier: ^3.0.5
-        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2(encoding@0.1.13)))(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1)
+        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2))(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1)
 
   packages/onegrep-sdk-langchain:
     dependencies:
@@ -493,7 +493,7 @@ importers:
         version: 5.8.3
       vitest:
         specifier: ^3.0.5
-        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2(encoding@0.1.13)))(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1)
+        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2))(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1)
 
   packages/typescript-config: {}
 
@@ -2654,6 +2654,13 @@ packages:
     engines: {node: '>=20 <=22'}
     peerDependencies:
       zod: ^3.24.2
+
+  '@onegrep/sdk@0.0.1':
+    resolution: {integrity: sha512-nmIIN6BiGnTbp4t8jwaIRV8dQMylDvuC/Bvb7PCg5eiYJWKl2ramVzoyHps4H3u5D1QzALhXrEMKxNfOleVQgw==}
+    peerDependencies:
+      '@blaxel/sdk': 0.1.9
+      chalk: ^5.3.0
+      dotenv: ^16.4.7
 
   '@opentelemetry/api-logs@0.200.0':
     resolution: {integrity: sha512-IKJBQxh91qJ+3ssRly5hYEJ8NDHu9oY/B1PXVSCWf7zytmYO9RNLB0Ox9XQ/fJ8m6gY6Q6NtBWlmXfaXt5Uc4Q==}
@@ -12709,7 +12716,7 @@ snapshots:
       html-to-text: 9.0.5
       ignore: 5.3.2
       ioredis: 5.3.2
-      jsdom: 23.0.1(canvas@2.11.2(encoding@0.1.13))
+      jsdom: 23.0.1(canvas@2.11.2)
       jsonwebtoken: 9.0.2
       lodash: 4.17.21
       mammoth: 1.7.2
@@ -13076,7 +13083,7 @@ snapshots:
       form-data: 4.0.0
       generate-schema: 2.6.0
       html-to-text: 9.0.5
-      jsdom: 23.0.1(canvas@2.11.2(encoding@0.1.13))
+      jsdom: 23.0.1(canvas@2.11.2)
       langchain: 0.3.11(a1b1d8f579acddeca1083aab38e85215)
       lodash: 4.17.21
       mammoth: 1.7.2
@@ -13382,6 +13389,28 @@ snapshots:
   '@onegrep/json-schema-to-zod@1.2.1(zod@3.24.2)':
     dependencies:
       zod: 3.24.2
+
+  '@onegrep/json-schema-to-zod@1.2.1(zod@3.24.3)':
+    dependencies:
+      zod: 3.24.3
+
+  '@onegrep/sdk@0.0.1(@blaxel/sdk@0.1.9(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1)))(axios@1.7.9)(chalk@5.4.1)(dotenv@16.4.7)':
+    dependencies:
+      '@blaxel/sdk': 0.1.9(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1))
+      '@modelcontextprotocol/sdk': 1.10.0
+      '@onegrep/json-schema-to-zod': 1.2.1(zod@3.24.3)
+      '@zodios/core': 10.9.6(axios@1.7.9)(zod@3.24.3)
+      ajv: 8.17.1
+      buffer: 6.0.3
+      chalk: 5.4.1
+      date-fns: 4.1.0
+      dotenv: 16.4.7
+      eventsource: 3.0.6
+      uuid: 11.1.0
+      zod: 3.24.3
+    transitivePeerDependencies:
+      - axios
+      - supports-color
 
   '@opentelemetry/api-logs@0.200.0':
     dependencies:
@@ -18776,7 +18805,7 @@ snapshots:
   jsbn@1.1.0:
     optional: true
 
-  jsdom@23.0.1(canvas@2.11.2(encoding@0.1.13)):
+  jsdom@23.0.1(canvas@2.11.2):
     dependencies:
       cssstyle: 3.0.0
       data-urls: 5.0.0
@@ -22721,7 +22750,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 20.17.22
-      jsdom: 23.0.1(canvas@2.11.2(encoding@0.1.13))
+      jsdom: 23.0.1(canvas@2.11.2)
     transitivePeerDependencies:
       - less
       - lightningcss
@@ -22732,7 +22761,7 @@ snapshots:
       - supports-color
       - terser
 
-  vitest@3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2(encoding@0.1.13)))(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1):
+  vitest@3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2))(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1):
     dependencies:
       '@vitest/expect': 3.0.5
       '@vitest/mocker': 3.0.5(vite@6.1.0(@types/node@22.13.4)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.2)(yaml@2.7.1))
@@ -22757,7 +22786,7 @@ snapshots:
     optionalDependencies:
       '@types/debug': 4.1.12
       '@types/node': 22.13.4
-      jsdom: 23.0.1(canvas@2.11.2(encoding@0.1.13))
+      jsdom: 23.0.1(canvas@2.11.2)
     transitivePeerDependencies:
       - jiti
       - less
@@ -22797,7 +22826,7 @@ snapshots:
     optionalDependencies:
       '@types/debug': 4.1.12
       '@types/node': 22.13.4
-      jsdom: 23.0.1(canvas@2.11.2(encoding@0.1.13))
+      jsdom: 23.0.1(canvas@2.11.2)
     transitivePeerDependencies:
       - jiti
       - less

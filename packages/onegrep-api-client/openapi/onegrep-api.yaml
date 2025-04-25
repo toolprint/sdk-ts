@@ -4,7 +4,7 @@ info:
   description: OneGrep's core API service
   version: 0.0.1
 servers:
-  - url: http://localhost:8000
+  - url: http://localhost:8080
     description: Local
   - url: http://localhost:8080
     description: Docker
@@ -24,6 +24,414 @@ paths:
           content:
             application/json:
               schema: {}
+  /api/v1/account/auth/status:
+    get:
+      tags:
+        - account
+      summary: Get Auth Status
+      description: >-
+        Returns the authentications state of the caller. Will read their API Key
+        or JWT and then determine
+
+        if a OneGrep account exists. If yes, then it will be considered
+        authenticated.
+
+
+        # ! NOTE: The User may have a valid JWT but if they do not have a
+        OneGrep account, they will not be considered authenticated.
+      operationId: get_auth_status_api_v1_account_auth_status_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationStatus'
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+  /api/v1/account/api-key:
+    get:
+      tags:
+        - account
+      summary: Get Api Key
+      description: Returns the API key information for the authenticated user.
+      operationId: get_api_key_api_v1_account_api_key_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAccount'
+      security:
+        - HTTPBearer: []
+  /api/v1/account/:
+    get:
+      tags:
+        - account
+      summary: Get Account Information
+      operationId: get_account_information_api_v1_account__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountInformation'
+      security:
+        - HTTPBearer: []
+    post:
+      tags:
+        - account
+      summary: Create Account
+      description: >-
+        Creates a new account for the authenticated user with an API key and
+        organization.
+      operationId: create_account_api_v1_account__post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountInformation'
+      security:
+        - HTTPBearer: []
+    delete:
+      tags:
+        - account
+      summary: Delete Account
+      operationId: delete_account_api_v1_account__delete
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: boolean
+                title: Response Delete Account Api V1 Account  Delete
+      security:
+        - HTTPBearer: []
+  /api/v1/account/invitation-code:
+    post:
+      tags:
+        - account
+      summary: Create Account By Invitation
+      description: >-
+        Creates a new account given an authenticated user and a valid invitation
+        code.
+      operationId: create_account_by_invitation_api_v1_account_invitation_code_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountCreateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountInformation'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+        - HTTPBearer: []
+  /api/v1/integrations/:
+    get:
+      tags:
+        - integrations
+      summary: List Integrations
+      description: >-
+        Lists all available integrations for a user's organization.
+
+        If active is true, only returns integrations that have an active tool
+        server.
+      operationId: list_integrations_api_v1_integrations__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: active
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+            title: Active
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IntegrationConfigDetails'
+                title: Response List Integrations Api V1 Integrations  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/integrations/{integration_name}/tools:
+    get:
+      tags:
+        - integrations
+      summary: Get Integration Tools
+      description: Returns details for a tool in an integration available to a user.
+      operationId: get_integration_tools_api_v1_integrations__integration_name__tools_get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: integration_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Integration Name
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ToolResource'
+                title: >-
+                  Response Get Integration Tools Api V1 Integrations 
+                  Integration Name  Tools Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/integrations/{integration_name}/tools/{tool_name}:
+    get:
+      tags:
+        - integrations
+      summary: Get Tool Details
+      description: Returns the details for a tool in an integration.
+      operationId: >-
+        get_tool_details_api_v1_integrations__integration_name__tools__tool_name__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: integration_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Integration Name
+        - name: tool_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Tool Name
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolResource'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/integrations/{integration_name}/tools/{tool_name}/custom/tags:
+    post:
+      tags:
+        - integrations
+      summary: Upsert Tool Custom Tags
+      description: >-
+        Upserts custom tags for a tool in an integration. Will not delete any
+        existing tags but will update any
+
+        overlapping tags that are already set.
+      operationId: >-
+        upsert_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_post
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: integration_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Integration Name
+        - name: tool_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Tool Name
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToolCustomTagsParamsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolResource'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+        - integrations
+      summary: Delete Tool Custom Tags
+      description: Deletes custom tags for a tool in an integration.
+      operationId: >-
+        delete_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_delete
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: integration_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Integration Name
+        - name: tool_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Tool Name
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToolCustomTagSelectionParamsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolResource'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/integrations/{integration_name}/tools/custom/tags:
+    post:
+      tags:
+        - integrations
+      summary: Upsert Multiple Tool Custom Tags
+      description: Upserts custom tags for multiple tools in an integration.
+      operationId: >-
+        upsert_multiple_tool_custom_tags_api_v1_integrations__integration_name__tools_custom_tags_post
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: integration_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Integration Name
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultipleToolCustomTagsParamsRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ToolResource'
+                title: >-
+                  Response Upsert Multiple Tool Custom Tags Api V1 Integrations 
+                  Integration Name  Tools Custom Tags Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/policies/:
     get:
       tags:
@@ -157,7 +565,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
             title: Policy Id
       responses:
         '200':
@@ -185,7 +593,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
             title: Policy Id
       requestBody:
         required: true
@@ -304,7 +712,8 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+            format: uuid
             title: Policy Id
         - name: audit_id
           in: path
@@ -366,7 +775,7 @@ paths:
           required: false
           schema:
             anyOf:
-              - type: integer
+              - type: string
               - type: 'null'
             description: Filter by policy ID
             title: Policy Id
@@ -416,125 +825,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/account/auth/status:
-    get:
-      tags:
-        - account
-      summary: Get Auth Status
-      description: >-
-        Returns the authentications state of the caller. Will read their API Key
-        or JWT and then determine
-
-        if a OneGrep account exists. If yes, then it will be considered
-        authenticated.
-
-
-        # ! NOTE: The User may have a valid JWT but if they do not have a
-        OneGrep account, they will not be considered authenticated.
-      operationId: get_auth_status_api_v1_account_auth_status_get
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthenticationStatus'
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-  /api/v1/account/api-key:
-    get:
-      tags:
-        - account
-      summary: Get Api Key
-      description: Returns the API key information for the authenticated user.
-      operationId: get_api_key_api_v1_account_api_key_get
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAccount'
-      security:
-        - HTTPBearer: []
-  /api/v1/account/:
-    get:
-      tags:
-        - account
-      summary: Get Account Information
-      operationId: get_account_information_api_v1_account__get
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountInformation'
-      security:
-        - HTTPBearer: []
-    post:
-      tags:
-        - account
-      summary: Create Account
-      description: >-
-        Creates a new account for the authenticated user with an API key and
-        organization.
-      operationId: create_account_api_v1_account__post
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountInformation'
-      security:
-        - HTTPBearer: []
-    delete:
-      tags:
-        - account
-      summary: Delete Account
-      operationId: delete_account_api_v1_account__delete
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: boolean
-                title: Response Delete Account Api V1 Account  Delete
-      security:
-        - HTTPBearer: []
-  /api/v1/account/invitation-code:
-    post:
-      tags:
-        - account
-      summary: Create Account By Invitation
-      description: >-
-        Creates a new account given an authenticated user and a valid invitation
-        code.
-      operationId: create_account_by_invitation_api_v1_account_invitation_code_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccountCreateRequest'
-        required: true
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountInformation'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      security:
-        - HTTPBearer: []
   /api/v1/clients/meta:
     get:
       tags:
@@ -549,6 +839,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RemoteClientConfig'
+      deprecated: true
       security:
         - APIKeyHeader: []
         - HTTPBearer: []
@@ -569,228 +860,10 @@ paths:
                   $ref: '#/components/schemas/RemoteClientConfig'
                 type: array
                 title: Response Get Hosts Clients Api V1 Clients Hosts Get
+      deprecated: true
       security:
         - APIKeyHeader: []
         - HTTPBearer: []
-  /api/v1/integrations/{integration_name}/tools:
-    get:
-      tags:
-        - integrations
-      summary: Get Integration Tools
-      description: Returns details for a tool in an integration available to a user.
-      operationId: get_integration_tools_api_v1_integrations__integration_name__tools_get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: integration_name
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Integration Name
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ToolResource'
-                title: >-
-                  Response Get Integration Tools Api V1 Integrations 
-                  Integration Name  Tools Get
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/integrations/{integration_name}/tools/{tool_name}:
-    get:
-      tags:
-        - integrations
-      summary: Get Tool Details
-      description: Returns the details for a tool in an integration.
-      operationId: >-
-        get_tool_details_api_v1_integrations__integration_name__tools__tool_name__get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: integration_name
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Integration Name
-        - name: tool_name
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Tool Name
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ToolResource'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/integrations/{integration_name}/tools/{tool_name}/custom/tags:
-    post:
-      tags:
-        - integrations
-      summary: Upsert Tool Custom Tags
-      description: >-
-        Upserts custom tags for a tool in an integration. Will not delete any
-        existing tags but will update any
-
-        overlapping tags that are already set.
-      operationId: >-
-        upsert_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_post
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ToolCustomTagsParamsRequest'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ToolResource'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    delete:
-      tags:
-        - integrations
-      summary: Delete Tool Custom Tags
-      description: Deletes custom tags for a tool in an integration.
-      operationId: >-
-        delete_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_delete
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ToolCustomTagSelectionParamsRequest'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ToolResource'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/integrations/{integration_name}/tools/custom/tags:
-    post:
-      tags:
-        - integrations
-      summary: Upsert Multiple Tool Custom Tags
-      description: Upserts custom tags for multiple tools in an integration.
-      operationId: >-
-        upsert_multiple_tool_custom_tags_api_v1_integrations__integration_name__tools_custom_tags_post
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: integration_name
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Integration Name
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MultipleToolCustomTagsParamsRequest'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ToolResource'
-                title: >-
-                  Response Upsert Multiple Tool Custom Tags Api V1 Integrations 
-                  Integration Name  Tools Custom Tags Post
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
     AccessPolicyType:
@@ -838,7 +911,8 @@ components:
             - type: 'null'
           title: Id
         policy_id:
-          type: integer
+          type: string
+          format: uuid
           title: Policy Id
         state:
           $ref: '#/components/schemas/ActionApprovalState'
@@ -911,7 +985,8 @@ components:
             - type: 'null'
           title: Id
         policy_id:
-          type: integer
+          type: string
+          format: uuid
           title: Policy Id
         action:
           type: string
@@ -961,24 +1036,67 @@ components:
         - credentials_provided
         - is_authenticated
       title: AuthenticationStatus
-    BasePolicy:
+    BlaxelToolServerClient:
       properties:
+        client_type:
+          type: string
+          const: blaxel
+          title: Client Type
+        blaxel_workspace:
+          type: string
+          title: Blaxel Workspace
+        blaxel_function:
+          type: string
+          title: Blaxel Function
+      type: object
+      required:
+        - client_type
+        - blaxel_workspace
+        - blaxel_function
+      title: BlaxelToolServerClient
+      description: A client for a tool server that is a blaxel server.
+    CanonicalResource:
+      properties:
+        org_id:
+          type: string
+          title: Org Id
+        profile_id:
+          type: string
+          title: Profile Id
+        server_name:
+          type: string
+          title: Server Name
         event_name:
           type: string
           title: Event Name
-        description:
+      type: object
+      required:
+        - org_id
+        - profile_id
+        - server_name
+        - event_name
+      title: CanonicalResource
+      description: Represents a canonical resource name in object form.
+    CreateInvitationRequest:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        org_id:
           anyOf:
             - type: string
             - type: 'null'
-          title: Description
-        access_policy:
-          $ref: '#/components/schemas/AccessPolicyType'
+          title: Org Id
+        expires_in_days:
+          type: integer
+          title: Expires In Days
+          default: 7
       type: object
       required:
-        - event_name
-        - access_policy
-      title: BasePolicy
-      description: Base model with shared policy fields
+        - email
+      title: CreateInvitationRequest
+      description: Request model for creating an invitation
     HTTPValidationError:
       properties:
         detail:
@@ -1034,6 +1152,175 @@ components:
         - orgID
         - serverID
       title: IngressConfig
+    IntegrationAuthScheme:
+      type: string
+      enum:
+        - token
+        - oauth_1_0
+        - oauth_2_0
+      title: IntegrationAuthScheme
+      description: Authentication schemes supported by server templates.
+    IntegrationConfigDetails:
+      properties:
+        name:
+          type: string
+          title: Name
+        configuration_state:
+          $ref: '#/components/schemas/IntegrationConfigurationState'
+        template:
+          $ref: '#/components/schemas/IntegrationTemplate'
+      type: object
+      required:
+        - name
+        - configuration_state
+        - template
+      title: IntegrationConfigDetails
+      description: >-
+        General details about an integration. Meant to be surfaceable to a
+        client.
+    IntegrationConfigurationState:
+      type: string
+      enum:
+        - agent_local
+        - cloud_hosted_available
+        - cloud_hosted_configured
+      title: IntegrationConfigurationState
+      description: >-
+        The state of an integration from an account perspective (not runtime).
+
+        To determine the runtime state, we will have to check the server
+        configuration for
+
+        the integration separately depending on our infrastucture selection.
+    IntegrationDefaultPolicies:
+      properties:
+        tools:
+          items:
+            $ref: '#/components/schemas/PolicyAccessRule'
+          type: array
+          title: Tools
+          description: Policies for tools in this integration.
+      type: object
+      required:
+        - tools
+      title: IntegrationDefaultPolicies
+      description: Default policies for an integration.
+    IntegrationOAuthAuthorizer:
+      type: string
+      enum:
+        - google
+        - meta
+      title: IntegrationOAuthAuthorizer
+    IntegrationSecret:
+      properties:
+        name:
+          type: string
+          title: Name
+        generation_link:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Generation Link
+        value:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Value
+      type: object
+      required:
+        - name
+      title: IntegrationSecret
+      description: Represents a secret required by a server template.
+    IntegrationTemplate:
+      properties:
+        version:
+          type: string
+          title: Version
+          description: The version of the integration template.
+        name:
+          type: string
+          title: Name
+        repository:
+          type: string
+          title: Repository
+        sha:
+          type: string
+          title: Sha
+        auth_scheme:
+          anyOf:
+            - $ref: '#/components/schemas/IntegrationAuthScheme'
+            - type: 'null'
+        oauth_authorizer:
+          anyOf:
+            - $ref: '#/components/schemas/IntegrationOAuthAuthorizer'
+            - type: 'null'
+        args:
+          oneOf:
+            - $ref: '#/components/schemas/MCPIntegrationArgs'
+          title: Args
+          discriminator:
+            propertyName: type
+            mapping:
+              mcp: '#/components/schemas/MCPIntegrationArgs'
+        secrets:
+          anyOf:
+            - items:
+                $ref: '#/components/schemas/IntegrationSecret'
+              type: array
+            - type: 'null'
+          title: Secrets
+        default_policies:
+          $ref: '#/components/schemas/IntegrationDefaultPolicies'
+      type: object
+      required:
+        - version
+        - name
+        - repository
+        - sha
+        - args
+        - default_policies
+      title: IntegrationTemplate
+      description: >-
+        Class representation of the server templates that we support. This
+        matches the structure
+
+        of server templates under resources/integrations/templates/*
+    Invitation:
+      properties:
+        code:
+          type: string
+          title: Code
+        org_id:
+          type: string
+          title: Org Id
+        email:
+          type: string
+          format: email
+          title: Email
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        expires_at:
+          type: string
+          format: date-time
+          title: Expires At
+        accepted:
+          type: boolean
+          title: Accepted
+          default: false
+        accepted_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Accepted At
+      type: object
+      required:
+        - org_id
+        - email
+      title: Invitation
+      description: Represents an invitation to join an organization.
     KindMetadata:
       type: object
     LauncherConfig:
@@ -1049,6 +1336,30 @@ components:
         - configMapName
         - mountPath
       title: LauncherConfig
+    MCPIntegrationArgs:
+      properties:
+        type:
+          type: string
+          const: mcp
+          title: Type
+        command:
+          type: string
+          title: Command
+        args:
+          anyOf:
+            - items:
+                type: string
+              type: array
+            - type: 'null'
+          title: Args
+      type: object
+      required:
+        - type
+        - command
+      title: MCPIntegrationArgs
+      description: >-
+        Arguments specifically for an integration that is powered by an MCP
+        server.
     MCPServerConfig:
       properties:
         name:
@@ -1089,6 +1400,30 @@ components:
         - args
         - env_vars
       title: MCPServerConfig
+    MCPToolServerClient:
+      properties:
+        client_type:
+          type: string
+          const: mcp
+          title: Client Type
+        transport_type:
+          type: string
+          enum:
+            - sse
+            - websocket
+          title: Transport Type
+        url:
+          type: string
+          minLength: 1
+          format: uri
+          title: Url
+      type: object
+      required:
+        - client_type
+        - transport_type
+        - url
+      title: MCPToolServerClient
+      description: A client for a tool server that is a direct MCP server connection.
     MultipleToolCustomTagsParamsRequest:
       properties:
         tool_names:
@@ -1126,6 +1461,21 @@ components:
         default policy for the
 
         integration/event
+    NewUserRecipeRequest:
+      properties:
+        goal:
+          type: string
+          title: Goal
+          description: The goal that this recipe is helping an agent achieve.
+        details:
+          $ref: '#/components/schemas/RecipeDetails-Input'
+          description: The details for this recipe.
+      type: object
+      required:
+        - goal
+        - details
+      title: NewUserRecipeRequest
+      description: Model to create a new user recipe.
     Organization:
       properties:
         created_at:
@@ -1171,6 +1521,20 @@ components:
         - items
         - pagination
       title: PaginatedResponse[AuditLog]
+    PaginatedResponse_UserRecipe_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/UserRecipe'
+          type: array
+          title: Items
+        pagination:
+          $ref: '#/components/schemas/PaginationMetadata'
+      type: object
+      required:
+        - items
+        - pagination
+      title: PaginatedResponse[UserRecipe]
     PaginationMetadata:
       properties:
         page:
@@ -1203,6 +1567,18 @@ components:
       description: Metadata for paginated results
     Policy:
       properties:
+        created_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Updated At
         event_name:
           type: string
           title: Event Name
@@ -1213,35 +1589,70 @@ components:
           title: Description
         access_policy:
           $ref: '#/components/schemas/AccessPolicyType'
-        id:
+        organization_id:
           anyOf:
-            - type: integer
+            - type: string
             - type: 'null'
-          title: Id
+          title: Organization Id
         canonical_resource_name:
           type: string
           title: Canonical Resource Name
-        organization_id:
+        id:
           type: string
-          title: Organization Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          anyOf:
-            - type: string
-              format: date-time
-            - type: 'null'
-          title: Updated At
+          format: uuid
+          title: Id
       type: object
       required:
         - event_name
         - access_policy
         - canonical_resource_name
-        - organization_id
       title: Policy
       description: Policy model that works with both SQL and in-memory storage
+    PolicyAccessRule:
+      properties:
+        event_name:
+          type: string
+          title: Event Name
+        description:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Description
+        access_policy:
+          $ref: '#/components/schemas/AccessPolicyType'
+      type: object
+      required:
+        - event_name
+        - access_policy
+      title: PolicyAccessRule
+      description: Policy template that is used to create a policy.
+    PolicyBase:
+      properties:
+        event_name:
+          type: string
+          title: Event Name
+        description:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Description
+        access_policy:
+          $ref: '#/components/schemas/AccessPolicyType'
+        organization_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Organization Id
+        canonical_resource_name:
+          type: string
+          title: Canonical Resource Name
+      type: object
+      required:
+        - event_name
+        - access_policy
+        - canonical_resource_name
+      title: PolicyBase
+      description: Base model with shared policy fields
     PolicyCheckResult:
       properties:
         approved:
@@ -1252,6 +1663,93 @@ components:
         - approved
       title: PolicyCheckResult
       description: Result of a policy check
+    Recipe:
+      properties:
+        created_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Created At
+        updated_at:
+          anyOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+          title: Updated At
+        goal:
+          type: string
+          title: Goal
+          description: The goal that this recipe is helping an agent achieve.
+        instructions:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Instructions
+          description: The instructions for this recipe.
+        id:
+          type: string
+          format: uuid
+          title: Id
+        tools:
+          items:
+            $ref: '#/components/schemas/Tool'
+          type: array
+          title: Tools
+          readOnly: true
+      type: object
+      required:
+        - goal
+        - instructions
+        - tools
+      title: Recipe
+      description: A recipe.
+    RecipeDetails-Input:
+      properties:
+        tools:
+          items:
+            $ref: '#/components/schemas/RecipeTool'
+          type: array
+          title: Tools
+          description: An unsorted list of tools that would be used in this recipe.
+          default: []
+      type: object
+      title: RecipeDetails
+      description: >-
+        Details about a recipe. This is an unordered list of tools that are used
+        in the recipe.
+    RecipeDetails-Output:
+      properties:
+        tools:
+          items:
+            $ref: '#/components/schemas/RecipeTool'
+          type: array
+          title: Tools
+          description: An unsorted list of tools that would be used in this recipe.
+          default: []
+      type: object
+      title: RecipeDetails
+      description: >-
+        Details about a recipe. This is an unordered list of tools that are used
+        in the recipe.
+    RecipeTool:
+      properties:
+        tool_resource:
+          $ref: '#/components/schemas/ToolResourceBase'
+          description: A reference to the tool that is used in this recipe.
+        usage_instructions:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Usage Instructions
+          description: >-
+            A more in-depth description of this tool and what it should be used
+            for in the context of this recipe.
+      type: object
+      required:
+        - tool_resource
+      title: RecipeTool
+      description: A reference to a tool that is used in a recipe.
     RemoteClientConfig:
       properties:
         org_id:
@@ -1296,6 +1794,97 @@ components:
         - name
         - display_name
       title: RemoteClientConfig
+    ScoredItem_Recipe_:
+      properties:
+        item:
+          $ref: '#/components/schemas/Recipe'
+          description: The item that was scored.
+        score:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: Score
+          description: The score of the item [0, 1].
+      type: object
+      required:
+        - item
+        - score
+      title: ScoredItem[Recipe]
+    ScoredItem_Tool_:
+      properties:
+        item:
+          $ref: '#/components/schemas/Tool'
+          description: The item that was scored.
+        score:
+          type: number
+          maximum: 1
+          minimum: 0
+          title: Score
+          description: The score of the item [0, 1].
+      type: object
+      required:
+        - item
+        - score
+      title: ScoredItem[Tool]
+    SearchRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: The query used against the search index.
+        k:
+          type: integer
+          title: K
+          description: The number of results to return from index.
+          default: 10
+        min_score:
+          type: number
+          title: Min Score
+          description: The minimum score to return from index.
+          default: 0
+        page_size:
+          type: integer
+          title: Page Size
+          description: The number of results per page.
+          default: 10
+        page:
+          type: integer
+          title: Page
+          description: The page number to return.
+          default: 0
+      type: object
+      required:
+        - query
+      title: SearchRequest
+      description: A request for a search.
+    SearchResponse_ScoredItem_Recipe__:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationMetadata'
+        results:
+          items:
+            $ref: '#/components/schemas/ScoredItem_Recipe_'
+          type: array
+          title: Results
+      type: object
+      required:
+        - pagination
+        - results
+      title: SearchResponse[ScoredItem[Recipe]]
+    SearchResponse_ScoredItem_Tool__:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationMetadata'
+        results:
+          items:
+            $ref: '#/components/schemas/ScoredItem_Tool_'
+          type: array
+          title: Results
+      type: object
+      required:
+        - pagination
+        - results
+      title: SearchResponse[ScoredItem[Tool]]
     Server:
       properties:
         kind:
@@ -1378,21 +1967,74 @@ components:
         - orgID
         - image
       title: ServerSpec
-    ToolCustomProperties:
+    Strategy:
       properties:
-        tool_name:
+        recipe_id:
           type: string
-          title: Tool Name
-        tags:
-          type: object
-          title: Tags
+          format: uuid
+          title: Recipe Id
+          description: The ID of the recipe that was used to generate the strategy.
+        instructions:
+          type: string
+          title: Instructions
+          description: Instructions to follow the strategy.
+        tools:
+          items:
+            $ref: '#/components/schemas/ToolResource'
+          type: array
+          title: Tools
+          description: >-
+            List of one or more fully-hydrated tool resources that should be
+            used in the strategy to achieve the goal.
       type: object
       required:
-        - tool_name
-      title: ToolCustomProperties
-      description: >-
-        Custom properties for a tool in an integration that are set by the user
-        or agent.
+        - recipe_id
+        - instructions
+        - tools
+      title: Strategy
+      description: A model representing a result for a goal-based search.
+    Tool:
+      properties:
+        server_id:
+          type: string
+          format: uuid
+          title: Server Id
+        name:
+          type: string
+          title: Name
+          description: The name of the tool (should be unique within a server).
+        description:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Description
+          description: A description of the tool.
+        icon_url:
+          anyOf:
+            - type: string
+              minLength: 1
+              format: uri
+            - type: 'null'
+          title: Icon Url
+          description: A URL to an icon for the tool.
+        input_schema:
+          anyOf:
+            - type: object
+            - type: boolean
+          title: Input Schema
+          description: A JSON schema for the tool's input (defaults to 'always valid').
+          default: true
+        id:
+          type: string
+          format: uuid
+          title: Id
+      type: object
+      required:
+        - server_id
+        - name
+        - id
+      title: Tool
+      description: A tool.
     ToolCustomTagSelectionParamsRequest:
       properties:
         integration_name:
@@ -1447,6 +2089,16 @@ components:
         tags that already
 
         exist. Will not delete any other tags. This is only net additive.
+    ToolProperties:
+      properties:
+        tags:
+          type: object
+          title: Tags
+      type: object
+      required:
+        - tags
+      title: ToolProperties
+      description: Properties for a tool.
     ToolResource:
       properties:
         integration_name:
@@ -1463,20 +2115,94 @@ components:
         id:
           type: string
           title: Id
+        tool:
+          $ref: '#/components/schemas/Tool'
+        org_id:
+          type: string
+          title: Org Id
+        profile_id:
+          type: string
+          title: Profile Id
         policy:
-          $ref: '#/components/schemas/BasePolicy'
-        custom_properties:
-          anyOf:
-            - $ref: '#/components/schemas/ToolCustomProperties'
-            - type: 'null'
+          $ref: '#/components/schemas/PolicyBase'
+        properties:
+          $ref: '#/components/schemas/ToolProperties'
+        server:
+          $ref: '#/components/schemas/ToolServer'
+          readOnly: true
+        provider:
+          $ref: '#/components/schemas/ToolServerProvider'
+          readOnly: true
+        canonical_resource:
+          $ref: '#/components/schemas/CanonicalResource'
+          readOnly: true
       type: object
       required:
         - integration_name
         - tool_name
         - id
+        - tool
+        - org_id
+        - profile_id
         - policy
+        - properties
+        - server
+        - provider
+        - canonical_resource
       title: ToolResource
       description: A broad summary of details about a tool akin to a ToolResource.
+    ToolResourceBase:
+      properties:
+        integration_name:
+          type: string
+          title: Integration Name
+        tool_name:
+          type: string
+          title: Tool Name
+        description:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Description
+      type: object
+      required:
+        - integration_name
+        - tool_name
+      title: ToolResourceBase
+      description: Identification details about a tool in an integration.
+    ToolServer:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        provider_id:
+          type: string
+          format: uuid
+          title: Provider Id
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+        - id
+        - provider_id
+        - name
+      title: ToolServer
+    ToolServerProvider:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+        - id
+        - name
+      title: ToolServerProvider
     TraefikIngressRoute:
       properties:
         kind:
@@ -1534,6 +2260,43 @@ components:
         - api_key
       title: UserAccount
       description: Model for storing user information including their API key
+    UserRecipe:
+      properties:
+        id:
+          type: integer
+          title: Id
+        goal:
+          type: string
+          title: Goal
+          description: The goal that this recipe is helping an agent achieve.
+        details:
+          type: object
+          title: Details
+        org_id:
+          type: string
+          title: Org Id
+          description: The organization ID that owns this recipe
+        profile_id:
+          type: string
+          title: Profile Id
+          description: The profile ID within the organization that owns this recipe
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        details_data:
+          $ref: '#/components/schemas/RecipeDetails-Output'
+          description: Returns the details as a RecipeDetails object.
+          readOnly: true
+      type: object
+      required:
+        - id
+        - goal
+        - org_id
+        - profile_id
+        - details_data
+      title: UserRecipe
+      description: A user recipe.
     ValidationError:
       properties:
         loc:

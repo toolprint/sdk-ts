@@ -40,6 +40,7 @@ export class BlaxelToolCache implements ToolCache {
     }
 
     // Get the metadata from the api for all the tools for the integration.
+    // console.debug(`Getting API tool resources for ${blaxelServerName}`)
     const apiToolResources: ApiToolResource[] =
       await this.apiClient.get_integration_tools_api_v1_integrations__integration_name__tools_get(
         {
