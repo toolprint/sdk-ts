@@ -3,7 +3,6 @@ import {
   ListFunctionsResponse,
   Function as BlaxelFunction
 } from '@blaxel/sdk'
-import { Tool as BlaxelTool } from '@blaxel/sdk/tools/types'
 import {
   McpTool as BlaxelMcpServer,
   retrieveMCPClient
@@ -68,7 +67,7 @@ export class BlaxelClient {
         await server.refresh() // This refreshes the internal tool cache in blaxel for the server and opens up a persistent transport
         this.toolServers.set(serverName, server)
 
-        const tools = await server.listTools()
+        // const tools = await server.listTools()
         // console.debug(
         //   `Tools for ${serverName} -> ${JSON.stringify(
         //     tools.map((t: BlaxelTool) => t.name),

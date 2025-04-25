@@ -1,5 +1,5 @@
 import { Ajv } from 'ajv'
-import { JsonSchema, ToolResource } from './types.js'
+import { JsonSchema, EquippedTool } from './types.js'
 import {
   jsonSchemaToZod,
   JsonSchema as ToZodJsonSchema
@@ -9,7 +9,7 @@ import { v5 as uuidv5 } from 'uuid'
 
 const TOOL_SCHEMA_NAMESPACE = uuidv5('onegrep-sdk-tool-schemas', uuidv5.DNS)
 const INPUT_SCHEMA_NAMESPACE = uuidv5('input', TOOL_SCHEMA_NAMESPACE)
-const OUTPUT_SCHEMA_NAMESPACE = uuidv5('output', TOOL_SCHEMA_NAMESPACE)
+// const OUTPUT_SCHEMA_NAMESPACE = uuidv5('output', TOOL_SCHEMA_NAMESPACE)
 
 function schemaIdForTool(toolId: string, namespace: string) {
   return uuidv5(toolId, namespace)
@@ -30,16 +30,16 @@ function toZodAdapter(jsonSchema: JsonSchema): ToZodJsonSchema {
   }
 }
 
-function schemaIdsForTool(tool: ToolResource): Record<string, JsonSchema> {
+function schemaIdsForTool(tool: EquippedTool): Record<string, JsonSchema> {
   const schemas: Record<string, JsonSchema> = {}
   if (tool.metadata.inputSchema) {
-    const inputId = schemaIdForTool(tool.id, INPUT_SCHEMA_NAMESPACE)
+    const inputId = schemaIdForTool(tool.metadata.id, INPUT_SCHEMA_NAMESPACE)
     schemas[inputId] = tool.metadata.inputSchema
   }
-  if (tool.metadata.outputSchema) {
-    const outputId = schemaIdForTool(tool.id, OUTPUT_SCHEMA_NAMESPACE)
-    schemas[outputId] = tool.metadata.outputSchema
-  }
+  // if (tool.metadata.outputSchema) {
+  //   const outputId = schemaIdForTool(tool.metadata.id, OUTPUT_SCHEMA_NAMESPACE)
+  //   schemas[outputId] = tool.metadata.outputSchema
+  // }
   return schemas
 }
 
@@ -62,15 +62,15 @@ class ToolValidator {
     return validate(data)
   }
 
-  validateOutputData(data: any) {
-    const validate = this._ajv.getSchema(
-      schemaIdForTool(this._toolId, OUTPUT_SCHEMA_NAMESPACE)
-    )
-    if (!validate) {
-      throw new Error(`Tool ${this._toolId} has no output schema`)
-    }
-    return validate(data)
-  }
+  // validateOutputData(data: any) {
+  //   const validate = this._ajv.getSchema(
+  //     schemaIdForTool(this._toolId, OUTPUT_SCHEMA_NAMESPACE)
+  //   )
+  //   if (!validate) {
+  //     throw new Error(`Tool ${this._toolId} has no output schema`)
+  //   }
+  //   return validate(data)
+  // }
 }
 
 /**
@@ -103,21 +103,24 @@ class JsonSchemaUtils {
     return this._ajv.compile(schema)
   }
 
-  registerTool(tool: ToolResource) {
+  registerTool(tool: EquippedTool) {
     const schemas = schemaIdsForTool(tool)
     for (const [id, schema] of Object.entries(schemas)) {
       if (!this.validateJsonSchema(schema)) {
-        log.error(`Tool ${tool.id} has invalid JSON schemas`)
-        throw new Error(`Tool ${tool.id} has invalid JSON schemas`)
+        log.error(`Tool ${tool.metadata.id} has invalid JSON schemas`)
+        throw new Error(`Tool ${tool.metadata.id} has invalid JSON schemas`)
       }
       this._ajv.addSchema(schema, id)
     }
-    this._toolValidators[tool.id] = new ToolValidator(this._ajv, tool.id)
-    log.info(`Registered tool ${tool.id}`)
+    this._toolValidators[tool.metadata.id] = new ToolValidator(
+      this._ajv,
+      tool.metadata.id
+    )
+    log.info(`Registered tool ${tool.metadata.id}`)
   }
 
-  getToolValidator(tool: ToolResource) {
-    return this._toolValidators[tool.id]
+  getToolValidator(tool: EquippedTool) {
+    return this._toolValidators[tool.metadata.id]
   }
 
   toZodType(schema: JsonSchema) {

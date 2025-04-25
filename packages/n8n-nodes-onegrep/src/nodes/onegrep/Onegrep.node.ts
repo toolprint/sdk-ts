@@ -4,7 +4,8 @@ import {
   ServerNameFilter,
   ToolNameFilter,
   createApiClientFromParams,
-  ToolCallResponse
+  ToolCallResponse,
+  EquippedTool
 } from '@onegrep/sdk'
 import {
   INodeType,
@@ -124,9 +125,14 @@ export class Onegrep implements INodeType {
       ServerNameFilter(server),
       ToolNameFilter(tool)
     )
-    const toolResource = await toolbox.matchUnique(resourceFilter)
+    const toolMetadataMap = await toolbox.metadata(resourceFilter)
 
-    const result: ToolCallResponse<any> = await toolResource.call({
+    const toolMetadata = Array.from(toolMetadataMap.values())[0]
+
+    const equippedTool: EquippedTool = await toolbox.get(toolMetadata.id)
+
+    // TODO: needs testing
+    const result: ToolCallResponse<any> = await equippedTool.handle.call({
       args: args || {},
       approval: undefined
     })

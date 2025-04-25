@@ -1,14 +1,21 @@
 import { OneGrepApiClient } from 'core/api/client.js'
-import { ApiToolResource, ToolCache, ToolId, ToolResource } from 'types.js'
+import {
+  ApiToolResource,
+  ToolCache,
+  ToolId,
+  EquippedTool,
+  ToolFilter,
+  ToolMetadata,
+  ScoredResult
+} from 'types.js'
 import { BlaxelClient } from './client.js'
-import { BlaxelToolResource } from './resource.js'
 import { Tool as BlaxelTool } from '@blaxel/sdk/tools/types'
 
 export class BlaxelToolCache implements ToolCache {
   private apiClient: OneGrepApiClient
   private blaxelClient: BlaxelClient
-  private toolIdToResource: Map<ToolId, BlaxelToolResource> = new Map()
-  private integrationToResources: Map<string, BlaxelToolResource[]> = new Map()
+  private toolIdToResource: Map<ToolId, EquippedTool> = new Map()
+  private integrationToResources: Map<string, EquippedTool[]> = new Map()
 
   constructor(apiClient: OneGrepApiClient) {
     this.apiClient = apiClient
@@ -26,7 +33,7 @@ export class BlaxelToolCache implements ToolCache {
     const staleResources = this.integrationToResources.get(blaxelServerName)
     if (staleResources !== undefined) {
       for (const resource of staleResources) {
-        this.toolIdToResource.delete(resource.id)
+        this.toolIdToResource.delete(resource.metadata.id)
       }
       this.integrationToResources.delete(blaxelServerName)
     }
@@ -60,16 +67,17 @@ export class BlaxelToolCache implements ToolCache {
         continue
       }
 
-      const blaxelTool = toolNameToMcpTool.get(toolName)!
+      // const blaxelTool = toolNameToMcpTool.get(toolName)!
 
-      const toolResource: BlaxelToolResource = new BlaxelToolResource(
-        this.blaxelClient,
-        blaxelServerName,
-        blaxelTool,
-        toolResourceData
-      )
+      // ! We're deleting this class?
+      // const toolResource: BlaxelToolResource = new BlaxelToolResource(
+      //   this.blaxelClient,
+      //   blaxelServerName,
+      //   blaxelTool,
+      //   toolResourceData
+      // )
 
-      this.toolIdToResource.set(toolResource.id, toolResource)
+      // this.toolIdToResource.set(toolResource.metadata.id, toolResource)
     }
 
     return true
@@ -89,12 +97,36 @@ export class BlaxelToolCache implements ToolCache {
     return true
   }
 
-  async get(key: ToolId): Promise<ToolResource | undefined> {
-    return this.toolIdToResource.get(key)
+  async metadata(toolFilter?: ToolFilter): Promise<Map<ToolId, ToolMetadata>> {
+    const metadataMap = new Map<ToolId, ToolMetadata>()
+    for (const [toolId, resource] of this.toolIdToResource) {
+      if (toolFilter === undefined || toolFilter(resource.metadata)) {
+        metadataMap.set(toolId, resource.metadata)
+      }
+    }
+    return metadataMap
   }
 
-  async list(): Promise<ToolResource[]> {
-    return Array.from(this.toolIdToResource.values())
+  async get(key: ToolId): Promise<EquippedTool> {
+    const resource = this.toolIdToResource.get(key)
+    if (resource === undefined) {
+      throw new Error(`Tool ${key} not found`)
+    }
+    return resource
+  }
+
+  async list(): Promise<EquippedTool[]> {
+    return Array.from(this.toolIdToResource.values()).map((resource) => {
+      return {
+        metadata: resource.metadata,
+        tags: resource.tags,
+        handle: resource.handle
+      }
+    })
+  }
+
+  async search(_: string): Promise<Array<ScoredResult<EquippedTool>>> {
+    return [] // TODO: Implement
   }
 
   async cleanup(): Promise<void> {

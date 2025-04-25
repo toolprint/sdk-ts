@@ -80,7 +80,10 @@
     "date-fns": "^4.1.0",
     "eventsource": "^3.0.5",
     "uuid": "^11.1.0",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "cacheable": "^1.8.10",
+    "cache-manager": "^6.4.2",
+    "keyv": "^5.3.3"
   },
   "peerDependencies": {
     "@blaxel/sdk": "0.1.9",

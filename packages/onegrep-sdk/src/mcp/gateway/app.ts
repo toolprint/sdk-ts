@@ -7,28 +7,26 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
   Tool,
-  Implementation,
-  CallToolResult
+  Implementation
 } from '@modelcontextprotocol/sdk/types.js'
 
 import { clientFromConfig } from '../../core/api/client.js'
-import { MCPToolResource } from '../resource.js'
 import { log } from '@repo/utils'
 
-import { ToolCallInput } from '../../types.js'
+import { EquippedTool, ToolCallInput, ToolCallResponse } from '../../types.js'
 import { MCPToolCache } from '../toolcache.js'
 import { ConnectedClientManager } from '../client.js'
 
-export const ToolNamespaceDelimiter = '_TOOL_'
+export const ToolNamespaceDelimiter = '.'
 
-const asGatewayTool = (toolResource: MCPToolResource): Tool => {
-  const inputSchema = toolResource.metadata.inputSchema
+const asGatewayTool = (equippedTool: EquippedTool): Tool => {
+  const inputSchema = equippedTool.metadata.inputSchema
   log.info(`Input schema: ${JSON.stringify(inputSchema)}`)
   try {
     return {
-      name: `${toolResource.serverName()}${ToolNamespaceDelimiter}${toolResource.toolName()}`,
-      description: toolResource.metadata.description,
-      inputSchema: toolResource.metadata.inputSchema
+      name: `${equippedTool.metadata.integrationName}${ToolNamespaceDelimiter}${equippedTool.metadata.id}`,
+      description: equippedTool.metadata.description,
+      inputSchema: equippedTool.metadata.inputSchema
     } as Tool
   } catch (error) {
     log.error(`Error creating gateway tool: ${error}`)
@@ -64,7 +62,8 @@ export const createGateway = async () => {
   // List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async (_request) => {
     log.info(`Listing tools`)
-    const toolResources = (await mcpToolCache.list()) as MCPToolResource[] // Cast to MCPToolResource[]
+    const allToolMetadataMap = await mcpToolCache.metadata()
+    const toolResources = Object.values(allToolMetadataMap) as EquippedTool[]
     log.info(`Found ${toolResources.length} tools`)
     const allTools: Tool[] = toolResources.map((resource) =>
       asGatewayTool(resource)
@@ -89,7 +88,7 @@ export const createGateway = async () => {
     // )
     const toolId = `${serverName}::${toolName}`
     const toolResource = (await mcpToolCache.get(toolId)) as
-      | MCPToolResource
+      | EquippedTool
       | undefined
     if (!toolResource) {
       throw new Error(`Tool not found: ${toolId}`)
@@ -102,9 +101,18 @@ export const createGateway = async () => {
       approval: undefined
     }
 
-    const result: CallToolResult = await toolResource.callMCP(toolInput)
-    log.info(`Tool call succeeded`)
-    return result
+    const result: ToolCallResponse<any> =
+      await toolResource.handle.call(toolInput)
+
+    if (result.isError) {
+      throw new Error(result.message)
+    }
+
+    // TODO: Parse result content
+    log.info(`Tool call succeeded`, result)
+    return {
+      content: result.content
+    }
   })
 
   server.onclose = async () => {

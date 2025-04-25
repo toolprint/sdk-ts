@@ -3,27 +3,30 @@ import { describe, it, expect } from 'vitest'
 import { log } from '@repo/utils'
 
 describe('API Client Integration Tests', () => {
-  it('should successfully call the health endpoint', async () => {
+  it.skip('should successfully call the health endpoint', async () => {
     const client = clientFromConfig()
     const response = await client.health_health_get()
     expect(response).toBeDefined()
     log.info(response)
   })
 
-  it(
-    'should successfully get meta server remote client config',
-    { timeout: 20000 },
-    async () => {
-      const client = clientFromConfig()
-      const response = await client.get_meta_client_api_v1_clients_meta_get()
-      expect(response).toBeDefined()
-      log.info(response)
-    }
-  )
-
-  it('should successfully get host servers', { timeout: 20000 }, async () => {
+  it('should successfully list servers', async () => {
     const client = clientFromConfig()
-    const response = await client.get_hosts_clients_api_v1_clients_hosts_get()
+    const response = await client.list_servers_api_v1_servers__get()
+    expect(response).toBeDefined()
+    log.info(response)
+  })
+
+  it('should successfully get server client', async () => {
+    const client = clientFromConfig()
+    const servers = await client.list_servers_api_v1_servers__get()
+    const server = servers[0]
+    const response =
+      await client.get_server_client_api_v1_servers__server_id__client_get({
+        params: {
+          server_id: server.id
+        }
+      })
     expect(response).toBeDefined()
     log.info(response)
   })

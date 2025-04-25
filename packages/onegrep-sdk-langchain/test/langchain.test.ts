@@ -2,12 +2,9 @@ import { describe, it, expect, beforeAll } from 'vitest'
 import {
   createLangchainToolbox,
   LangchainToolbox
-} from '../src/extensions/langchain'
-import {
-  StructuredTool,
-  ToolInputParsingException
-} from '@langchain/core/tools'
-import { Toolbox, ToolCallOutput, ToolResource } from '@onegrep/sdk'
+} from '../src/extensions/langchain.js'
+import { ToolInputParsingException } from '@langchain/core/tools'
+import { Toolbox, ToolCallOutput } from '@onegrep/sdk'
 import { createToolbox } from '@onegrep/sdk'
 import { clientFromConfig } from '@onegrep/sdk'
 import { log } from '@repo/utils'
@@ -23,9 +20,9 @@ describe('Toolbox Tests', () => {
   // }
 
   // ! Tool args that work with the test-sandbox.onegrep.dev `meta` server which is a running mock_mcp server (reference impl in onegrep-api repo)
-  const toolName = 'echo'
+  const toolName = 'web_search'
   const toolArgs = {
-    text: 'Hello, world!'
+    query: 'What is Langchain?'
   }
 
   beforeAll(async () => {
@@ -34,30 +31,40 @@ describe('Toolbox Tests', () => {
     langchainToolbox = await createLangchainToolbox(toolbox) // Initialize toolbox before test suite
   })
 
-  it('should get all tool resources', async () => {
-    const tools: ToolResource[] = await toolbox.listAll()
-    expect(tools.length).toBeGreaterThan(0)
+  it('should get all tool metadata', async () => {
+    const metadata = await langchainToolbox.metadata()
+    expect(metadata.size).toBeGreaterThan(0)
   })
 
   it('should get all structured tools', async () => {
-    const tools: StructuredTool[] = await langchainToolbox.listAll()
-    expect(tools.length).toBeGreaterThan(0)
+    const metadata = await langchainToolbox.metadata()
+    expect(metadata.size).toBeGreaterThan(0)
+
+    const structuredTools = await Promise.all(
+      Array.from(metadata.keys()).map(async (toolId) => {
+        return langchainToolbox.get(toolId)
+      })
+    )
+    expect(structuredTools.length).toBeGreaterThan(0)
   })
 
   it('should be able to make a structured tool call with valid input', async () => {
-    const tools: StructuredTool[] = await langchainToolbox.listAll()
-    expect(tools.length).toBeGreaterThan(0)
-    log.info(`Tool names: ${tools.map((tool) => tool.name).join(', ')}`)
+    const metadata = await langchainToolbox.metadata()
+    expect(metadata.size).toBeGreaterThan(0)
 
-    const clientConfigTool = tools.find((tool) => tool.name === toolName)
-    if (!clientConfigTool) {
+    const structuredToolMetadata = Array.from(metadata.values()).find(
+      (tool) => tool.name === toolName
+    )
+
+    if (!structuredToolMetadata) {
       throw new Error(`${toolName} tool not found`)
     }
 
-    log.info(`Structured tool: ${JSON.stringify(clientConfigTool)}`)
+    const structuredTool = await langchainToolbox.get(structuredToolMetadata.id)
 
-    const response: ToolCallOutput<any> =
-      await clientConfigTool.invoke(toolArgs)
+    log.info(`Structured tool: ${JSON.stringify(structuredTool)}`)
+
+    const response: ToolCallOutput<any> = await structuredTool.invoke(toolArgs)
     expect(response).toBeDefined()
     expect(response).toBeTypeOf('object')
     expect(response.content.length).toBeGreaterThan(0)
@@ -69,23 +76,28 @@ describe('Toolbox Tests', () => {
   })
 
   it('should be able to make a structured tool call with invalid input', async () => {
-    const tools: StructuredTool[] = await langchainToolbox.listAll()
-    expect(tools.length).toBeGreaterThan(0)
-    log.info(`Tool names: ${tools.map((tool) => tool.name).join(', ')}`)
+    const metadata = await langchainToolbox.metadata()
+    expect(metadata.size).toBeGreaterThan(0)
 
-    const clientConfigTool = tools.find((tool) => tool.name === toolName)
-    if (!clientConfigTool) {
+    const structuredToolMetadata = Array.from(metadata.values()).find(
+      (tool) => tool.name === toolName
+    )
+
+    if (!structuredToolMetadata) {
       throw new Error(`${toolName} tool not found`)
     }
 
-    log.info(`Structured tool: ${JSON.stringify(clientConfigTool)}`)
+    const structuredTool = await langchainToolbox.get(structuredToolMetadata.id)
+
+    log.info(`Structured tool: ${JSON.stringify(structuredTool)}`)
+
     const args = {
       invalid_key: 'baz'
     }
 
     try {
       // Expect this to throw an exception.
-      await clientConfigTool.invoke(args)
+      await structuredTool.invoke(args)
     } catch (error) {
       if (error instanceof ToolInputParsingException) {
         log.info(`Tool call error: ${error.message}`)

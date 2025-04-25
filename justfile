@@ -16,6 +16,7 @@ reinstall:
 
 generate:
     pnpm turbo run generate
+    ./fix-api-client.sh # ! There's a bug in the api client generator for discriminated unions
 
 format:
     pnpm format

@@ -1,9 +1,13 @@
 import { schemas } from '@repo/onegrep-api-client'
 import { z } from 'zod'
 
+export type ToolServerProviderId = string
+export type ToolServerId = string
 export type ToolId = string
 
 export type JsonSchema = Record<string, any> | boolean
+
+export type ToolTags = Record<string, any>
 
 export type ToolCallArgs = Record<string, any>
 
@@ -29,11 +33,7 @@ export interface BinaryResultContent extends ResultContent {
 
 export type ToolCallResultContent = Array<ResultContent>
 
-export type AccountInformation = z.infer<typeof schemas.AccountInformation>
-// export type BasePolicy = z.infer<typeof schemas.BasePolicy>
-export type Policy = z.infer<typeof schemas.Policy>
-// export type ToolCustomProperties = z.infer<typeof schemas.ToolCustomProperties>
-export type ToolProperties = z.infer<typeof schemas.ToolProperties>
+// ! TODO: Deprecate this
 export type ApiToolResource = z.infer<typeof schemas.ToolResource>
 
 export interface ToolCallApproval {}
@@ -63,51 +63,61 @@ export type ToolCallResponse<T> = ToolCallOutput<T> | ToolCallError
  * This is the metadata that is used to describe a tool.
  */
 export interface ToolMetadata {
+  id: string
   name: string
   description: string
+
+  // Integration properties
+  serverId: string
   integrationName: string
 
   // Cosmetic properties
-  extraProperties?: ToolProperties
   iconUrl?: URL
 
   // Schema properties
   inputSchema: JsonSchema
-  outputSchema?: JsonSchema
 
-  zodInputType: () => z.ZodTypeAny
-  zodOutputType: () => z.ZodTypeAny
+  // zodInputType: () => z.ZodTypeAny
+  // zodOutputType: () => z.ZodTypeAny
+}
+
+export interface ToolHandle {
+  call: (input: ToolCallInput) => Promise<ToolCallResponse<any>>
+  callSync: (input: ToolCallInput) => ToolCallResponse<any>
 }
 
 /**
  * The core resource object that is used to describe and interact with a tool.
  */
-export interface ToolResource {
-  id: ToolId
+export interface EquippedTool {
   metadata: ToolMetadata
-  policy: Policy
+  tags: ToolTags
+  handle: ToolHandle
 
-  // TODO: This is a temporary method to set the output schema
-  setOutputSchema(outputSchema: JsonSchema): void
+  // TODO: Get Policies
+  // policy: BasePolicy
+}
 
-  call<T>(input: ToolCallInput): Promise<ToolCallResponse<T>>
+export interface ToolFilter {
+  (metadata: ToolMetadata): boolean
+}
+
+export interface ScoredResult<T> {
+  score: number
+  result: T
 }
 
 export interface ToolCache {
   refresh(): Promise<boolean>
-  refreshIntegration(integrationName: string): Promise<boolean>
-  get(key: ToolId): Promise<ToolResource | undefined>
-  list(): Promise<ToolResource[]>
+  metadata(toolFilter?: ToolFilter): Promise<Map<ToolId, ToolMetadata>>
+  get(toolId: ToolId): Promise<EquippedTool>
+  search(query: string): Promise<Array<ScoredResult<EquippedTool>>>
   cleanup(): Promise<void>
 }
 
-export interface ToolResourceFilter {
-  (resource: ToolResource): boolean
-}
-
 export interface BaseToolbox<T> {
-  listAll(): Promise<T[]>
-  filter(filter: ToolResourceFilter): Promise<T[]>
-  matchUnique(filter: ToolResourceFilter): Promise<T>
+  metadata(toolFilter?: ToolFilter): Promise<Map<ToolId, ToolMetadata>>
+  get(toolId: ToolId): Promise<T>
+  search(query: string): Promise<Array<ScoredResult<T>>>
   close(): Promise<void>
 }

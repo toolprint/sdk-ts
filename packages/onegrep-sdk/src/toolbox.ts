@@ -1,31 +1,34 @@
 import { clientFromConfig, OneGrepApiClient } from './core/api/client.js'
-import { BaseToolbox, ToolCache, ToolResource } from './types.js'
-import { MCPToolCache } from './mcp/toolcache.js'
-import { BlaxelToolCache } from 'blaxel/toolcache.js'
-
-export interface ToolFilter {
-  (resource: ToolResource): boolean
-}
+import {
+  BaseToolbox,
+  ToolCache,
+  EquippedTool,
+  ToolMetadata,
+  ToolFilter,
+  ToolId,
+  ScoredResult
+} from './types.js'
+import { UniversalToolCache } from './toolcache.js'
 
 export const ServerNameFilter = (serverName: string): ToolFilter => {
-  return (resource: ToolResource): boolean => {
-    return resource.metadata.integrationName === serverName
+  return (metadata: ToolMetadata): boolean => {
+    return metadata.integrationName === serverName
   }
 }
 
 export const ToolNameFilter = (toolName: string): ToolFilter => {
-  return (resource: ToolResource): boolean => {
-    return resource.metadata.name === toolName
+  return (metadata: ToolMetadata): boolean => {
+    return metadata.name === toolName
   }
 }
 
 export const AndFilter = (...filters: ToolFilter[]): ToolFilter => {
-  return (resource: ToolResource): boolean => {
-    return filters.every((filter) => filter(resource))
+  return (metadata: ToolMetadata): boolean => {
+    return filters.every((filter) => filter(metadata))
   }
 }
 
-export class Toolbox implements BaseToolbox<ToolResource> {
+export class Toolbox implements BaseToolbox<EquippedTool> {
   apiClient: OneGrepApiClient
   toolCache: ToolCache
 
@@ -34,37 +37,24 @@ export class Toolbox implements BaseToolbox<ToolResource> {
     this.toolCache = toolCache
   }
 
-  async listAll(): Promise<ToolResource[]> {
-    return this.toolCache.list()
-  }
-
-  async filter(toolFilter: ToolFilter): Promise<ToolResource[]> {
-    const toolResources = await this.listAll()
-    return toolResources.filter(toolFilter)
-  }
-
-  async matchUnique(toolFilter: ToolFilter): Promise<ToolResource> {
-    const filteredToolResources = await this.filter(toolFilter)
-    if (filteredToolResources.length === 0) {
-      throw new Error('No tool resource found')
-    }
-    if (filteredToolResources.length > 1) {
-      throw new Error('Multiple tool resources found')
-    }
-    return filteredToolResources[0] as ToolResource
-  }
-
   async refresh(): Promise<boolean> {
     return this.toolCache.refresh()
   }
 
-  async refreshIntegration(integrationName: string): Promise<boolean> {
-    return this.toolCache.refreshIntegration(integrationName)
+  async metadata(toolFilter?: ToolFilter): Promise<Map<ToolId, ToolMetadata>> {
+    return this.toolCache.metadata(toolFilter)
+  }
+
+  async get(toolId: ToolId): Promise<EquippedTool> {
+    return this.toolCache.get(toolId)
+  }
+
+  async search(query: string): Promise<Array<ScoredResult<EquippedTool>>> {
+    return this.toolCache.search(query)
   }
 
   async close(): Promise<void> {
     await this.toolCache.cleanup()
-    // await this.connectedClientManager.close()
   }
 }
 
@@ -72,17 +62,21 @@ export async function createToolbox(apiClient: OneGrepApiClient) {
   // TODO: Get infra parameters from the API to determine which ToolCache to initialize
   // TODO: this will be populated from an api endpoint.
   const providerConfig = {
-    providerName: 'blaxel'
+    providerName: 'universal'
   }
 
   let toolCache: ToolCache | undefined
 
   switch (providerConfig.providerName) {
-    case 'mcp':
-      toolCache = new MCPToolCache(apiClient)
-      break
-    case 'blaxel':
-      toolCache = new BlaxelToolCache(apiClient)
+    // ! Deprecate fully when ready
+    // case 'mcp':
+    //   toolCache = new MCPToolCache(apiClient)
+    //   break
+    // case 'blaxel':
+    //   toolCache = new BlaxelToolCache(apiClient)
+    //   break
+    case 'universal':
+      toolCache = new UniversalToolCache(apiClient)
       break
     default:
       throw new Error(`Unsupported provider: ${providerConfig.providerName}`)

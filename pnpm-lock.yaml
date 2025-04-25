@@ -161,36 +161,6 @@ importers:
         specifier: ^4.19.2
         version: 4.19.2
 
-  apps/tmp:
-    dependencies:
-      '@blaxel/sdk':
-        specifier: ^0.1.9
-        version: 0.1.9(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1))
-      '@onegrep/sdk':
-        specifier: ^0.0.1
-        version: 0.0.1(@blaxel/sdk@0.1.9(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1)))(axios@1.7.9)(chalk@5.4.1)(dotenv@16.4.7)
-      '@zodios/core':
-        specifier: ^10.9.6
-        version: 10.9.6(axios@1.7.9)(zod@3.24.3)
-      ajv:
-        specifier: ^8.17.1
-        version: 8.17.1
-      buffer:
-        specifier: ^6.0.3
-        version: 6.0.3
-      chalk:
-        specifier: ^5.4.1
-        version: 5.4.1
-      eventsource:
-        specifier: ^3.0.6
-        version: 3.0.6
-      uuid:
-        specifier: ^11.1.0
-        version: 11.1.0
-      zod:
-        specifier: ^3.24.3
-        version: 3.24.3
-
   packages/eslint-config:
     devDependencies:
       '@eslint/js':
@@ -333,12 +303,21 @@ importers:
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
+      cache-manager:
+        specifier: ^6.4.2
+        version: 6.4.2
+      cacheable:
+        specifier: ^1.8.10
+        version: 1.8.10
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
       eventsource:
         specifier: ^3.0.5
         version: 3.0.5
+      keyv:
+        specifier: ^5.3.3
+        version: 5.3.3
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
@@ -1953,6 +1932,9 @@ packages:
   '@kafkajs/confluent-schema-registry@1.0.6':
     resolution: {integrity: sha512-NrZL1peOIlmlLKvheQcJAx9PHdnc4kaW+9+Yt4jXUfbbYR9EFNCZt6yApI4SwlFilaiZieReM6XslWy1LZAvoQ==}
 
+  '@keyv/serialize@1.0.3':
+    resolution: {integrity: sha512-qnEovoOp5Np2JDGonIDL6Ayihw0RhnRh6vxPuHo4RDn1UOzwEo4AeIfpL6UGIrsceWrCMiVPgwRjbHu4vYFc3g==}
+
   '@kwsites/file-exists@1.1.1':
     resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
 
@@ -2654,13 +2636,6 @@ packages:
     engines: {node: '>=20 <=22'}
     peerDependencies:
       zod: ^3.24.2
-
-  '@onegrep/sdk@0.0.1':
-    resolution: {integrity: sha512-nmIIN6BiGnTbp4t8jwaIRV8dQMylDvuC/Bvb7PCg5eiYJWKl2ramVzoyHps4H3u5D1QzALhXrEMKxNfOleVQgw==}
-    peerDependencies:
-      '@blaxel/sdk': 0.1.9
-      chalk: ^5.3.0
-      dotenv: ^16.4.7
 
   '@opentelemetry/api-logs@0.200.0':
     resolution: {integrity: sha512-IKJBQxh91qJ+3ssRly5hYEJ8NDHu9oY/B1PXVSCWf7zytmYO9RNLB0Ox9XQ/fJ8m6gY6Q6NtBWlmXfaXt5Uc4Q==}
@@ -4785,6 +4760,12 @@ packages:
   cache-manager@5.2.3:
     resolution: {integrity: sha512-9OErI8fksFkxAMJ8Mco0aiZSdphyd90HcKiOMJQncSlU1yq/9lHHxrT8PDayxrmr9IIIZPOAEfXuGSD7g29uog==}
 
+  cache-manager@6.4.2:
+    resolution: {integrity: sha512-oT0d1cGWZAlqEGDPjOfhmldTS767jT6kBT3KIdn7MX5OevlRVYqJT+LxRv5WY4xW9heJtYxeRRXaoKlEW+Biew==}
+
+  cacheable@1.8.10:
+    resolution: {integrity: sha512-0ZnbicB/N2R6uziva8l6O6BieBklArWyiGx4GkwAhLKhSHyQtRfM9T1nx7HHuHDKkYB/efJQhz3QJ6x/YqoZzA==}
+
   call-bind-apply-helpers@1.0.1:
     resolution: {integrity: sha512-BhYE+WDaywFg2TBWYNXAE+8B1ATnThNBqXHP5nQu0jWJdVvY2hvkpyB3qOmtmDePiS5/BDQ8wASEWGMWRG148g==}
     engines: {node: '>= 0.4'}
@@ -6420,6 +6401,9 @@ packages:
     resolution: {integrity: sha512-eSmmWE5bZTK2Nou4g0AI3zZ9rswp7GRKoKXS1BLUkvPviOqs4YTN1djQIqrXy9k5gEtdLPy86JjRwsNM9tnDcA==}
     engines: {node: '>=0.10.0'}
 
+  hookified@1.8.2:
+    resolution: {integrity: sha512-5nZbBNP44sFCDjSoB//0N7m508APCgbQ4mGGo1KJGBYyCKNHfry1Pvd0JVHZIxjdnqn8nFRBAN/eFB6Rk/4w5w==}
+
   hosted-git-info@4.1.0:
     resolution: {integrity: sha512-kyCuEOWjJqZuDbRHzL8V93NzQhwIB71oFWSyzVo+KPZI+pnQPPxucdkrOZvkLRnrf5URsQM+IJ09Dw29cRALIA==}
     engines: {node: '>=10'}
@@ -7000,6 +6984,9 @@ packages:
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
+
+  keyv@5.3.3:
+    resolution: {integrity: sha512-Rwu4+nXI9fqcxiEHtbkvoes2X+QfkTRo1TMkPfwzipGsJlJO/z69vqB4FNl9xJ3xCpAcbkvmEabZfPzrwN3+gQ==}
 
   kind-of@6.0.3:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
@@ -11813,42 +11800,6 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@blaxel/sdk@0.1.9(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1))':
-    dependencies:
-      '@hey-api/client-fetch': 0.5.7
-      '@modelcontextprotocol/sdk': 1.10.0
-      '@opentelemetry/api': 1.9.0
-      '@opentelemetry/api-logs': 0.57.2
-      '@opentelemetry/exporter-logs-otlp-http': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/exporter-metrics-otlp-http': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/exporter-trace-otlp-http': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/instrumentation-http': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/instrumentation-pino': 0.46.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/resources': 1.30.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-logs': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-metrics': 1.30.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-trace-base': 1.30.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-trace-node': 1.30.1(@opentelemetry/api@1.9.0)
-      jwt-decode: 4.0.0
-      pino: 9.6.0
-      pino-opentelemetry-transport: 1.0.1(@opentelemetry/api@1.9.0)(pino@9.6.0)
-      pino-pretty: 13.0.0
-      toml: 3.0.0
-      uuid: 11.1.0
-      ws: 8.18.1
-      yaml: 2.7.1
-      zod: 3.24.3
-      zod-to-json-schema: 3.24.5(zod@3.24.3)
-    optionalDependencies:
-      '@google/generative-ai': 0.21.0
-      '@langchain/core': 0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3))
-      '@langchain/openai': 0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1)
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
   '@browserbasehq/sdk@2.3.0(encoding@0.1.13)':
     dependencies:
       '@types/node': 18.19.79
@@ -12628,6 +12579,10 @@ snapshots:
       avsc: 5.7.7
       mappersmith: 2.45.0
 
+  '@keyv/serialize@1.0.3':
+    dependencies:
+      buffer: 6.0.3
+
   '@kwsites/file-exists@1.1.1':
     dependencies:
       debug: 4.4.0(supports-color@8.1.1)
@@ -12776,24 +12731,6 @@ snapshots:
     transitivePeerDependencies:
       - openai
 
-  '@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3))':
-    dependencies:
-      '@cfworker/json-schema': 4.1.1
-      ansi-styles: 5.2.0
-      camelcase: 6.3.0
-      decamelize: 1.2.0
-      js-tiktoken: 1.0.19
-      langsmith: 0.3.7(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3))
-      mustache: 4.2.0
-      p-queue: 6.6.2
-      p-retry: 4.6.2
-      uuid: 10.0.0
-      zod: 3.24.3
-      zod-to-json-schema: 3.24.5(zod@3.24.3)
-    transitivePeerDependencies:
-      - openai
-    optional: true
-
   '@langchain/google-common@0.1.8(@langchain/core@0.3.30(openai@4.78.1(encoding@0.1.13)(zod@3.24.2)))(zod@3.24.1)':
     dependencies:
       '@langchain/core': 0.3.30(openai@4.78.1(encoding@0.1.13)(zod@3.24.2))
@@ -12868,18 +12805,6 @@ snapshots:
   '@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.2)))(encoding@0.1.13)(ws@8.18.1)':
     dependencies:
       '@langchain/core': 0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.2))
-      js-tiktoken: 1.0.19
-      openai: 4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)
-      zod: 3.24.3
-      zod-to-json-schema: 3.24.3(zod@3.24.3)
-    transitivePeerDependencies:
-      - encoding
-      - ws
-    optional: true
-
-  '@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1)':
-    dependencies:
-      '@langchain/core': 0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3))
       js-tiktoken: 1.0.19
       openai: 4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)
       zod: 3.24.3
@@ -13389,28 +13314,6 @@ snapshots:
   '@onegrep/json-schema-to-zod@1.2.1(zod@3.24.2)':
     dependencies:
       zod: 3.24.2
-
-  '@onegrep/json-schema-to-zod@1.2.1(zod@3.24.3)':
-    dependencies:
-      zod: 3.24.3
-
-  '@onegrep/sdk@0.0.1(@blaxel/sdk@0.1.9(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1)))(axios@1.7.9)(chalk@5.4.1)(dotenv@16.4.7)':
-    dependencies:
-      '@blaxel/sdk': 0.1.9(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1))
-      '@modelcontextprotocol/sdk': 1.10.0
-      '@onegrep/json-schema-to-zod': 1.2.1(zod@3.24.3)
-      '@zodios/core': 10.9.6(axios@1.7.9)(zod@3.24.3)
-      ajv: 8.17.1
-      buffer: 6.0.3
-      chalk: 5.4.1
-      date-fns: 4.1.0
-      dotenv: 16.4.7
-      eventsource: 3.0.6
-      uuid: 11.1.0
-      zod: 3.24.3
-    transitivePeerDependencies:
-      - axios
-      - supports-color
 
   '@opentelemetry/api-logs@0.200.0':
     dependencies:
@@ -16144,6 +16047,15 @@ snapshots:
       lodash.clonedeep: 4.5.0
       lru-cache: 9.1.2
 
+  cache-manager@6.4.2:
+    dependencies:
+      keyv: 5.3.3
+
+  cacheable@1.8.10:
+    dependencies:
+      hookified: 1.8.2
+      keyv: 5.3.3
+
   call-bind-apply-helpers@1.0.1:
     dependencies:
       es-errors: 1.3.0
@@ -18309,6 +18221,8 @@ snapshots:
     dependencies:
       parse-passwd: 1.0.0
 
+  hookified@1.8.2: {}
+
   hosted-git-info@4.1.0:
     dependencies:
       lru-cache: 6.0.0
@@ -18936,6 +18850,10 @@ snapshots:
     dependencies:
       json-buffer: 3.0.1
 
+  keyv@5.3.3:
+    dependencies:
+      '@keyv/serialize': 1.0.3
+
   kind-of@6.0.3: {}
 
   kleur@3.0.3: {}
@@ -18996,19 +18914,6 @@ snapshots:
       uuid: 10.0.0
     optionalDependencies:
       openai: 4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.2)
-
-  langsmith@0.3.7(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)):
-    dependencies:
-      '@types/uuid': 10.0.0
-      chalk: 4.1.2
-      console-table-printer: 2.12.1
-      p-queue: 6.6.2
-      p-retry: 4.6.2
-      semver: 7.7.1
-      uuid: 10.0.0
-    optionalDependencies:
-      openai: 4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)
-    optional: true
 
   ldapts@4.2.6:
     dependencies:

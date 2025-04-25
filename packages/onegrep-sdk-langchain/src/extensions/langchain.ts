@@ -6,11 +6,13 @@ import {
 import { log } from '@repo/utils'
 import {
   BaseToolbox,
+  EquippedTool,
+  jsonSchemaUtils,
+  ScoredResult,
   Toolbox,
   ToolCallOutput,
   ToolCallResponse,
-  ToolResource,
-  ToolResourceFilter
+  ToolMetadata
 } from '@onegrep/sdk'
 import { z, ZodTypeAny } from 'zod'
 
@@ -26,12 +28,17 @@ function ensureZodObject<T extends z.ZodTypeAny>(
   return z.object({ value: schema }) as any
 }
 
-const convertToStructuredTool = (resource: ToolResource): StructuredTool => {
+const convertToStructuredTool = (
+  equippedTool: EquippedTool
+): StructuredTool => {
   // Input zod type is required for Langchain to enforce input schema
-  const zodInputType: ZodTypeAny = resource.metadata.zodInputType()
+  const zodInputType: ZodTypeAny = jsonSchemaUtils.toZodType(
+    equippedTool.metadata.inputSchema
+  )
 
   // Output zod type is required for Langchain to provide structured output (we use z.any() if not provided)
-  const zodOutputType: ZodTypeAny = resource.metadata.zodOutputType()
+  // const zodOutputType: ZodTypeAny = jsonSchemaUtils.toZodType(equippedTool.metadata.outputSchema)
+  const zodOutputType: ZodTypeAny = z.any()
 
   const inputZodObject: z.ZodObject<any> = ensureZodObject(zodInputType)
   const outputZodObject: z.ZodObject<any> = ensureZodObject(zodOutputType)
@@ -43,10 +50,11 @@ const convertToStructuredTool = (resource: ToolResource): StructuredTool => {
   const toolcallFunc = async (
     input: ToolInputType
   ): Promise<ToolCallOutput<ToolOutputType>> => {
-    const response: ToolCallResponse<ToolOutputType> = await resource.call({
-      args: input,
-      approval: undefined // TODO: approvals
-    })
+    const response: ToolCallResponse<ToolOutputType> =
+      await equippedTool.handle.call({
+        args: input,
+        approval: undefined // TODO: approvals
+      })
     if (response.isError) {
       log.error(`Tool call error: ${response.message}`)
       // TODO: How does Langchain want us to handle errors?
@@ -57,8 +65,8 @@ const convertToStructuredTool = (resource: ToolResource): StructuredTool => {
 
   // Create the dynamic structured tool
   const dynamicToolInput: DynamicStructuredToolInput<ToolInputType> = {
-    name: resource.metadata.name,
-    description: resource.metadata.description,
+    name: equippedTool.metadata.name,
+    description: equippedTool.metadata.description,
     schema: inputZodObject,
     func: toolcallFunc
   }
@@ -75,19 +83,17 @@ export class LangchainToolbox implements BaseToolbox<StructuredTool> {
     this.toolbox = toolbox
   }
 
-  async listAll(): Promise<StructuredTool[]> {
-    const resources = await this.toolbox.listAll()
-    return resources.map((resource) => convertToStructuredTool(resource))
+  async metadata(): Promise<Map<string, ToolMetadata>> {
+    return this.toolbox.metadata()
   }
 
-  async filter(filter: ToolResourceFilter): Promise<StructuredTool[]> {
-    const resources = await this.toolbox.filter(filter)
-    return resources.map((resource) => convertToStructuredTool(resource))
+  async get(toolId: string): Promise<StructuredTool> {
+    const tool = await this.toolbox.get(toolId)
+    return convertToStructuredTool(tool)
   }
 
-  async matchUnique(filter: ToolResourceFilter): Promise<StructuredTool> {
-    const resource = await this.toolbox.matchUnique(filter)
-    return convertToStructuredTool(resource)
+  async search(_: string): Promise<Array<ScoredResult<StructuredTool>>> {
+    throw new Error('Not implemented')
   }
 
   async close(): Promise<void> {

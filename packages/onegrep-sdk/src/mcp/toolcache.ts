@@ -1,7 +1,14 @@
 import { OneGrepApiClient } from '../core/api/client.js'
 import { ConnectedClientManager } from './client.js'
-import { ToolCache, ApiToolResource, ToolId, ToolResource } from '../types.js'
-import { MCPToolResource, toolResourceFromMcpTool } from './resource.js'
+import {
+  ToolCache,
+  ApiToolResource,
+  ToolId,
+  EquippedTool,
+  ToolFilter,
+  ToolMetadata,
+  ScoredResult
+} from '../types.js'
 import { log } from '@repo/utils'
 import { RemoteClientConfig } from './types.js'
 import { Tool as MCPTool, Tool } from '@modelcontextprotocol/sdk/types.js'
@@ -16,11 +23,12 @@ class IntegrationRefreshAttempt {
   ) {}
 }
 
+// ! Deprecate in favor of the UniversalToolCache
 export class MCPToolCache implements ToolCache {
   private apiClient: OneGrepApiClient
   private connectedClientManager: ConnectedClientManager
   private allConfigs: Array<RemoteClientConfig> = []
-  private toolIdToResource: Map<ToolId, ToolResource> = new Map()
+  private toolIdToResource: Map<ToolId, EquippedTool> = new Map()
   private toolIdsByIntegration: Map<string, Set<ToolId>> = new Map()
 
   constructor(apiClient: OneGrepApiClient) {
@@ -60,7 +68,7 @@ export class MCPToolCache implements ToolCache {
    */
   private async getToolResourcesForIntegration(
     integrationClientConfig: RemoteClientConfig
-  ): Promise<MCPToolResource[]> {
+  ): Promise<EquippedTool[]> {
     // ? This will be updated in the future and likely removed altogether in favor of a better runtime discovery mechanism.
     const mcpConnectedClient = await this.connectedClientManager.getClient(
       integrationClientConfig
@@ -98,7 +106,7 @@ export class MCPToolCache implements ToolCache {
     })
 
     // Now we can create the tool resources for this integration.
-    const resources: Array<MCPToolResource> = []
+    const resources: Array<EquippedTool> = []
     toolDataMap.forEach((toolData) => {
       if (toolData.apiToolResource === undefined) {
         // ! Failsafe to ensure that any new tools that are discoverable BUT do not have guardrails are not rendered.
@@ -106,14 +114,14 @@ export class MCPToolCache implements ToolCache {
           `Tool details not found for tool ${toolData.tool.name}. Will not render this tool.`
         )
       } else {
-        resources.push(
-          toolResourceFromMcpTool(
-            toolData.tool,
-            toolData.apiToolResource,
-            integrationClientConfig,
-            this.connectedClientManager
-          )
-        )
+        // resources.push(
+        //   toolResourceFromMcpTool(
+        //     toolData.tool,
+        //     toolData.apiToolResource,
+        //     integrationClientConfig,
+        //     this.connectedClientManager
+        //   )
+        // )
       }
     })
 
@@ -125,9 +133,11 @@ export class MCPToolCache implements ToolCache {
   ): Promise<IntegrationRefreshAttempt> {
     try {
       /** We want to update our tool cache for the tools we just retrieved via our integration client. */
-      const resources: Array<MCPToolResource> =
+      const resources: Array<EquippedTool> =
         await this.getToolResourcesForIntegration(clientConfig)
-      const newToolResourceIds = new Set(resources.map((tool) => tool.id))
+      const newToolResourceIds = new Set(
+        resources.map((tool) => tool.metadata.id)
+      )
 
       // ? Purely for logging purposes. Has no functional impact.
       const previouslyCachedToolIds =
@@ -151,7 +161,7 @@ export class MCPToolCache implements ToolCache {
 
       // Add new tools for this integration
       resources.forEach((resource) => {
-        this.toolIdToResource.set(resource.id, resource)
+        this.toolIdToResource.set(resource.metadata.id, resource)
       })
 
       return new IntegrationRefreshAttempt(true, clientConfig.name)
@@ -174,9 +184,7 @@ export class MCPToolCache implements ToolCache {
   }
 
   private async refreshClientConfigs(): Promise<void> {
-    return
-    // TODO: Fix with new provider approach
-    // /** Refreshes the client configs in the toolcache. */
+    /** Refreshes the client configs in the toolcache. */
     // const metaClientConfig =
     //   await this.apiClient.get_meta_client_api_v1_clients_meta_get()
     // // log.debug(`Meta client config: ${JSON.stringify(metaClientConfig)}`)
@@ -186,9 +194,14 @@ export class MCPToolCache implements ToolCache {
     // log.debug(
     //   `Host client configs: ${JSON.stringify(hostClientConfigs, null, 2)}`
     // )
+    // const hostClientConfigs =
+    //   await this.apiClient.get_hosts_clients_api_v1_clients_hosts_get()
+    // log.debug(
+    //   `Host client configs: ${JSON.stringify(hostClientConfigs, null, 2)}`
+    // )
 
     // this.allConfigs = [metaClientConfig, ...hostClientConfigs]
-    // log.info(`${this.allConfigs.length} integrations configs refreshed`)
+    log.info(`${this.allConfigs.length} integrations configs refreshed`)
   }
 
   /**
@@ -269,12 +282,20 @@ export class MCPToolCache implements ToolCache {
     }
   }
 
-  async get(key: ToolId): Promise<ToolResource | undefined> {
-    return this.toolIdToResource.get(key)
+  async metadata(_?: ToolFilter): Promise<Map<ToolId, ToolMetadata>> {
+    throw new Error('Not implemented')
   }
 
-  async list(): Promise<ToolResource[]> {
-    return Array.from(this.toolIdToResource.values())
+  async get(key: ToolId): Promise<EquippedTool> {
+    const tool = this.toolIdToResource.get(key)
+    if (!tool) {
+      throw new Error(`Tool not found: ${key}`)
+    }
+    return tool
+  }
+
+  async search(_: string): Promise<Array<ScoredResult<EquippedTool>>> {
+    throw new Error('Not implemented')
   }
 
   async cleanup(): Promise<void> {
