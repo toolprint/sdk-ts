@@ -87,6 +87,7 @@
   },
   "peerDependencies": {
     "@blaxel/sdk": "0.1.9",
+    "@langchain/core": "^0.3.40",
     "chalk": "^5.3.0",
     "dotenv": "^16.4.7"
   }

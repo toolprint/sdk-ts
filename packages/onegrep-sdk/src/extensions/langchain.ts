@@ -92,8 +92,12 @@ export class LangchainToolbox implements BaseToolbox<StructuredTool> {
     return convertToStructuredTool(tool)
   }
 
-  async search(_: string): Promise<Array<ScoredResult<StructuredTool>>> {
-    throw new Error('Not implemented')
+  async search(query: string): Promise<Array<ScoredResult<StructuredTool>>> {
+    const searchResults = await this.toolbox.search(query)
+    return searchResults.map((result) => ({
+      ...result,
+      result: convertToStructuredTool(result.result)
+    }))
   }
 
   async close(): Promise<void> {

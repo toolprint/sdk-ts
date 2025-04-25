@@ -1,8 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest'
-import {
-  createLangchainToolbox,
-  LangchainToolbox
-} from '../src/extensions/langchain.js'
+import { createLangchainToolbox, LangchainToolbox } from './langchain.js'
 import { ToolInputParsingException } from '@langchain/core/tools'
 import { Toolbox, ToolCallOutput } from '@onegrep/sdk'
 import { createToolbox } from '@onegrep/sdk'

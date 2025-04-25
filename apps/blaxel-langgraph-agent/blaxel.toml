@@ -1,0 +1,4 @@
+type = "agent"
+
+functions = ["all"]
+models = ["sandbox-openai"]

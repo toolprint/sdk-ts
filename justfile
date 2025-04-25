@@ -60,6 +60,12 @@ dev:
 dev-n8n:
     pnpm turbo run dev --filter=@onegrep/sdk/n8n-nodes-onegrep
 
+bl-serve:
+    pnpm turbo run bl:serve --filter=@repo/blaxel-langgraph-agent
+
+bl-chat:
+    pnpm turbo run bl:chat --filter=@repo/blaxel-langgraph-agent
+
 gateway:
     pnpm turbo run start --filter=@onegrep/gateway
 

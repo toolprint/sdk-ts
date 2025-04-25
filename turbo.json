@@ -126,6 +126,18 @@
       "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
       "dependsOn": ["build"],
       "persistent": true
+    },
+    "@repo/blaxel-langgraph-agent#bl:serve": {
+      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
+      "dependsOn": [],
+      "persistent": true
+    },
+    "@repo/blaxel-langgraph-agent#bl:chat": {
+      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
+      "dependsOn": [],
+      "persistent": true
     }
   }
 }
