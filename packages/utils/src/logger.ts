@@ -1,11 +1,11 @@
 import { dummyLogger, Logger } from 'ts-log'
 import { Env, getEnv } from './env.js'
 
-export function silentLogger(): Logger {
+function silentLogger(): Logger {
   return dummyLogger
 }
 
-export function consoleLogger(): Logger {
+function consoleLogger(): Logger {
   return console
 }
 
@@ -15,11 +15,6 @@ async function getLoggerFromEnv(env: Env): Promise<Logger> {
     logger = silentLogger()
   } else if (env.LOG_MODE === 'console') {
     logger = consoleLogger()
-  } else if (env.LOG_MODE === 'pino') {
-    logger = consoleLogger()
-  } else if (env.LOG_MODE === 'debug') {
-    // ! Debug mode is not supported in the utils package, so we use the silent logger.
-    logger = silentLogger()
   } else {
     throw new Error(`Invalid log mode: ${env.LOG_MODE}`)
   }
@@ -28,7 +23,7 @@ async function getLoggerFromEnv(env: Env): Promise<Logger> {
 
 export let log: Logger = silentLogger()
 
-export function initLogger(): void {
+function initLogger(): void {
   const env = getEnv()
   getLoggerFromEnv(env)
     .then((logger) => {

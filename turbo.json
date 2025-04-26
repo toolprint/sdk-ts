@@ -14,15 +14,12 @@
     "@repo/onegrep-api-client#generate": {
       "dependsOn": ["client:updateSpec"]
     },
-    "compile": {
-      "dependsOn": ["^compile"]
-    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"]
     },
     "@onegrep/sdk#build": {
-      "dependsOn": ["@repo/onegrep-api-client#build"]
+      "dependsOn": ["@repo/utils#build", "@repo/onegrep-api-client#build"]
     },
     "lint": {
       "dependsOn": ["^lint"]

@@ -1,8 +1,8 @@
 {
   "name": "@repo/onegrep-api-client",
   "version": "0.0.0",
-  "type": "module",
   "private": true,
+  "type": "module",
   "types": "dist/types/index.d.ts",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

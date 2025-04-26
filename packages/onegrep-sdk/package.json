@@ -31,11 +31,10 @@
     "access": "public"
   },
   "scripts": {
-    "check-types": "tsc -p tsconfig.check.json --noEmit",
+    "check-types": "tsc --noEmit",
     "lint": "eslint src package.json",
     "lint:fix": "eslint src package.json --fix",
     "build": "rollup -c",
-    "test-debug": "LOG_MODE=debug vitest --config vitest.config.ts ",
     "test": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept ",
     "test:watch": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept --watch",
     "licenses": "pnpm licenses list --prod --long > .licenses.txt",
@@ -48,9 +47,9 @@
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
-    "@repo/onegrep-api-client": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/utils": "workspace:*",
+    "@repo/onegrep-api-client": "workspace:*",
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^16.0.0",
@@ -62,12 +61,10 @@
     "check-licenses": "^1.1.0",
     "dotenv": "^16.4.7",
     "eslint": "^9.21.0",
-    "pino-pretty": "^13.0.0",
     "rimraf": "^6.0.1",
     "rollup": "^4.34.9",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "thread-stream": "^1.0.0",
     "typescript": "latest",
     "vitest": "^3.0.5"
   },

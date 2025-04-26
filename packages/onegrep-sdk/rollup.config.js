@@ -46,20 +46,20 @@ const config = defineConfig([
         compact: true,
         namedExports: true,
         include: ['package.json', '**/package.json', '**/*.json']
+      }),
+      terser({
+        format: {
+          comments: false,
+          ecma: 2020
+        },
+        compress: {
+          dead_code: true,
+          drop_console: false,
+          drop_debugger: true,
+          keep_classnames: false,
+          keep_fnames: false
+        }
       })
-      // terser({
-      //   format: {
-      //     comments: false,
-      //     ecma: 2020
-      //   },
-      //   compress: {
-      //     dead_code: true,
-      //     drop_console: false,
-      //     drop_debugger: true,
-      //     keep_classnames: false,
-      //     keep_fnames: false
-      //   }
-      // })
     ],
     external: [
       'chalk',

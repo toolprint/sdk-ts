@@ -1,7 +1,8 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { log } from '@repo/utils'
 import { createSSEClientTransport } from './transport/sse.js'
-import { RemoteClientConfig, RemoteToolCallArgs } from './types.js'
+import { McpToolCallError, McpToolCallInput } from './types.js'
+import { RemoteClientConfig } from 'core/api/types.js'
 import {
   CallToolRequest,
   CallToolResult,
@@ -14,7 +15,7 @@ export interface ConnectedClient {
   client: Client
 
   listTools: () => Promise<Tool[]>
-  callTool: (args: RemoteToolCallArgs) => Promise<CallToolResult>
+  callTool: (args: McpToolCallInput) => Promise<CallToolResult>
   close: () => Promise<void>
 }
 
@@ -104,21 +105,28 @@ const createConnectedClient = async (
       }
       return tools.tools
     },
-    callTool: async (args: RemoteToolCallArgs) => {
+    callTool: async (toolCallInput: McpToolCallInput) => {
       const callToolRequest: CallToolRequest = {
         method: 'tools/call',
         params: {
-          name: args.toolName,
-          arguments: args.toolArgs
+          name: toolCallInput.toolName,
+          arguments: toolCallInput.toolArgs
         }
       }
       log.debug(`Calling tool: ${JSON.stringify(callToolRequest)}`)
-      const result = await client.callTool(callToolRequest.params)
-      if (result.isError) {
-        log.error(`Tool call failed result: ${JSON.stringify(result)}`)
-        throw new Error('Tool call failed')
+      try {
+        const result = await client.callTool(callToolRequest.params)
+        if (result.isError) {
+          log.error(`Tool call failed result: ${JSON.stringify(result)}`)
+        }
+        return result as CallToolResult
+      } catch (error) {
+        throw new McpToolCallError(
+          toolCallInput,
+          `Failed to call tool ${toolCallInput.toolName}`,
+          { cause: error }
+        )
       }
-      return result as CallToolResult
     },
     close: async () => {
       await transport.close()

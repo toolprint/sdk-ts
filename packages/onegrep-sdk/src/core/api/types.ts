@@ -28,3 +28,5 @@ export type SearchResponseScoredItemRecipe = z.infer<
 export type SearchResponse =
   | SearchResponseScoredItemTool
   | SearchResponseScoredItemRecipe
+
+export type RemoteClientConfig = z.infer<typeof schemas.RemoteClientConfig>

@@ -10,7 +10,7 @@ import {
   ScoredResult
 } from '../types.js'
 import { log } from '@repo/utils'
-import { RemoteClientConfig } from './types.js'
+import { RemoteClientConfig } from '../core/api/types.js'
 import { Tool as MCPTool, Tool } from '@modelcontextprotocol/sdk/types.js'
 import { getUnixTime } from 'date-fns'
 

@@ -1,7 +1,8 @@
 {
   "name": "@onegrep/gateway",
+  "version": "0.1.0",
+  "private": true,
   "type": "module",
-  "version": "1.0.0",
   "description": "OneGrep Gateway",
   "license": "MIT",
   "author": "OneGrep, Inc.",
