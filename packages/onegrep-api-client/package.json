@@ -20,7 +20,7 @@
     "dist/**/*"
   ],
   "scripts": {
-    "client:updateSpec": "curl http://localhost:8080/openapi/sdk-client.yaml --output ./openapi/onegrep-api.yaml",
+    "client:updateSpec": "curl https://test-sandbox.onegrep.dev/openapi/sdk-client.yaml --output ./openapi/onegrep-api.yaml",
     "generate": "openapi-zod-client ./openapi/onegrep-api.yaml --output ./src/api.ts --prettier ../../prettier.config.js --export-schemas --export-types --strict-objects --default-status --with-docs --with-description",
     "check-types": "tsc -p tsconfig.check.json --noEmit",
     "build:types": "tsc -p tsconfig.types.json",

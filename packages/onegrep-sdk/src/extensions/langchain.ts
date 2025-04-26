@@ -13,7 +13,7 @@ import {
   ToolCallOutput,
   ToolCallResponse,
   ToolMetadata
-} from '@onegrep/sdk'
+} from '../index.js'
 import { z, ZodTypeAny } from 'zod'
 
 // TODO: Is this needed?

@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import { createLangchainToolbox, LangchainToolbox } from './langchain.js'
 import { ToolInputParsingException } from '@langchain/core/tools'
-import { Toolbox, ToolCallOutput } from '@onegrep/sdk'
-import { createToolbox } from '@onegrep/sdk'
-import { clientFromConfig } from '@onegrep/sdk'
+import { Toolbox, ToolCallOutput } from '../index.js'
+import { createToolbox } from '../index.js'
+import { clientFromConfig } from '../index.js'
 import { log } from '@repo/utils'
 
 describe('Toolbox Tests', () => {
