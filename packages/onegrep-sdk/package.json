@@ -37,6 +37,7 @@
     "build": "rollup -c",
     "test": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept ",
     "test:watch": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts --disable-console-intercept --watch",
+    "test-debug": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts ",
     "licenses": "pnpm licenses list --prod --long > .licenses.txt",
     "package": "mkdir -p pack && pnpm pack --pack-destination pack",
     "version": "changeset version",

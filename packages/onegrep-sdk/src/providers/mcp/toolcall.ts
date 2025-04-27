@@ -6,7 +6,6 @@ import {
   EmbeddedResource
 } from '@modelcontextprotocol/sdk/types.js'
 import {
-  ToolMetadata,
   ToolCallResultContent,
   ObjectResultContent,
   ToolCallOutput,
@@ -14,8 +13,9 @@ import {
   BinaryResultContent,
   ToolCallOutputMode
   // JsonSchema
-} from '../types.js'
+} from '../../types.js'
 import { log } from '@repo/utils'
+import { ToolDetails } from 'types.js'
 // import { jsonSchemaUtils } from '../schema.js'
 
 export type McpCallToolResultContent = Array<
@@ -130,7 +130,7 @@ export function parseMcpContent(
 // Otherwise, we parse the raw content into a ToolCallResultContent
 export function parseMcpResult<T>(
   result: CallToolResult,
-  toolMetadata: ToolMetadata,
+  toolDetails: ToolDetails,
   mode: ToolCallOutputMode = 'single' // TODO: Put this in the tool metadata
 ): ToolCallOutput<T> {
   if (result.isError) {
@@ -161,8 +161,8 @@ export function parseMcpResult<T>(
 
   //   return { isError: false, content, mode, toZod } as ToolCallOutput<T>
   // } else {
-  log.warn(`No output schema provided for tool: ${toolMetadata.name}`)
-  const content = parseMcpContent(result.content)
+  log.warn(`No output schema provided for tool: ${toolDetails.name}`)
+  const content = parseMcpContent(result.content as McpCallToolResultContent)
   return {
     isError: false,
     content,

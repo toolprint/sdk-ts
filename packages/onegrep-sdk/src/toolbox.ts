@@ -3,30 +3,13 @@ import {
   BaseToolbox,
   ToolCache,
   EquippedTool,
-  ToolMetadata,
-  ToolFilter,
+  FilterOptions,
   ToolId,
-  ScoredResult
+  ScoredResult,
+  ToolDetails,
+  BasicToolDetails
 } from './types.js'
 import { UniversalToolCache } from './toolcache.js'
-
-export const ServerNameFilter = (serverName: string): ToolFilter => {
-  return (metadata: ToolMetadata): boolean => {
-    return metadata.integrationName === serverName
-  }
-}
-
-export const ToolNameFilter = (toolName: string): ToolFilter => {
-  return (metadata: ToolMetadata): boolean => {
-    return metadata.name === toolName
-  }
-}
-
-export const AndFilter = (...filters: ToolFilter[]): ToolFilter => {
-  return (metadata: ToolMetadata): boolean => {
-    return filters.every((filter) => filter(metadata))
-  }
-}
 
 export class Toolbox implements BaseToolbox<EquippedTool> {
   apiClient: OneGrepApiClient
@@ -37,12 +20,18 @@ export class Toolbox implements BaseToolbox<EquippedTool> {
     this.toolCache = toolCache
   }
 
-  async refresh(): Promise<boolean> {
-    return this.toolCache.refresh()
+  async listTools(): Promise<Map<ToolId, BasicToolDetails>> {
+    return this.toolCache.listTools()
   }
 
-  async metadata(toolFilter?: ToolFilter): Promise<Map<ToolId, ToolMetadata>> {
-    return this.toolCache.metadata(toolFilter)
+  async listIntegrations(): Promise<string[]> {
+    return this.toolCache.listIntegrations()
+  }
+
+  async filterTools(
+    options?: FilterOptions
+  ): Promise<Map<ToolId, ToolDetails>> {
+    return this.toolCache.filterTools(options)
   }
 
   async get(toolId: ToolId): Promise<EquippedTool> {
@@ -53,35 +42,17 @@ export class Toolbox implements BaseToolbox<EquippedTool> {
     return this.toolCache.search(query)
   }
 
+  async refresh(): Promise<boolean> {
+    return this.toolCache.refresh()
+  }
+
   async close(): Promise<void> {
     await this.toolCache.cleanup()
   }
 }
 
 export async function createToolbox(apiClient: OneGrepApiClient) {
-  // TODO: Get infra parameters from the API to determine which ToolCache to initialize
-  // TODO: this will be populated from an api endpoint.
-  const providerConfig = {
-    providerName: 'universal'
-  }
-
-  let toolCache: ToolCache | undefined
-
-  switch (providerConfig.providerName) {
-    // ! Deprecate fully when ready
-    // case 'mcp':
-    //   toolCache = new MCPToolCache(apiClient)
-    //   break
-    // case 'blaxel':
-    //   toolCache = new BlaxelToolCache(apiClient)
-    //   break
-    case 'universal':
-      toolCache = new UniversalToolCache(apiClient)
-      break
-    default:
-      throw new Error(`Unsupported provider: ${providerConfig.providerName}`)
-  }
-
+  const toolCache: ToolCache = new UniversalToolCache(apiClient)
   const ok = await toolCache!.refresh()
 
   if (!ok) {

@@ -7,17 +7,20 @@ import {
   McpTool as BlaxelMcpServer,
   retrieveMCPClient
 } from '@blaxel/sdk/tools/mcpTool'
+import { IServerClientManager } from '../domain/types.js'
 
-export class BlaxelClient {
-  private toolServers: Map<string, BlaxelMcpServer> = new Map()
+export class BlaxelClientManager
+  implements IServerClientManager<BlaxelMcpServer>
+{
+  private serverNameMap: Map<string, BlaxelMcpServer> = new Map()
 
   constructor() {}
 
   private async cleanupToolServers(): Promise<void> {
-    this.toolServers.forEach((server: BlaxelMcpServer) => {
+    this.serverNameMap.forEach((server: BlaxelMcpServer) => {
       server.close()
     })
-    this.toolServers.clear()
+    this.serverNameMap.clear()
   }
 
   async cleanup(): Promise<void> {
@@ -25,17 +28,17 @@ export class BlaxelClient {
   }
 
   async refreshServer(serverName: string): Promise<void> {
-    if (!this.toolServers.has(serverName)) {
+    if (!this.serverNameMap.has(serverName)) {
       throw new Error(`Integration ${serverName} not found`)
     }
 
-    let server = this.toolServers.get(serverName)!
+    let server = this.serverNameMap.get(serverName)!
     await server.close()
 
     // Now retrieve the server again.
     server = retrieveMCPClient(serverName)
     await server.refresh()
-    this.toolServers.set(serverName, server)
+    this.serverNameMap.set(serverName, server)
   }
 
   async refresh(): Promise<boolean> {
@@ -51,30 +54,16 @@ export class BlaxelClient {
       }
 
       const functions: BlaxelFunction[] = data as ListFunctionsResponse
-      // console.debug(functions)
 
       const serverNames = functions
         .map((bfn: BlaxelFunction) => bfn.metadata?.name)
         .filter((name: string | undefined) => name !== undefined)
 
-      // console.debug(
-      //   `Discovered servers -> ${JSON.stringify(serverNames, null, 2)}`
-      // )
-
       // Now get the McpToolServer for each of the server names.
       for (const serverName of serverNames) {
         const server = retrieveMCPClient(serverName)
         await server.refresh() // This refreshes the internal tool cache in blaxel for the server and opens up a persistent transport
-        this.toolServers.set(serverName, server)
-
-        // const tools = await server.listTools()
-        // console.debug(
-        //   `Tools for ${serverName} -> ${JSON.stringify(
-        //     tools.map((t: BlaxelTool) => t.name),
-        //     null,
-        //     2
-        //   )}`
-        // )
+        this.serverNameMap.set(serverName, server)
       }
 
       return true
@@ -84,23 +73,35 @@ export class BlaxelClient {
     }
   }
 
-  async refreshIntegration(integrationName: string): Promise<void> {
-    if (!this.toolServers.has(integrationName)) {
-      throw new Error(`Integration ${integrationName} not found`)
+  async getServers(
+    serverNames: string[]
+  ): Promise<Map<string, BlaxelMcpServer>> {
+    const servers = new Map<string, BlaxelMcpServer>()
+    for (const serverName of serverNames) {
+      const server = await this.getServer(serverName)
+      if (server) {
+        servers.set(serverName, server)
+      }
     }
 
-    await this.refreshServer(integrationName)
+    return servers
   }
 
-  async getToolServers(): Promise<Map<string, BlaxelMcpServer>> {
-    return this.toolServers
-  }
-
-  async getToolServer(serverName: string): Promise<BlaxelMcpServer> {
-    if (!this.toolServers.has(serverName)) {
-      throw new Error(`Integration ${serverName} not found`)
+  async getServer(serverName: string): Promise<BlaxelMcpServer | undefined> {
+    if (this.serverNameMap.get(serverName)) {
+      return this.serverNameMap.get(serverName)!
     }
 
-    return this.toolServers.get(serverName)!
+    try {
+      // Generate a connection to the underlying server and cache it for cleanup later.
+      const server = retrieveMCPClient(serverName)
+      await server.refresh()
+      this.serverNameMap.set(serverName, server)
+
+      return server
+    } catch (error) {
+      console.error('Error getting Blaxel server:', error)
+      return undefined
+    }
   }
 }

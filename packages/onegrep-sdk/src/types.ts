@@ -1,5 +1,4 @@
-import { schemas } from '@repo/onegrep-api-client'
-import { z } from 'zod'
+import { Policy, ToolProperties } from 'core/api/types.js'
 
 export type ToolServerProviderId = string
 export type ToolServerId = string
@@ -7,63 +6,59 @@ export type ToolId = string
 
 export type JsonSchema = Record<string, any> | boolean
 
-export type ToolTags = Record<string, any>
-
+/**
+ * Schemas that represent how to pass inputs to a tool.
+ */
 export type ToolCallArgs = Record<string, any>
-
-export interface ResultContent {
-  type: 'text' | 'object' | 'binary'
-}
-
-export interface TextResultContent extends ResultContent {
-  type: 'text'
-  text: string
-}
-
-export interface ObjectResultContent extends ResultContent {
-  type: 'object'
-  data: Record<string, any>
-}
-
-export interface BinaryResultContent extends ResultContent {
-  type: 'binary'
-  data: string
-  mime_type: string
-}
-
-export type ToolCallResultContent = Array<ResultContent>
-
-// ! TODO: Deprecate this
-export type ApiToolResource = z.infer<typeof schemas.ToolResource>
-
 export interface ToolCallApproval {}
-
 export interface ToolCallInput {
   args: ToolCallArgs
   approval: ToolCallApproval | undefined
 }
 
+/**
+ * These are the types that describe the shape of a result's content
+ */
+export interface ResultContent {
+  type: 'text' | 'object' | 'binary'
+}
+export interface TextResultContent extends ResultContent {
+  type: 'text'
+  text: string
+}
+export interface ObjectResultContent extends ResultContent {
+  type: 'object'
+  data: Record<string, any>
+}
+export interface BinaryResultContent extends ResultContent {
+  type: 'binary'
+  data: string
+  mime_type: string
+}
+export type ToolCallResultContent = Array<ResultContent>
+
+/**
+ * These are the types that describe the shape of a tool call's output.
+ */
 export interface ToolCallError {
   isError: true
   message: string
 }
-
 export type ToolCallOutputMode = 'single' | 'multiple'
-
 export interface ToolCallOutput<T> {
   isError: false
   content: ToolCallResultContent
   mode: ToolCallOutputMode
   toZod: () => T
 }
-
 export type ToolCallResponse<T> = ToolCallOutput<T> | ToolCallError
 
 /**
- * This is the metadata that is used to describe a tool.
+ * The core set of details about a tool without additional profile-specific
+ * properties
  */
-export interface ToolMetadata {
-  id: string
+export interface BasicToolDetails {
+  id: ToolId
   name: string
   description: string
 
@@ -71,52 +66,81 @@ export interface ToolMetadata {
   serverId: string
   integrationName: string
 
-  // Cosmetic properties
-  iconUrl?: URL
-
   // Schema properties
   inputSchema: JsonSchema
 
-  // zodInputType: () => z.ZodTypeAny
-  // zodOutputType: () => z.ZodTypeAny
+  // Cosmetic properties
+  iconUrl?: URL
 }
 
+/**
+ * Details about a tool including metadata that is specific to the
+ * profile of the caller.
+ */
+export interface ToolDetails extends BasicToolDetails {
+  // User-defined properties to describe this tool.
+  properties: ToolProperties
+
+  // The tool policy that has been applied to this tool.
+  policy: Policy
+}
+
+/**
+ * A handle to a tool that is used to call the tool.
+ */
 export interface ToolHandle {
   call: (input: ToolCallInput) => Promise<ToolCallResponse<any>>
   callSync: (input: ToolCallInput) => ToolCallResponse<any>
 }
 
 /**
- * The core resource object that is used to describe and interact with a tool.
+ * A resource object that is used to interact with a tool.
  */
 export interface EquippedTool {
-  metadata: ToolMetadata
-  tags: ToolTags
+  details: ToolDetails
   handle: ToolHandle
-
-  // TODO: Get Policies
-  // policy: BasePolicy
 }
 
 export interface ToolFilter {
-  (metadata: ToolMetadata): boolean
+  integrationName: string
+  toolName: string
 }
 
+/**
+ * Filtering options that can be passed to the toolbox to filter down to a specific set of tools.
+ */
+export interface FilterOptions {
+  serverIds?: string[]
+  integrationNames?: string[]
+  tools?: ToolFilter[]
+}
+
+/**
+ * A generic representation of a search result with a score for its relevance.
+ */
 export interface ScoredResult<T> {
   score: number
   result: T
 }
 
 export interface ToolCache {
-  refresh(): Promise<boolean>
-  metadata(toolFilter?: ToolFilter): Promise<Map<ToolId, ToolMetadata>>
+  // Querying methods
+  listTools(): Promise<Map<ToolId, BasicToolDetails>>
+  listIntegrations(): Promise<string[]>
+  filterTools(toolFilter?: FilterOptions): Promise<Map<ToolId, ToolDetails>>
   get(toolId: ToolId): Promise<EquippedTool>
   search(query: string): Promise<Array<ScoredResult<EquippedTool>>>
+
+  // Housekeeping methods
+  refresh(): Promise<boolean>
+  refreshTool(toolId: ToolId): Promise<EquippedTool>
   cleanup(): Promise<void>
 }
 
 export interface BaseToolbox<T> {
-  metadata(toolFilter?: ToolFilter): Promise<Map<ToolId, ToolMetadata>>
+  listTools(): Promise<Map<ToolId, BasicToolDetails>>
+  listIntegrations(): Promise<string[]>
+  filterTools(toolFilter?: FilterOptions): Promise<Map<ToolId, ToolDetails>>
   get(toolId: ToolId): Promise<T>
   search(query: string): Promise<Array<ScoredResult<T>>>
   close(): Promise<void>

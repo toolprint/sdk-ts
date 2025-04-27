@@ -1,8 +1,5 @@
 import {
-  AndFilter,
   createToolbox,
-  ServerNameFilter,
-  ToolNameFilter,
   createApiClientFromParams,
   ToolCallResponse,
   EquippedTool
@@ -121,11 +118,15 @@ export class Onegrep implements INodeType {
 
     const args = JSON.parse(argsJSON)
 
-    const resourceFilter = AndFilter(
-      ServerNameFilter(server),
-      ToolNameFilter(tool)
-    )
-    const toolMetadataMap = await toolbox.metadata(resourceFilter)
+    const toolMetadataMap = await toolbox.filterTools({
+      integrationNames: [server],
+      tools: [
+        {
+          integrationName: server,
+          toolName: tool
+        }
+      ]
+    })
 
     const toolMetadata = Array.from(toolMetadataMap.values())[0]
 

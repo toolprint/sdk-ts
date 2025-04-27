@@ -32,9 +32,9 @@ function toZodAdapter(jsonSchema: JsonSchema): ToZodJsonSchema {
 
 function schemaIdsForTool(tool: EquippedTool): Record<string, JsonSchema> {
   const schemas: Record<string, JsonSchema> = {}
-  if (tool.metadata.inputSchema) {
-    const inputId = schemaIdForTool(tool.metadata.id, INPUT_SCHEMA_NAMESPACE)
-    schemas[inputId] = tool.metadata.inputSchema
+  if (tool.details.inputSchema) {
+    const inputId = schemaIdForTool(tool.details.id, INPUT_SCHEMA_NAMESPACE)
+    schemas[inputId] = tool.details.inputSchema
   }
   // if (tool.metadata.outputSchema) {
   //   const outputId = schemaIdForTool(tool.metadata.id, OUTPUT_SCHEMA_NAMESPACE)
@@ -107,20 +107,20 @@ class JsonSchemaUtils {
     const schemas = schemaIdsForTool(tool)
     for (const [id, schema] of Object.entries(schemas)) {
       if (!this.validateJsonSchema(schema)) {
-        log.error(`Tool ${tool.metadata.id} has invalid JSON schemas`)
-        throw new Error(`Tool ${tool.metadata.id} has invalid JSON schemas`)
+        log.error(`Tool ${tool.details.id} has invalid JSON schemas`)
+        throw new Error(`Tool ${tool.details.id} has invalid JSON schemas`)
       }
       this._ajv.addSchema(schema, id)
     }
-    this._toolValidators[tool.metadata.id] = new ToolValidator(
+    this._toolValidators[tool.details.id] = new ToolValidator(
       this._ajv,
-      tool.metadata.id
+      tool.details.id
     )
-    log.info(`Registered tool ${tool.metadata.id}`)
+    log.info(`Registered tool ${tool.details.id}`)
   }
 
   getToolValidator(tool: EquippedTool) {
-    return this._toolValidators[tool.metadata.id]
+    return this._toolValidators[tool.details.id]
   }
 
   toZodType(schema: JsonSchema) {

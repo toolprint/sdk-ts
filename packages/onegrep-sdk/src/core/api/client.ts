@@ -39,6 +39,8 @@ export function createApiClientFromParams(clientParams: {
       headers: headers
     }
   }
+  console.debug(`Creating client pointing to ${baseUrl}`)
+
   return createApiClient(baseUrl, options) as OneGrepApiClient
 }
 
@@ -57,6 +59,10 @@ export function clientFromConfig(): OneGrepApiClient {
     apiKey: env.ONEGREP_API_KEY.toString(),
     baseUrl: env.ONEGREP_API_URL.toString()
   }
+
+  console.debug(
+    `Creating client pointing to ${params.baseUrl}`
+  )
 
   return createApiClientFromParams(params)
 }
