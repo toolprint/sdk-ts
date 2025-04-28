@@ -69,7 +69,8 @@ const config = defineConfig([
       'ajv',
       'buffer',
       '@zodios/core',
-      '@blaxel/sdk'
+      '@blaxel/sdk',
+      'pkce-challenge'
     ], // Add any external dependencies here
     treeshake: true
   },

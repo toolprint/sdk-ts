@@ -12,15 +12,11 @@ import {
   jsonSchemaUtils,
   ScoredResult,
   Toolbox,
-  ToolCallOutput,
   ToolCallResponse,
   ToolDetails,
   ToolId
 } from '../index.js'
 import { z, ZodTypeAny } from 'zod'
-
-// TODO: Is this needed?
-// type ExtractZodShape<T> = T extends z.ZodObject<infer Shape> ? Shape : never
 
 function ensureZodObject<T extends z.ZodTypeAny>(
   schema: T
@@ -31,16 +27,15 @@ function ensureZodObject<T extends z.ZodTypeAny>(
   return z.object({ value: schema }) as any
 }
 
-const convertToStructuredTool = (
-  equippedTool: EquippedTool
-): StructuredTool => {
+/**
+ * Convert an EquippedTool to a DynamicStructuredTool that's compatible with LangChain agents
+ */
+const convertToLangChainTool = (equippedTool: EquippedTool): StructuredTool => {
   // Input zod type is required for Langchain to enforce input schema
   const zodInputType: ZodTypeAny = jsonSchemaUtils.toZodType(
     equippedTool.details.inputSchema
   )
 
-  // Output zod type is required for Langchain to provide structured output (we use z.any() if not provided)
-  // const zodOutputType: ZodTypeAny = jsonSchemaUtils.toZodType(equippedTool.metadata.outputSchema)
   const zodOutputType: ZodTypeAny = z.any()
 
   const inputZodObject: z.ZodObject<any> = ensureZodObject(zodInputType)
@@ -49,10 +44,10 @@ const convertToStructuredTool = (
   type ToolInputType = z.infer<typeof inputZodObject>
   type ToolOutputType = z.infer<typeof outputZodObject>
 
-  // The tool call function
+  // The tool call function with proper signature for LangChain
   const toolcallFunc = async (
     input: ToolInputType
-  ): Promise<ToolCallOutput<ToolOutputType>> => {
+  ): Promise<ToolCallResponse<ToolOutputType>> => {
     const response: ToolCallResponse<ToolOutputType> =
       await equippedTool.handle.call({
         args: input,
@@ -60,7 +55,6 @@ const convertToStructuredTool = (
       })
     if (response.isError) {
       log.error(`Tool call error: ${response.message}`)
-      // TODO: How does Langchain want us to handle errors?
       throw new Error(response.message)
     }
     return response
@@ -78,7 +72,7 @@ const convertToStructuredTool = (
 }
 
 /**
- * A Langchain Toolbox that provides StructuredTools for all the tools in the toolbox
+ * A Langchain Toolbox that provides tools compatible with LangChain agents
  */
 export class LangchainToolbox implements BaseToolbox<StructuredTool> {
   toolbox: Toolbox
@@ -103,14 +97,14 @@ export class LangchainToolbox implements BaseToolbox<StructuredTool> {
 
   async get(toolId: string): Promise<StructuredTool> {
     const tool = await this.toolbox.get(toolId)
-    return convertToStructuredTool(tool)
+    return convertToLangChainTool(tool)
   }
 
   async search(query: string): Promise<Array<ScoredResult<StructuredTool>>> {
     const searchResults = await this.toolbox.search(query)
     return searchResults.map((result) => ({
       ...result,
-      result: convertToStructuredTool(result.result)
+      result: convertToLangChainTool(result.result)
     }))
   }
 

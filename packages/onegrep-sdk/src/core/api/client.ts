@@ -60,9 +60,7 @@ export function clientFromConfig(): OneGrepApiClient {
     baseUrl: env.ONEGREP_API_URL.toString()
   }
 
-  console.debug(
-    `Creating client pointing to ${params.baseUrl}`
-  )
+  console.debug(`Creating client pointing to ${params.baseUrl}`)
 
   return createApiClientFromParams(params)
 }
