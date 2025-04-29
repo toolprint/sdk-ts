@@ -25,27 +25,112 @@ TODO: add getting started
 
 ## Initial setup
 
-TODO: add installation example
+Install the dependencies:
 
-## Run the Gateway
+```shell
+just install
+```
 
-TODO: add gateway setup example
+Build the project:
 
-## What's inside?
+```shell
+# Using build cache
+just build
 
-This repository includes the following packages/apps:
+# Without build cache
+just rebuild
+```
+
+Run the tests:
+
+```shell
+just test
+```
+
+## Run an example Agent
+
+In the examples directory, there is an example agent that uses the SDK and Blaxel to run a simple agent.
+
+You'll need the Blaxel CLI and a free Blaxel account with some deployed MCP Servers before you can run the example locally.
+
+Use the Blaxel Getting Started guide to install the Blaxel CLI and create a free account: <https://docs.blaxel.ai/Get-started>
+
+Make sure `blaxel-search` is installed on your Blaxel account and the Blaxel CLI is logged in.
+
+```shell
+# Start the Agent locally
+just bl-serve
+
+# Open a terminal chat window with the Agent
+just bl-chat
+```
+
+## Using the SDK
+
+Add the SDK to your project:
+
+```shell
+npm add @onegrep/sdk
+```
+
+Export the following environment variables for your application:
+
+```shell
+export ONEGREP_API_KEY=<your-onegrep-api-key>
+export ONEGREP_API_URL=<your-onegrep-api-url>
+```
+
+Import the SDK and create a toolbox somewhere it the boot-sequence of your application:
+
+```typescript
+import { getToolbox } from '@onegrep/sdk'
+
+const toolbox = await getToolbox()
+
+// Optionally, create a LangchainToolbox for use with LangGraph framework directly
+import { createLangchainToolbox } from '@onegrep/sdk'
+const langchainToolbox = await createLangchainToolbox(toolbox)
+```
+
+NOTE: It is recommended to create toolboxes as soon as possible in the boot-sequence of your application as a singleton and reuse it throughout your application. It will perform caching operations and manage connections to Tool Servers.
+
+In your agent loop, you can use the toolbox to search for tools based on natural language queries, then bind it to the LangGraph agent:
+
+```typescript
+const searchResults: ScoredResult<StructuredTool>[] = await toolbox.search(
+  'What is the weather in Tokyo?'
+)
+
+// Extract the tools from the search results
+const tools = searchResults.map((result) => result.result)
+
+const agent = await createReactAgent({
+  llm: 'your-llm-model-of-choice',
+  prompt: 'If the user ask for the weather, use the weather tool.',
+  tools: tools
+})
+```
 
 ## 🛠 Tech Stack
 
 - **Build System**: [Turborepo](https://turborepo.org/)
 - **Package Manager**: [PNPM](https://pnpm.io/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Bundle**: [tsup](https://tsup.egoist.dev/)
+- **Bundle**: [rollup](https://rollupjs.org/)
 - **Task Runner**: [Just](https://just.systems/)
 
 ## 📦 Project Structure
 
-TODO: add project structure
+This repository includes the following packages/apps:
+
+Apps:
+
+- `blaxel-langgraph-agent`: A simple LangGraph agent that uses the OneGrep SDK and Blaxel
+
+Packages:
+
+- `onegrep-sdk`: The SDK used by your agents
+- `onegrep-api-client`: The generated OpenAPI client
 
 ### Utilities
 
@@ -55,14 +140,6 @@ This Turborepo has some additional tools already setup for you:
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
 - [Husky](https://typicode.github.io/husky/#/) for git hooks
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-just build
-```
 
 ## Useful Links
 
@@ -81,13 +158,11 @@ For more detailed documentation about each package, please refer to their respec
 
 - [OneGrep SDK](packages/onegrep-sdk/README.md)
 - [OneGrep Gateway](apps/onegrep-gateway/README.md)
-- [N8N Nodes](packages/n8n-nodes-onegrep/README.md)
+- [Blaxel LangGraph Agent](apps/blaxel-langgraph-agent/README.md)
 
 ## Additional Notes
 
 - All packages in the repo that are part of a `pnpm pack` dependency chain must have a version (even if it's 0.0.0). [Related issue](https://github.com/pnpm/pnpm/issues/4164#issuecomment-1236762286)
-
-- Pino v7-9 depends on thread-stream, which is not bundled in CJS automatically. Additionally, for some runtimes (like n8n), which use CommonJS, it's not easy to load Pino with dynamic imports, so we don't bundle it directly and expose it as a peer dependency. If Pino is not present, we fallback to logging to the console (which is not ideal for the Gateway running in MCP stdio mode).
 
 ## 📝 License
 
