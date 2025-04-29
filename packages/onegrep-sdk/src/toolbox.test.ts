@@ -35,6 +35,7 @@ describe('Toolbox Tests', () => {
 
   it('should be able to get a zod schema from a tool', async () => {
     const toolDetailsMap = await toolbox.listTools()
+    console.debug('toolDetailsMap', toolDetailsMap)
     expect(toolDetailsMap.size).toBeGreaterThan(0)
 
     const toolDetails = Array.from(toolDetailsMap.values()).find(

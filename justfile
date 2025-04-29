@@ -113,6 +113,10 @@ test-blaxel-client:
 test-toolbox:
     cd packages/onegrep-sdk && pnpm test-debug src/toolbox.test.ts --run --testNamePattern="Toolbox Tests"
 
+[group('test')]
+test-toolcache:
+    cd packages/onegrep-sdk && pnpm test-debug src/toolcache.test.ts --run --testNamePattern="UniversalToolCacheTests"
+
 # inspect the gateway
 [group('mcp-inspector')]
 inspect:

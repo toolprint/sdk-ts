@@ -372,6 +372,8 @@ export class UniversalToolCache implements ToolCache {
   }
 
   async refreshTool(toolId: ToolId): Promise<EquippedTool> {
+    await this.toolDetailsCache.del(toolId)
+
     return await this.get(toolId)
   }
 
