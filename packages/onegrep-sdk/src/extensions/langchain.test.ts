@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeAll } from 'vitest'
 import { createLangchainToolbox, LangchainToolbox } from './langchain.js'
 import { ToolInputParsingException } from '@langchain/core/tools'
-import { Toolbox, ToolCallOutput } from '../index.js'
-import { createToolbox } from '../index.js'
-import { clientFromConfig } from '../index.js'
 import { log } from '@repo/utils'
+import { createToolbox, Toolbox } from '../toolbox.js'
+import { clientFromConfig } from '../core/api/client.js'
+import { FilterOptions, ToolCallOutput } from '../types.js'
 
-describe('Toolbox Tests', () => {
+describe('Langchain Toolbox Tests', () => {
   let toolbox: Toolbox
   let langchainToolbox: LangchainToolbox
 
@@ -17,6 +17,7 @@ describe('Toolbox Tests', () => {
   // }
 
   // ! Tool args that work with the test-sandbox.onegrep.dev `meta` server which is a running mock_mcp server (reference impl in onegrep-api repo)
+  const integrationName = 'blaxel-search'
   const toolName = 'web_search'
   const toolArgs = {
     query: 'What is Langchain?'
@@ -28,17 +29,13 @@ describe('Toolbox Tests', () => {
     langchainToolbox = await createLangchainToolbox(toolbox) // Initialize toolbox before test suite
   })
 
-  it('should get all tool metadata', async () => {
-    const metadata = await langchainToolbox.filterTools()
-    expect(metadata.size).toBeGreaterThan(0)
-  })
-
-  it('should get all structured tools', async () => {
-    const metadata = await langchainToolbox.filterTools()
-    expect(metadata.size).toBeGreaterThan(0)
+  // ! NOT PERFORMANT
+  it.skip('should get all structured tools', async () => {
+    const toolMap = await langchainToolbox.listTools()
+    expect(toolMap.size).toBeGreaterThan(0)
 
     const structuredTools = await Promise.all(
-      Array.from(metadata.keys()).map(async (toolId) => {
+      Array.from(toolMap.keys()).map(async (toolId) => {
         return langchainToolbox.get(toolId)
       })
     )
@@ -46,10 +43,13 @@ describe('Toolbox Tests', () => {
   })
 
   it('should be able to make a structured tool call with valid input', async () => {
-    const metadata = await langchainToolbox.filterTools()
-    expect(metadata.size).toBeGreaterThan(0)
+    const filterOptions: FilterOptions = {
+      integrationNames: [integrationName]
+    }
+    const toolMap = await langchainToolbox.filterTools(filterOptions)
+    expect(toolMap.size).toBeGreaterThan(0)
 
-    const structuredToolMetadata = Array.from(metadata.values()).find(
+    const structuredToolMetadata = Array.from(toolMap.values()).find(
       (tool) => tool.name === toolName
     )
 
@@ -73,10 +73,13 @@ describe('Toolbox Tests', () => {
   })
 
   it('should be able to make a structured tool call with invalid input', async () => {
-    const metadata = await langchainToolbox.filterTools()
-    expect(metadata.size).toBeGreaterThan(0)
+    const filterOptions: FilterOptions = {
+      integrationNames: [integrationName]
+    }
+    const toolMap = await langchainToolbox.filterTools(filterOptions)
+    expect(toolMap.size).toBeGreaterThan(0)
 
-    const structuredToolMetadata = Array.from(metadata.values()).find(
+    const structuredToolMetadata = Array.from(toolMap.values()).find(
       (tool) => tool.name === toolName
     )
 

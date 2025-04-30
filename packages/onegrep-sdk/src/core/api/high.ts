@@ -1,4 +1,4 @@
-import { ToolServerId } from 'types.js'
+import { ToolServerId } from '../../types.js'
 import { OneGrepApiClient } from './client.js'
 import {
   SearchResponseScoredItemTool,
@@ -6,11 +6,16 @@ import {
   ToolProperties,
   ToolResource,
   ToolServer,
-  ToolServerClient
+  ToolServerClient,
+  InitializeResponse
 } from './types.js'
 
 export class OneGrepApiHighLevelClient {
   constructor(private readonly apiClient: OneGrepApiClient) {}
+
+  async initialize(): Promise<InitializeResponse> {
+    return await this.apiClient.initialize_api_v1_sdk_initialize_get()
+  }
 
   async getServerName(serverId: string): Promise<string> {
     const toolServer =

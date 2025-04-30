@@ -2,7 +2,8 @@ import {
   createToolbox,
   createApiClientFromParams,
   ToolCallResponse,
-  EquippedTool
+  EquippedTool,
+  ToolDetails
 } from '@onegrep/sdk'
 import {
   INodeType,
@@ -130,7 +131,8 @@ export class Onegrep implements INodeType {
 
     const toolMetadata = Array.from(toolMetadataMap.values())[0]
 
-    const equippedTool: EquippedTool = await toolbox.get(toolMetadata.id)
+    const toolDetails: ToolDetails = await toolbox.get(toolMetadata.id)
+    const equippedTool: EquippedTool = await toolDetails.equip()
 
     // TODO: needs testing
     const result: ToolCallResponse<any> = await equippedTool.handle.call({

@@ -32,7 +32,13 @@
     },
     "test": {
       "dependsOn": ["lint", "build"],
-      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL", "LOG_MODE", "LOG_LEVEL"],
+      "env": [
+        "ONEGREP_API_KEY",
+        "ONEGREP_API_URL",
+        "LOG_MODE",
+        "LOG_LEVEL",
+        "SMITHERY_API_KEY"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env",
@@ -45,7 +51,13 @@
       "outputs": []
     },
     "test:watch": {
-      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL", "LOG_MODE", "LOG_LEVEL"],
+      "env": [
+        "ONEGREP_API_KEY",
+        "ONEGREP_API_URL",
+        "LOG_MODE",
+        "LOG_LEVEL",
+        "SMITHERY_API_KEY"
+      ],
       "cache": false,
       "persistent": true
     },

@@ -1,8 +1,4 @@
-import { Keyv } from 'keyv'
 import { log } from '@repo/utils'
-import { z } from 'zod'
-import { jsonSchemaUtils } from './schema.js'
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 
 import { OneGrepApiClient } from './core/api/client.js'
 import { OneGrepApiHighLevelClient } from './core/api/high.js'
@@ -10,54 +6,40 @@ import {
   ToolProperties,
   ToolServerClient,
   SearchResponseScoredItemTool,
-  // MCPToolServerClient, // ! Add back when MCP is supported
-  BlaxelToolServerClient,
   ToolResource,
   Tool,
-  ToolServer
+  InitializeResponse
 } from './core/api/types.js'
-// import { ConnectedClientManager } from './mcp/client.js'; // ! Add back when MCP is supported
-import {
-  McpCallToolResultContent,
-  parseMcpContent
-} from './providers/mcp/toolcall.js'
-
-import { McpTool as BlaxelMcpServer } from '@blaxel/sdk/tools/mcpTool'
 
 import {
   ScoredResult,
   ToolCache,
-  ToolCallInput,
-  ToolCallResponse,
-  ToolHandle,
   ToolId,
   ToolServerId,
   JsonSchema,
-  EquippedTool,
   FilterOptions,
-  ToolCallError,
   ToolDetails,
-  BasicToolDetails
+  BasicToolDetails,
+  EquippedTool,
+  ToolHandle
 } from './types.js'
 
-import { BlaxelClientManager } from './providers/blaxel/clientManager.js'
-
+import { Keyv } from 'keyv'
 import { Cache, createCache } from 'cache-manager'
+import { ToolServerConnectionManager } from './connection.js'
 
 export class UniversalToolCache implements ToolCache {
   private highLevelClient: OneGrepApiHighLevelClient
 
-  // * Client managers take care of the low-level details of server connections.
-  // Lazy loaded in case we don't actually use Blaxel.
-  private blaxelClientManager?: BlaxelClientManager
-  // private connectedClientManager: ConnectedClientManager; // ! Add back when MCP is supported
+  private connectionManager: ToolServerConnectionManager
 
   private serverNameCache: Cache
   private serverClientCache: Cache
-  private toolDetailsCache: Cache
+  private toolBasicDetailsCache: Cache
 
   constructor(apiClient: OneGrepApiClient) {
     this.highLevelClient = new OneGrepApiHighLevelClient(apiClient)
+    this.connectionManager = new ToolServerConnectionManager()
 
     // Configure caches with TTL and max size
     this.serverNameCache = createCache({
@@ -74,22 +56,30 @@ export class UniversalToolCache implements ToolCache {
       ]
     })
 
-    this.toolDetailsCache = createCache({
-      cacheId: 'tool-details-cache',
+    this.toolBasicDetailsCache = createCache({
+      cacheId: 'tool-basic-details-cache',
       stores: [
-        new Keyv({ ttl: 1000 * 30 }) // 30 seconds
+        new Keyv({ ttl: 1000 * 60 * 60 * 24 }) // 1 hours
       ]
     })
   }
 
-  private async cleanupServerManagers(): Promise<void> {
-    if (this.blaxelClientManager) {
-      await this.blaxelClientManager.cleanup()
-    }
-
-    // Add other manager cleanups here.
+  /**
+   * Get the name of a tool server (wrapped in TTL cache)
+   * @param serverId - The id of the tool server.
+   * @returns The name of the tool server.
+   */
+  private async getServerName(serverId: ToolServerId): Promise<string> {
+    return await this.serverNameCache.wrap(serverId, async () => {
+      return await this.highLevelClient.getServerName(serverId)
+    })
   }
 
+  /**
+   * Get the client for a tool server (wrapped in TTL cache)
+   * @param serverId - The id of the tool server.
+   * @returns The client for the tool server.
+   */
   private async getServerClient(
     serverId: ToolServerId
   ): Promise<ToolServerClient> {
@@ -98,134 +88,116 @@ export class UniversalToolCache implements ToolCache {
     })
   }
 
-  private async getHandle(toolId: ToolId): Promise<ToolHandle> {
-    const toolDetails: ToolDetails = await this.getToolDetails(toolId)
-    const toolServerClient: ToolServerClient = await this.getServerClient(
-      toolDetails.serverId
-    )
+  private async convertToolToBasicDetails(
+    tool: Tool
+  ): Promise<BasicToolDetails> {
+    const serverName = await this.getServerName(tool.server_id)
+    if (!serverName) {
+      log.warn(`Server name not found for tool ${tool.id}`)
+      throw new Error(`Server name not found for tool ${tool.id}`)
+    }
 
-    if (toolServerClient.client_type === 'mcp') {
-      // Implement and optimize
-      if (toolServerClient.transport_type !== 'sse') {
-        throw new Error(
-          'SSE is the only currently supported transport type for MCP tools'
-        )
-      }
-
-      throw new Error('MCP tools are not yet supported')
-    } else if (toolServerClient.client_type === 'blaxel') {
-      const blaxelToolServerClient = toolServerClient as BlaxelToolServerClient
-      if (!this.blaxelClientManager) {
-        this.blaxelClientManager = new BlaxelClientManager()
-      }
-
-      const toolServer: BlaxelMcpServer | undefined =
-        await this.blaxelClientManager.getServer(
-          blaxelToolServerClient.blaxel_function
-        )
-
-      if (!toolServer) {
-        throw new Error(
-          `No tool server was discovered for blaxel: ${toolServerClient.blaxel_function}`
-        )
-      }
-
-      log.debug(`Found blaxel tool server: ${toolServerClient.blaxel_function}`)
-
-      // TODO: How to determine the output type?
-      const parseResultFunc = (
-        result: CallToolResult
-      ): ToolCallResponse<any> => {
-        log.debug('Parsing blaxel tool result')
-        const resultContent = result.content as McpCallToolResultContent
-        const content = parseMcpContent(resultContent)
-        return {
-          isError: false,
-          content: content,
-          mode: 'single',
-          toZod: () => {
-            return z.object({})
-          }
-        }
-      }
-
-      const call = async (
-        toolCallInput: ToolCallInput
-      ): Promise<ToolCallResponse<any>> => {
-        log.info(
-          `Calling blaxel tool with input: ${JSON.stringify(toolCallInput)}`
-        )
-        try {
-          const validator = jsonSchemaUtils.getValidator(
-            toolDetails.inputSchema
-          )
-          const valid = validator(toolCallInput.args)
-          if (!valid) {
-            throw new Error('Invalid tool input arguments')
-          }
-          const result = (await toolServer.call(
-            toolDetails.name,
-            toolCallInput.args
-          )) as CallToolResult // ! Why does blaxel not return a CallToolResult?
-          return parseResultFunc(result)
-        } catch (error) {
-          if (error instanceof Error) {
-            return {
-              isError: true,
-              message: error.message
-            } as ToolCallError
-          } else {
-            return {
-              isError: true,
-              message: 'An unknown error occurred'
-            } as ToolCallError
-          }
-        }
-      }
-
-      const callSync = (_: ToolCallInput): ToolCallResponse<any> => {
-        throw new Error('Blaxel tools do not support sync calls')
-
-        // ! TODO: Was having issues with the sync call, so we're not using it yet.
-        // log.info(`Calling blaxel tool with input: ${JSON.stringify(toolCallInput)}`);
-        // const result: CallToolResult = toolServer.call(toolCallInput.name, toolCallInput.args);
-        // return parseResultFunc(result);
-      }
-
-      return {
-        call: (input: ToolCallInput) => call(input),
-        callSync: (_: ToolCallInput) => callSync(_)
-      }
-    } else {
-      throw new TypeError(
-        `Unknown tool server client type: ${typeof toolServerClient}`
-      )
+    return {
+      id: tool.id,
+      name: tool.name,
+      description: tool.description as string,
+      serverId: tool.server_id,
+      integrationName: serverName as string,
+      iconUrl: tool.icon_url as URL | undefined,
+      inputSchema: tool.input_schema as JsonSchema
     }
   }
 
+  /**
+   * Get the basic details of a tool (wrapped in TTL cache)
+   * @param toolId - The id of the tool.
+   * @returns The basic details of the tool.
+   */
+  private async getToolBasicDetails(toolId: ToolId): Promise<BasicToolDetails> {
+    return await this.toolBasicDetailsCache.wrap(toolId, async () => {
+      const tool: Tool = await this.highLevelClient.getTool(toolId)
+      return await this.convertToolToBasicDetails(tool)
+    })
+  }
+
+  /**
+   * Invalidate the basic details cache for a tool
+   * @param toolId - The id of the tool.
+   */
+  private async invalidateToolBasicDetailsCache(toolId: ToolId): Promise<void> {
+    await this.toolBasicDetailsCache.del(toolId)
+  }
+
+  /**
+   * Get the details of a tool
+   * @param toolId - The id of the tool.
+   * @returns The details of the tool.
+   */
+  private async getToolDetails(toolId: ToolId): Promise<ToolDetails> {
+    const basicToolDetails: BasicToolDetails =
+      await this.getToolBasicDetails(toolId)
+
+    log.info(`Got tool basic details`, basicToolDetails)
+
+    // Getting the ToolResource will get the Properties and Policy for the tool
+    const resource: ToolResource =
+      await this.highLevelClient.getToolResource(toolId)
+
+    log.info(`Got tool resource`, resource)
+
+    const serverClient: ToolServerClient = await this.getServerClient(
+      resource.tool.server_id
+    )
+
+    // Convert a BasicToolDetails to an EquippedTool (used as a lazy-loaded equip function)
+    const convertToEquippedTool = async (
+      basicToolDetails: BasicToolDetails
+    ): Promise<EquippedTool> => {
+      log.info(
+        `Converting to equipped tool ${JSON.stringify(basicToolDetails)}`
+      )
+
+      const getHandle = async (): Promise<ToolHandle> => {
+        const connection = await this.connectionManager.connect(serverClient)
+        log.info(`Got connection to tool server ${resource.tool.server_id}`)
+
+        const toolHandle = await connection.getHandle(basicToolDetails)
+        log.info(`Got tool handle for ${resource.tool.id}`)
+
+        return toolHandle
+      }
+
+      return {
+        details: toolDetails,
+        handle: await getHandle()
+      }
+    }
+
+    // ! NOTE: We can't cache ToolDetails because we provide the equip function
+    // Additionally, We really never want to cache Properties or Policy for very long
+    // because they can change more frequently than the tool details.  Cache individually if needed.
+    const toolDetails: ToolDetails = {
+      ...basicToolDetails,
+      properties: resource.properties as ToolProperties,
+      policy: resource.policy,
+      equip: () => convertToEquippedTool(basicToolDetails)
+    }
+
+    log.info(`Got tool details ${JSON.stringify(toolDetails)}`)
+
+    return toolDetails
+  }
+
   async listTools(): Promise<Map<ToolId, BasicToolDetails>> {
-    await this.refreshServerNameCache()
     const tools: Tool[] = await this.highLevelClient.listTools()
     console.debug(`Found ${tools.length} tools`)
+
     const basicTools: Map<ToolId, BasicToolDetails> = new Map()
 
     for (const t of tools) {
       try {
-        const sName = await this.serverNameCache.get(t.server_id)
-        if (!sName) {
-          log.warn(`Server name not found for tool ${t.id}`)
-          continue
-        }
-
-        basicTools.set(t.id, {
-          id: t.id,
-          name: t.name,
-          description: t.description as string,
-          serverId: t.server_id,
-          integrationName: sName as string,
-          iconUrl: t.icon_url as URL | undefined,
-          inputSchema: t.input_schema as JsonSchema
-        })
+        const basicToolDetails = await this.getToolBasicDetails(t.id)
+        basicTools.set(t.id, basicToolDetails)
       } catch (e) {
         log.warn(`Error fetching tool details for ${t.id}`, e)
         continue
@@ -250,16 +222,6 @@ export class UniversalToolCache implements ToolCache {
     return true
   }
 
-  async clearToolDetailsCache(): Promise<boolean> {
-    /**
-     * Clear the tool metadata cache.
-     * Returns true if successful, false otherwise.
-     */
-    this.toolDetailsCache.clear()
-    log.info('Cleared tool metadata cache')
-    return true
-  }
-
   async filterTools(
     filterOptions?: FilterOptions
   ): Promise<Map<ToolId, ToolDetails>> {
@@ -272,76 +234,54 @@ export class UniversalToolCache implements ToolCache {
       )
     }
 
-    const result: Map<ToolId, ToolDetails> = new Map()
+    // ! Does not support the full filter options yet
+    if (filterOptions.serverIds) {
+      throw new Error('Filtering by server ids is not yet supported.')
+    }
+    if (filterOptions.tools) {
+      throw new Error('Filtering by tools is not yet supported.')
+    }
 
-    if (filterOptions.integrationNames) {
-      for (const integrationName of filterOptions.integrationNames) {
-        const toolResources =
-          await this.highLevelClient.getToolResourcesForIntegration(
-            integrationName
-          )
-        for (const toolResource of toolResources) {
-          const toolDetails = await this.getToolDetails(toolResource.tool.id)
-          result.set(toolDetails.id, toolDetails)
+    // Filter the tools based on the integration names
+    const allTools: Tool[] = await this.highLevelClient.listTools()
+    const filteredTools: Tool[] = await Promise.all(
+      allTools.map(async (tool) => {
+        if (filterOptions.integrationNames) {
+          const serverName = await this.getServerName(tool.server_id)
+          return filterOptions.integrationNames.includes(serverName)
+            ? tool
+            : null
         }
-      }
+        return tool
+      })
+    ).then((tools) => tools.filter((tool): tool is Tool => tool !== null))
+
+    // Get the details for the filtered tool using the basic details cache
+    const result: Map<ToolId, ToolDetails> = new Map()
+    for (const tool of filteredTools) {
+      const toolDetails = await this.getToolDetails(tool.id)
+      result.set(toolDetails.id, toolDetails)
     }
 
     return result
   }
 
-  private async getToolDetails(toolId: ToolId): Promise<ToolDetails> {
-    const cachedToolDetails = (await this.toolDetailsCache.get(
-      toolId
-    )) as ToolDetails | null
-    if (cachedToolDetails && cachedToolDetails !== null) {
-      return cachedToolDetails
-    }
-
-    const resource: ToolResource =
-      await this.highLevelClient.getToolResource(toolId)
-
-    const toolDetails: ToolDetails = {
-      id: resource.tool.id,
-      name: resource.tool.name,
-      description: resource.description as string,
-      iconUrl: resource.tool.icon_url as URL | undefined,
-      serverId: resource.tool.server_id,
-      integrationName: resource.integration_name,
-      inputSchema: resource.tool.input_schema as JsonSchema,
-      properties: resource.properties as ToolProperties,
-      policy: resource.policy
-    }
-
-    await this.toolDetailsCache.set(toolId, toolDetails)
-    return toolDetails
+  async get(toolId: ToolId): Promise<ToolDetails> {
+    return await this.getToolDetails(toolId)
   }
 
-  async get(toolId: ToolId): Promise<EquippedTool> {
-    const toolDetails: ToolDetails = await this.getToolDetails(toolId)
-
-    const handle: ToolHandle = await this.getHandle(toolId)
-    log.debug(`Fetched tool handle for ${toolId}`)
-
-    const equippedTool: EquippedTool = {
-      details: toolDetails,
-      handle: handle
-    }
-
-    return equippedTool
-  }
-
-  async search(query: string): Promise<ScoredResult<EquippedTool>[]> {
+  async search(query: string): Promise<ScoredResult<ToolDetails>[]> {
     log.info(`Searching for tools with query: ${query}`)
+
     const response: SearchResponseScoredItemTool =
       await this.highLevelClient.searchTools(query)
 
-    const results: ScoredResult<EquippedTool>[] = []
+    const results: ScoredResult<ToolDetails>[] = []
 
     for (const result of response.results) {
-      const equippedTool = await this.get(result.item.id)
+      const toolDetails = await this.get(result.item.id)
       results.push({
-        result: equippedTool,
+        result: toolDetails,
         score: result.score
       })
     }
@@ -349,38 +289,43 @@ export class UniversalToolCache implements ToolCache {
     return results
   }
 
-  async refreshServerNameCache(): Promise<boolean> {
-    /**
-     * Refresh the server ids by fetching server ids from the API.
-     * Returns true if successful, false otherwise.
-     */
-    this.serverNameCache.clear()
-    const servers: Map<ToolServerId, ToolServer> =
-      await this.highLevelClient.getAllServers()
-
-    for (const [serverId, server] of servers.entries()) {
-      this.serverNameCache.set(serverId as ToolServerId, server.name)
-    }
-
-    return true
-  }
-
   async refresh(): Promise<boolean> {
-    await this.refreshServerNameCache()
-    log.info('Toolcache refresh completed successfully')
+    log.info('Refreshing toolcache')
+
+    const initResponse: InitializeResponse =
+      await this.highLevelClient.initialize()
+    log.info(
+      `Refresh item counts: servers: ${initResponse.servers.length}, tools: ${initResponse.tools.length}`
+    )
+
+    for (const server of initResponse.servers) {
+      this.serverNameCache.set(server.id, server.name)
+    }
+    log.debug(`Set ${initResponse.servers.length} server names in cache`)
+
+    for (const client of initResponse.clients) {
+      this.serverClientCache.set(client.server_id, client)
+    }
+    log.debug(`Set ${initResponse.clients.length} server clients in cache`)
+
+    for (const tool of initResponse.tools) {
+      this.toolBasicDetailsCache.set(
+        tool.id,
+        await this.convertToolToBasicDetails(tool)
+      )
+    }
+    log.debug(`Set ${initResponse.tools.length} tool basic details in cache`)
+
     return true
   }
 
-  async refreshTool(toolId: ToolId): Promise<EquippedTool> {
-    await this.toolDetailsCache.del(toolId)
+  async refreshTool(toolId: ToolId): Promise<ToolDetails> {
+    await this.invalidateToolBasicDetailsCache(toolId)
 
     return await this.get(toolId)
   }
 
   async cleanup(): Promise<void> {
-    this.serverNameCache.clear()
-    this.serverClientCache.clear()
-    this.toolDetailsCache.clear()
-    await this.cleanupServerManagers()
+    await this.connectionManager.close()
   }
 }

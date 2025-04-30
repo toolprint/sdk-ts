@@ -15,7 +15,7 @@ import {
   // JsonSchema
 } from '../../types.js'
 import { log } from '@repo/utils'
-import { ToolDetails } from 'types.js'
+import { ToolDetails } from '../../types.js'
 // import { jsonSchemaUtils } from '../schema.js'
 
 export type McpCallToolResultContent = Array<

@@ -4,19 +4,21 @@ import {
   StructuredTool
 } from '@langchain/core/tools'
 import { log } from '@repo/utils'
-import {
-  BaseToolbox,
-  BasicToolDetails,
-  EquippedTool,
-  FilterOptions,
-  jsonSchemaUtils,
-  ScoredResult,
-  Toolbox,
-  ToolCallResponse,
-  ToolDetails,
-  ToolId
-} from '../index.js'
+import { jsonSchemaUtils } from '../schema.js'
+
 import { z, ZodTypeAny } from 'zod'
+
+import {
+  EquippedTool,
+  ToolCallResponse,
+  ToolId,
+  ToolDetails,
+  BasicToolDetails,
+  FilterOptions,
+  ScoredResult,
+  BaseToolbox
+} from 'types.js'
+import { Toolbox } from 'toolbox.js'
 
 function ensureZodObject<T extends z.ZodTypeAny>(
   schema: T
@@ -96,16 +98,29 @@ export class LangchainToolbox implements BaseToolbox<StructuredTool> {
   }
 
   async get(toolId: string): Promise<StructuredTool> {
-    const tool = await this.toolbox.get(toolId)
+    const toolDetails = await this.toolbox.get(toolId)
+    const tool = await toolDetails.equip()
     return convertToLangChainTool(tool)
   }
 
   async search(query: string): Promise<Array<ScoredResult<StructuredTool>>> {
     const searchResults = await this.toolbox.search(query)
-    return searchResults.map((result) => ({
-      ...result,
-      result: convertToLangChainTool(result.result)
-    }))
+    const equippedToolResults: ScoredResult<EquippedTool>[] = await Promise.all(
+      searchResults.map(async (result) => {
+        const toolDetails = result.result
+        const tool = await toolDetails.equip()
+        return {
+          score: result.score,
+          result: tool
+        }
+      })
+    )
+    const structuredToolResults: ScoredResult<StructuredTool>[] =
+      equippedToolResults.map((result) => ({
+        score: result.score,
+        result: convertToLangChainTool(result.result)
+      }))
+    return structuredToolResults
   }
 
   async close(): Promise<void> {

@@ -9,6 +9,7 @@ import {
 } from '@blaxel/sdk/tools/mcpTool'
 import { IServerClientManager } from '../domain/types.js'
 
+// @deprecated Use ConnectionManager instead
 export class BlaxelClientManager
   implements IServerClientManager<BlaxelMcpServer>
 {

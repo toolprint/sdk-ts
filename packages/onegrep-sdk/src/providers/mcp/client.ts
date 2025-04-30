@@ -2,7 +2,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { log } from '@repo/utils'
 import { createSSEClientTransport } from './transport/sse.js'
 import { McpToolCallError, McpToolCallInput } from './types.js'
-import { RemoteClientConfig } from 'core/api/types.js'
+import { RemoteClientConfig } from '../../core/api/types.js'
 import {
   CallToolRequest,
   CallToolResult,
@@ -118,6 +118,7 @@ const createConnectedClient = async (
         const result = await client.callTool(callToolRequest.params)
         if (result.isError) {
           log.error(`Tool call failed result: ${JSON.stringify(result)}`)
+          throw new Error('Tool call failed')
         }
         return result as CallToolResult
       } catch (error) {

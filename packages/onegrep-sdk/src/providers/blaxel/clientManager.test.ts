@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { BlaxelClientManager } from './clientManager.js'
 
-describe('BlaxelClientManagerTests', () => {
+// @deprecated
+describe.skip('BlaxelClientManagerTests', () => {
   it('should get the web search server', async () => {
     const blaxelClient = new BlaxelClientManager()
     const server = await blaxelClient.getServer('exa')

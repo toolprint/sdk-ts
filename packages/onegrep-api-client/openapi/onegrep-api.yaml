@@ -1021,6 +1021,9 @@ paths:
         - servers
       summary: Get Server
       operationId: get_server_api_v1_servers__server_id__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
       parameters:
         - name: server_id
           in: path
@@ -1047,6 +1050,9 @@ paths:
         - servers
       summary: Get Server Client
       operationId: get_server_client_api_v1_servers__server_id__client_get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
       parameters:
         - name: server_id
           in: path
@@ -1063,11 +1069,13 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/MCPToolServerClient'
                   - $ref: '#/components/schemas/BlaxelToolServerClient'
+                  - $ref: '#/components/schemas/SmitheryToolServerClient'
                 discriminator:
                   propertyName: client_type
                   mapping:
                     mcp: '#/components/schemas/MCPToolServerClient'
                     blaxel: '#/components/schemas/BlaxelToolServerClient'
+                    smithery: '#/components/schemas/SmitheryToolServerClient'
                 title: >-
                   Response Get Server Client Api V1 Servers  Server Id  Client
                   Get
@@ -1471,6 +1479,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/sdk/initialize:
+    get:
+      tags:
+        - sdk
+      summary: Initialize
+      operationId: initialize_api_v1_sdk_initialize_get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitializeResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
     AccessPolicyType:
@@ -1645,6 +1684,10 @@ components:
       title: AuthenticationStatus
     BlaxelToolServerClient:
       properties:
+        server_id:
+          type: string
+          format: uuid
+          title: Server Id
         client_type:
           type: string
           const: blaxel
@@ -1657,6 +1700,7 @@ components:
           title: Blaxel Function
       type: object
       required:
+        - server_id
         - client_type
         - blaxel_workspace
         - blaxel_function
@@ -1759,6 +1803,54 @@ components:
         - orgID
         - serverID
       title: IngressConfig
+    InitializeResponse:
+      properties:
+        org_id:
+          type: string
+          title: Org Id
+        doppler_service_token:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Doppler Service Token
+        providers:
+          items:
+            $ref: '#/components/schemas/ToolServerProvider'
+          type: array
+          title: Providers
+        servers:
+          items:
+            $ref: '#/components/schemas/ToolServer'
+          type: array
+          title: Servers
+        tools:
+          items:
+            $ref: '#/components/schemas/Tool'
+          type: array
+          title: Tools
+        clients:
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/MCPToolServerClient'
+              - $ref: '#/components/schemas/BlaxelToolServerClient'
+              - $ref: '#/components/schemas/SmitheryToolServerClient'
+            discriminator:
+              propertyName: client_type
+              mapping:
+                blaxel: '#/components/schemas/BlaxelToolServerClient'
+                mcp: '#/components/schemas/MCPToolServerClient'
+                smithery: '#/components/schemas/SmitheryToolServerClient'
+          type: array
+          title: Clients
+      type: object
+      required:
+        - org_id
+        - providers
+        - servers
+        - tools
+        - clients
+      title: InitializeResponse
+      description: Response for the SDK to initialize.
     IntegrationAuthScheme:
       type: string
       enum:
@@ -2009,6 +2101,10 @@ components:
       title: MCPServerConfig
     MCPToolServerClient:
       properties:
+        server_id:
+          type: string
+          format: uuid
+          title: Server Id
         client_type:
           type: string
           const: mcp
@@ -2026,6 +2122,7 @@ components:
           title: Url
       type: object
       required:
+        - server_id
         - client_type
         - transport_type
         - url
@@ -2574,6 +2671,51 @@ components:
         - orgID
         - image
       title: ServerSpec
+    SmitheryConnectionInfo:
+      properties:
+        type:
+          type: string
+          enum:
+            - ws
+            - http
+          title: Type
+        deployment_url:
+          type: string
+          minLength: 1
+          format: uri
+          title: Deployment Url
+        config_schema:
+          anyOf:
+            - type: object
+            - type: boolean
+          title: Config Schema
+          default: true
+      type: object
+      required:
+        - type
+      title: SmitheryConnectionInfo
+    SmitheryToolServerClient:
+      properties:
+        server_id:
+          type: string
+          format: uuid
+          title: Server Id
+        client_type:
+          type: string
+          const: smithery
+          title: Client Type
+        connections:
+          items:
+            $ref: '#/components/schemas/SmitheryConnectionInfo'
+          type: array
+          title: Connections
+      type: object
+      required:
+        - server_id
+        - client_type
+        - connections
+      title: SmitheryToolServerClient
+      description: A client for a tool server that is a smithery server.
     Strategy:
       properties:
         recipe_id:
@@ -2779,10 +2921,6 @@ components:
       description: Identification details about a tool in an integration.
     ToolServer:
       properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
         provider_id:
           type: string
           format: uuid
@@ -2790,11 +2928,18 @@ components:
         name:
           type: string
           title: Name
+        properties:
+          type: object
+          title: Properties
+        id:
+          type: string
+          format: uuid
+          title: Id
       type: object
       required:
-        - id
         - provider_id
         - name
+        - id
       title: ToolServer
     ToolServerProvider:
       properties:

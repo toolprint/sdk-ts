@@ -1,4 +1,4 @@
-import { Policy, ToolProperties } from 'core/api/types.js'
+import { Policy, ToolProperties, ToolServerClient } from './core/api/types.js'
 
 export type ToolServerProviderId = string
 export type ToolServerId = string
@@ -83,6 +83,9 @@ export interface ToolDetails extends BasicToolDetails {
 
   // The tool policy that has been applied to this tool.
   policy: Policy
+
+  // A function that can be used to equip the tool.
+  equip: () => Promise<EquippedTool>
 }
 
 /**
@@ -91,6 +94,20 @@ export interface ToolDetails extends BasicToolDetails {
 export interface ToolHandle {
   call: (input: ToolCallInput) => Promise<ToolCallResponse<any>>
   callSync: (input: ToolCallInput) => ToolCallResponse<any>
+}
+
+/**
+ * A connection to a tool server that is used to call the tool.
+ */
+export interface ToolServerConnection {
+  initialize: () => Promise<void>
+  getHandle: (toolDetails: BasicToolDetails) => Promise<ToolHandle>
+  close: () => Promise<void>
+}
+
+export interface ConnectionManager {
+  connect: (client: ToolServerClient) => Promise<ToolServerConnection>
+  close: () => Promise<void>
 }
 
 /**
@@ -123,24 +140,26 @@ export interface ScoredResult<T> {
   result: T
 }
 
-export interface ToolCache {
-  // Querying methods
-  listTools(): Promise<Map<ToolId, BasicToolDetails>>
+export interface ToolDetailsStore {
+  listTools(): Promise<Map<ToolId, BasicToolDetails>> // ! Potentially non-scalable (use filter instead)
   listIntegrations(): Promise<string[]>
   filterTools(toolFilter?: FilterOptions): Promise<Map<ToolId, ToolDetails>>
-  get(toolId: ToolId): Promise<EquippedTool>
-  search(query: string): Promise<Array<ScoredResult<EquippedTool>>>
+}
+
+/**
+ * A cache of tool details that can be used to query and refresh tool details.
+ */
+export interface ToolCache extends ToolDetailsStore {
+  get(toolId: ToolId): Promise<ToolDetails>
+  search(query: string): Promise<Array<ScoredResult<ToolDetails>>>
 
   // Housekeeping methods
   refresh(): Promise<boolean>
-  refreshTool(toolId: ToolId): Promise<EquippedTool>
+  refreshTool(toolId: ToolId): Promise<ToolDetails> // Potentially not needed
   cleanup(): Promise<void>
 }
 
-export interface BaseToolbox<T> {
-  listTools(): Promise<Map<ToolId, BasicToolDetails>>
-  listIntegrations(): Promise<string[]>
-  filterTools(toolFilter?: FilterOptions): Promise<Map<ToolId, ToolDetails>>
+export interface BaseToolbox<T> extends ToolDetailsStore {
   get(toolId: ToolId): Promise<T>
   search(query: string): Promise<Array<ScoredResult<T>>>
   close(): Promise<void>

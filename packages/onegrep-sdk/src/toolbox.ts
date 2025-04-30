@@ -2,7 +2,6 @@ import { clientFromConfig, OneGrepApiClient } from './core/api/client.js'
 import {
   BaseToolbox,
   ToolCache,
-  EquippedTool,
   FilterOptions,
   ToolId,
   ScoredResult,
@@ -11,7 +10,7 @@ import {
 } from './types.js'
 import { UniversalToolCache } from './toolcache.js'
 
-export class Toolbox implements BaseToolbox<EquippedTool> {
+export class Toolbox implements BaseToolbox<ToolDetails> {
   apiClient: OneGrepApiClient
   toolCache: ToolCache
 
@@ -34,11 +33,11 @@ export class Toolbox implements BaseToolbox<EquippedTool> {
     return this.toolCache.filterTools(options)
   }
 
-  async get(toolId: ToolId): Promise<EquippedTool> {
+  async get(toolId: ToolId): Promise<ToolDetails> {
     return this.toolCache.get(toolId)
   }
 
-  async search(query: string): Promise<Array<ScoredResult<EquippedTool>>> {
+  async search(query: string): Promise<Array<ScoredResult<ToolDetails>>> {
     return this.toolCache.search(query)
   }
 
@@ -53,6 +52,8 @@ export class Toolbox implements BaseToolbox<EquippedTool> {
 
 export async function createToolbox(apiClient: OneGrepApiClient) {
   const toolCache: ToolCache = new UniversalToolCache(apiClient)
+
+  // Make sure the tool cache is initialized on bootstrap
   const ok = await toolCache!.refresh()
 
   if (!ok) {
