@@ -10,7 +10,7 @@ import {
   Tool
 } from '@modelcontextprotocol/sdk/types.js'
 
-export interface ConnectedClient {
+export interface OldConnectedClient {
   name: string
   client: Client
 
@@ -19,10 +19,10 @@ export interface ConnectedClient {
   close: () => Promise<void>
 }
 
-export class ConnectedClientManager {
-  private clients: Map<string, ConnectedClient> = new Map<
+export class OldConnectedClientManager {
+  private clients: Map<string, OldConnectedClient> = new Map<
     string,
-    ConnectedClient
+    OldConnectedClient
   >()
 
   private apiKey: string | undefined
@@ -132,5 +132,5 @@ const createConnectedClient = async (
     close: async () => {
       await transport.close()
     }
-  } as ConnectedClient
+  } as OldConnectedClient
 }

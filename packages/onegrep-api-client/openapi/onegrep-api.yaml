@@ -66,6 +66,36 @@ paths:
                 $ref: '#/components/schemas/UserAccount'
       security:
         - HTTPBearer: []
+  /api/v1/account/service-token:
+    get:
+      tags:
+        - account
+      summary: Get Service Token
+      description: Returns the service token information for the authenticated user.
+      operationId: get_service_token_api_v1_account_service_token_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceTokenResponse'
+      security:
+        - HTTPBearer: []
+    post:
+      tags:
+        - account
+      summary: Rotate Service Token
+      operationId: rotate_service_token_api_v1_account_service_token_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceTokenResponse'
+      security:
+        - HTTPBearer: []
   /api/v1/account/:
     get:
       tags:
@@ -1510,6 +1540,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/sdk/service-token:
+    get:
+      tags:
+        - sdk
+      summary: Get Service Token
+      description: Returns the service token information for the authenticated user.
+      operationId: get_service_token_api_v1_sdk_service_token_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceTokenResponse'
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
 components:
   schemas:
     AccessPolicyType:
@@ -1805,14 +1852,20 @@ components:
       title: IngressConfig
     InitializeResponse:
       properties:
-        org_id:
-          type: string
-          title: Org Id
-        doppler_service_token:
-          anyOf:
-            - type: string
-            - type: 'null'
-          title: Doppler Service Token
+        clients:
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/MCPToolServerClient'
+              - $ref: '#/components/schemas/BlaxelToolServerClient'
+              - $ref: '#/components/schemas/SmitheryToolServerClient'
+            discriminator:
+              propertyName: client_type
+              mapping:
+                blaxel: '#/components/schemas/BlaxelToolServerClient'
+                mcp: '#/components/schemas/MCPToolServerClient'
+                smithery: '#/components/schemas/SmitheryToolServerClient'
+          type: array
+          title: Clients
         providers:
           items:
             $ref: '#/components/schemas/ToolServerProvider'
@@ -1828,27 +1881,25 @@ components:
             $ref: '#/components/schemas/Tool'
           type: array
           title: Tools
-        clients:
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/MCPToolServerClient'
-              - $ref: '#/components/schemas/BlaxelToolServerClient'
-              - $ref: '#/components/schemas/SmitheryToolServerClient'
-            discriminator:
-              propertyName: client_type
-              mapping:
-                blaxel: '#/components/schemas/BlaxelToolServerClient'
-                mcp: '#/components/schemas/MCPToolServerClient'
-                smithery: '#/components/schemas/SmitheryToolServerClient'
-          type: array
-          title: Clients
+        doppler_service_token:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Doppler Service Token
+        user_id:
+          type: string
+          title: User Id
+        org_id:
+          type: string
+          title: Org Id
       type: object
       required:
-        - org_id
+        - clients
         - providers
         - servers
         - tools
-        - clients
+        - user_id
+        - org_id
       title: InitializeResponse
       description: Response for the SDK to initialize.
     IntegrationAuthScheme:
@@ -2671,6 +2722,16 @@ components:
         - orgID
         - image
       title: ServerSpec
+    ServiceTokenResponse:
+      properties:
+        doppler_service_token:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Doppler Service Token
+      type: object
+      title: ServiceTokenResponse
+      description: Response including the service token for the SDK to use.
     SmitheryConnectionInfo:
       properties:
         type:
@@ -3006,6 +3067,12 @@ components:
         api_key:
           type: string
           title: Api Key
+        doppler_service_token_id:
+          anyOf:
+            - type: string
+              format: uuid
+            - type: 'null'
+          title: Doppler Service Token Id
       type: object
       required:
         - id

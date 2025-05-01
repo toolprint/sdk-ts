@@ -73,6 +73,7 @@
     "@modelcontextprotocol/sdk": "^1.10.2",
     "@onegrep/json-schema-to-zod": "1.2.1",
     "@zodios/core": "^10.9.6",
+    "@dopplerhq/node-sdk": "^1.3.0",
     "ajv": "^8.17.1",
     "buffer": "^6.0.3",
     "cacheable": "^1.8.10",

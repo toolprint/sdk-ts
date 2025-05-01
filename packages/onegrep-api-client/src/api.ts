@@ -14,6 +14,9 @@ type UserAccount = {
     | ((string | null) | Array<string | null>)
     | undefined
   api_key: string
+  doppler_service_token_id?:
+    | ((string | null) | Array<string | null>)
+    | undefined
 }
 type Organization = {
   created_at?: ((string | null) | Array<string | null>) | undefined
@@ -84,14 +87,54 @@ type ValidationError = {
   type: string
 }
 type InitializeResponse = {
-  org_id: string
-  doppler_service_token?: ((string | null) | Array<string | null>) | undefined
-  providers: Array<ToolServerProvider>
-  servers: Array<ToolServer>
-  tools: Array<Tool>
   clients: Array<
     MCPToolServerClient | BlaxelToolServerClient | SmitheryToolServerClient
   >
+  providers: Array<ToolServerProvider>
+  servers: Array<ToolServer>
+  tools: Array<Tool>
+  doppler_service_token?: ((string | null) | Array<string | null>) | undefined
+  user_id: string
+  org_id: string
+}
+type MCPToolServerClient = {
+  server_id: string
+  client_type: string
+  /**
+   * @enum sse, websocket
+   */
+  transport_type: 'sse' | 'websocket'
+  /**
+   * @minLength 1
+   */
+  url: string
+}
+type BlaxelToolServerClient = {
+  server_id: string
+  client_type: string
+  blaxel_workspace: string
+  blaxel_function: string
+}
+type SmitheryToolServerClient = {
+  server_id: string
+  client_type: string
+  connections: Array<SmitheryConnectionInfo>
+}
+type SmitheryConnectionInfo = {
+  /**
+   * @enum ws, http
+   */
+  type: 'ws' | 'http'
+  deployment_url?: /**
+   * @minLength 1
+   */
+  string | undefined
+  config_schema?:
+    | /**
+     * @default true
+     */
+    (({} | boolean) | Array<{} | boolean>)
+    | undefined
 }
 type ToolServerProvider = {
   id: string
@@ -140,45 +183,6 @@ type Tool = {
     (({} | boolean) | Array<{} | boolean>)
     | undefined
   id: string
-}
-type MCPToolServerClient = {
-  server_id: string
-  client_type: string
-  /**
-   * @enum sse, websocket
-   */
-  transport_type: 'sse' | 'websocket'
-  /**
-   * @minLength 1
-   */
-  url: string
-}
-type BlaxelToolServerClient = {
-  server_id: string
-  client_type: string
-  blaxel_workspace: string
-  blaxel_function: string
-}
-type SmitheryToolServerClient = {
-  server_id: string
-  client_type: string
-  connections: Array<SmitheryConnectionInfo>
-}
-type SmitheryConnectionInfo = {
-  /**
-   * @enum ws, http
-   */
-  type: 'ws' | 'http'
-  deployment_url?: /**
-   * @minLength 1
-   */
-  string | undefined
-  config_schema?:
-    | /**
-     * @default true
-     */
-    (({} | boolean) | Array<{} | boolean>)
-    | undefined
 }
 type IntegrationConfigDetails = {
   name: string
@@ -524,8 +528,14 @@ const UserAccount: z.ZodType<UserAccount> = z
     updated_at: z.union([z.string(), z.null()]).optional(),
     id: z.string(),
     belongs_to_organization_id: z.union([z.string(), z.null()]).optional(),
-    api_key: z.string()
+    api_key: z.string(),
+    doppler_service_token_id: z.union([z.string(), z.null()]).optional()
   })
+  .strict()
+  .passthrough()
+const ServiceTokenResponse = z
+  .object({ doppler_service_token: z.union([z.string(), z.null()]) })
+  .partial()
   .strict()
   .passthrough()
 const Organization: z.ZodType<Organization> = z
@@ -1050,18 +1060,19 @@ const SearchResponse_ScoredItem_Recipe__: z.ZodType<SearchResponse_ScoredItem_Re
     .passthrough()
 const InitializeResponse: z.ZodType<InitializeResponse> = z
   .object({
-    org_id: z.string(),
-    doppler_service_token: z.union([z.string(), z.null()]).optional(),
-    providers: z.array(ToolServerProvider),
-    servers: z.array(ToolServer),
-    tools: z.array(Tool),
     clients: z.array(
       z.union([
         MCPToolServerClient,
         BlaxelToolServerClient,
         SmitheryToolServerClient
       ])
-    )
+    ),
+    providers: z.array(ToolServerProvider),
+    servers: z.array(ToolServer),
+    tools: z.array(Tool),
+    doppler_service_token: z.union([z.string(), z.null()]).optional(),
+    user_id: z.string(),
+    org_id: z.string()
   })
   .strict()
   .passthrough()
@@ -1188,6 +1199,7 @@ export const schemas = {
   AuthenticationMethod,
   AuthenticationStatus,
   UserAccount,
+  ServiceTokenResponse,
   Organization,
   AccountInformation,
   AccountCreateRequest,
@@ -1321,6 +1333,21 @@ if a OneGrep account exists. If yes, then it will be considered authenticated.
         schema: HTTPValidationError
       }
     ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/account/service-token',
+    alias: 'get_service_token_api_v1_account_service_token_get',
+    description: `Returns the service token information for the authenticated user.`,
+    requestFormat: 'json',
+    response: ServiceTokenResponse
+  },
+  {
+    method: 'post',
+    path: '/api/v1/account/service-token',
+    alias: 'rotate_service_token_api_v1_account_service_token_post',
+    requestFormat: 'json',
+    response: ServiceTokenResponse
   },
   {
     method: 'get',
@@ -1986,6 +2013,14 @@ The recipe must belong to the user&#x27;s organization.`,
         schema: HTTPValidationError
       }
     ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/sdk/service-token',
+    alias: 'get_service_token_api_v1_sdk_service_token_get',
+    description: `Returns the service token information for the authenticated user.`,
+    requestFormat: 'json',
+    response: ServiceTokenResponse
   },
   {
     method: 'post',

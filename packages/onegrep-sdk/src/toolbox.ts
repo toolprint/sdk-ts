@@ -9,6 +9,7 @@ import {
   BasicToolDetails
 } from './types.js'
 import { UniversalToolCache } from './toolcache.js'
+import { ToolServerConnectionManager } from './connection.js'
 
 export class Toolbox implements BaseToolbox<ToolDetails> {
   apiClient: OneGrepApiClient
@@ -51,7 +52,12 @@ export class Toolbox implements BaseToolbox<ToolDetails> {
 }
 
 export async function createToolbox(apiClient: OneGrepApiClient) {
-  const toolCache: ToolCache = new UniversalToolCache(apiClient)
+  const connectionManager = new ToolServerConnectionManager()
+
+  const toolCache: ToolCache = new UniversalToolCache(
+    apiClient,
+    connectionManager
+  )
 
   // Make sure the tool cache is initialized on bootstrap
   const ok = await toolCache!.refresh()

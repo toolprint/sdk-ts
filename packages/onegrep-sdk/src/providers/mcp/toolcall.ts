@@ -3,7 +3,8 @@ import {
   CallToolResult,
   TextContent,
   ImageContent,
-  EmbeddedResource
+  EmbeddedResource,
+  CallToolRequest
 } from '@modelcontextprotocol/sdk/types.js'
 import {
   ToolCallResultContent,
@@ -11,12 +12,17 @@ import {
   ToolCallOutput,
   TextResultContent,
   BinaryResultContent,
-  ToolCallOutputMode
-  // JsonSchema
+  ToolCallOutputMode,
+  ToolCallResponse,
+  ToolCallInput,
+  BasicToolDetails,
+  ToolCallError
 } from '../../types.js'
 import { log } from '@repo/utils'
 import { ToolDetails } from '../../types.js'
-// import { jsonSchemaUtils } from '../schema.js'
+import { jsonSchemaUtils } from '../../schema.js'
+import { Client } from '@modelcontextprotocol/sdk/client/index.js'
+import { z } from 'zod'
 
 export type McpCallToolResultContent = Array<
   TextContent | ImageContent | EmbeddedResource
@@ -170,4 +176,70 @@ export function parseMcpResult<T>(
     toZod: () => undefined
   } as ToolCallOutput<T>
   // }
+}
+
+// TODO: How to determine the output type?
+export const parseResultFunc = (
+  result: CallToolResult
+): ToolCallResponse<any> => {
+  log.debug('Parsing tool result')
+  const resultContent = result.content as McpCallToolResultContent
+  const content = parseMcpContent(resultContent)
+  return {
+    isError: false,
+    content: content,
+    mode: 'single',
+    toZod: () => {
+      return z.object({})
+    }
+  }
+}
+
+/**
+ * Call a tool using the MCP protocol, wrapped in our Input/Output schema validation.
+ *
+ * @param mcpClient - The MCP client to use.
+ * @param toolDetails - The details of the tool to call.
+ * @param toolCallInput - The input to the tool call.
+ */
+export const mcpCallTool = async (
+  mcpClient: Client,
+  toolDetails: BasicToolDetails,
+  toolCallInput: ToolCallInput
+): Promise<ToolCallResponse<any>> => {
+  log.info(
+    `Calling MCP tool ${toolDetails.name} with input ${JSON.stringify(toolCallInput)}`
+  )
+  try {
+    const validator = jsonSchemaUtils.getValidator(toolDetails.inputSchema)
+    const valid = validator(toolCallInput.args)
+    if (!valid) {
+      throw new Error('Invalid tool input arguments')
+    }
+    const callToolRequest: CallToolRequest = {
+      method: 'tools/call',
+      params: {
+        name: toolDetails.name,
+        arguments: toolCallInput.args
+      }
+    }
+    const result = await mcpClient.callTool(callToolRequest.params)
+    if (result.isError) {
+      log.error(`Tool call failed result: ${JSON.stringify(result)}`)
+      throw new Error('Tool call failed')
+    }
+    return parseResultFunc(result as CallToolResult)
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        isError: true,
+        message: error.message
+      } as ToolCallError
+    } else {
+      return {
+        isError: true,
+        message: 'An unknown error occurred'
+      } as ToolCallError
+    }
+  }
 }

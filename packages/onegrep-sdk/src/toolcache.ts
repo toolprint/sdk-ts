@@ -21,25 +21,29 @@ import {
   ToolDetails,
   BasicToolDetails,
   EquippedTool,
-  ToolHandle
+  ToolHandle,
+  ConnectionManager
 } from './types.js'
 
 import { Keyv } from 'keyv'
 import { Cache, createCache } from 'cache-manager'
-import { ToolServerConnectionManager } from './connection.js'
 
 export class UniversalToolCache implements ToolCache {
   private highLevelClient: OneGrepApiHighLevelClient
 
-  private connectionManager: ToolServerConnectionManager
+  private connectionManager: ConnectionManager
 
   private serverNameCache: Cache
   private serverClientCache: Cache
   private toolBasicDetailsCache: Cache
 
-  constructor(apiClient: OneGrepApiClient) {
+  constructor(
+    apiClient: OneGrepApiClient,
+    connectionManager: ConnectionManager
+  ) {
     this.highLevelClient = new OneGrepApiHighLevelClient(apiClient)
-    this.connectionManager = new ToolServerConnectionManager()
+
+    this.connectionManager = connectionManager
 
     // Configure caches with TTL and max size
     this.serverNameCache = createCache({

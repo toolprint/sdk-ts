@@ -1,3 +1,4 @@
+import { SecretManager } from './secrets/types.js'
 import {
   BlaxelToolServerClient,
   SmitheryToolServerClient,
@@ -5,7 +6,59 @@ import {
 } from './core/api/types.js'
 import { createBlaxelConnection } from './providers/blaxel/connection.js'
 import { createSmitheryConnection } from './providers/smithery/connection.js'
-import { ConnectionManager, ToolServerConnection } from './types.js'
+import {
+  ConnectionManager,
+  ToolServerConnection,
+  ToolServerId
+} from './types.js'
+import {
+  MultiTransportClientSession,
+  RefreshableMultiTransportClientSession
+} from './providers/mcp/session.js'
+import { ClientSessionFactory } from './providers/mcp/session.js'
+import { ClientSession } from './providers/mcp/session.js'
+import { ClientSessionManager } from './providers/mcp/session.js'
+
+import { createBlaxelMcpClientTransports as blaxelMcpTransportOptions } from './providers/blaxel/transport.js'
+import { createSmitheryTransports as smitheryMcpTransportOptions } from './providers/smithery/transport.js'
+
+/**
+ * Creates a client session for a tool server based on the client type.
+ */
+const toolServerSessionFactory: ClientSessionFactory<
+  ToolServerClient,
+  ClientSession
+> = {
+  create: async (client: ToolServerClient) => {
+    if (client.client_type === 'blaxel') {
+      const blaxelClient = client as BlaxelToolServerClient
+      return new RefreshableMultiTransportClientSession(
+        blaxelMcpTransportOptions(blaxelClient.blaxel_function)
+      )
+    }
+    if (client.client_type === 'smithery') {
+      const smitheryClient = client as SmitheryToolServerClient
+      return new MultiTransportClientSession(
+        smitheryMcpTransportOptions(smitheryClient)
+      )
+    }
+    throw new Error(
+      `Unsupported tool server client type: ${client.client_type}`
+    )
+  }
+}
+
+/**
+ * Manages tool server sessions for different tool servers.
+ *
+ * Sessions are cached by tool server id
+ *
+ * Must use close() to clean up sessions
+ */
+export const toolServerSessionManager = new ClientSessionManager<
+  ToolServerClient,
+  ClientSession
+>(toolServerSessionFactory, (client) => Promise.resolve(client.server_id))
 
 /**
  * Manages connections to tool servers of different types.
@@ -15,7 +68,7 @@ import { ConnectionManager, ToolServerConnection } from './types.js'
  * Must use close() to clean up connections
  */
 export class ToolServerConnectionManager implements ConnectionManager {
-  private connections: Map<string, ToolServerConnection>
+  private connections: Map<ToolServerId, ToolServerConnection>
 
   constructor() {
     this.connections = new Map()
@@ -28,7 +81,10 @@ export class ToolServerConnectionManager implements ConnectionManager {
       return createBlaxelConnection(client as BlaxelToolServerClient)
     }
     if (client.client_type === 'smithery') {
-      return createSmitheryConnection(client as SmitheryToolServerClient)
+      return createSmitheryConnection(
+        client as SmitheryToolServerClient,
+        await toolServerSessionManager.getSession(client)
+      )
     }
 
     throw new Error(
