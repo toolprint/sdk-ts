@@ -1,7 +1,7 @@
 import { log } from '@repo/utils'
 
-import { OneGrepApiClient } from './core/api/client.js'
-import { OneGrepApiHighLevelClient } from './core/api/high.js'
+import { OneGrepApiClient } from '~/core/index.js'
+import { OneGrepApiHighLevelClient } from '~/core/index.js'
 import {
   ToolProperties,
   ToolServerClient,
@@ -9,7 +9,7 @@ import {
   ToolResource,
   Tool,
   InitializeResponse
-} from './core/api/types.js'
+} from '~/core/index.js'
 
 import {
   ScoredResult,
@@ -23,10 +23,11 @@ import {
   EquippedTool,
   ToolHandle,
   ConnectionManager
-} from './types.js'
+} from '~/types.js'
 
 import { Keyv } from 'keyv'
 import { Cache, createCache } from 'cache-manager'
+import { ToolServerConnectionManager } from '~/connection.js'
 
 export class UniversalToolCache implements ToolCache {
   private highLevelClient: OneGrepApiHighLevelClient
@@ -332,4 +333,9 @@ export class UniversalToolCache implements ToolCache {
   async cleanup(): Promise<void> {
     await this.connectionManager.close()
   }
+}
+
+export async function createToolCache(apiClient: OneGrepApiClient) {
+  const connectionManager = new ToolServerConnectionManager()
+  return new UniversalToolCache(apiClient, connectionManager)
 }

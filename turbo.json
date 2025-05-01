@@ -140,12 +140,14 @@
       "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
       "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
       "dependsOn": [],
+      "cache": false,
       "persistent": true
     },
     "@repo/blaxel-langgraph-agent#bl:chat": {
       "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
       "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
       "dependsOn": [],
+      "cache": false,
       "persistent": true
     }
   }

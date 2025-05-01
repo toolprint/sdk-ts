@@ -1,4 +1,4 @@
-import { Policy, ToolProperties, ToolServerClient } from './core/api/types.js'
+import { Policy, ToolProperties, ToolServerClient } from '~/core/api/types.js'
 
 export type ToolServerProviderId = string
 export type ToolServerId = string

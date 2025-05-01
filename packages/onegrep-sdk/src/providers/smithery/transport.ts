@@ -1,7 +1,9 @@
 import { createSmitheryUrl } from '@smithery/sdk'
+
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
-import { SmitheryToolServerClient } from '../../core/api/types.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
+
+import { SmitheryToolServerClient } from '~/core/index.js'
 
 export function createSmitheryTransports(
   toolServerClient: SmitheryToolServerClient

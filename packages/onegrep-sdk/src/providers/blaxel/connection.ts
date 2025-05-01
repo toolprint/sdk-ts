@@ -5,10 +5,11 @@ import {
   ToolHandle,
   ToolServerConnection,
   ToolCallError
-} from '../../types.js'
-import { BlaxelToolServerClient } from '../../core/api/types.js'
-import { parseResultFunc } from '../mcp/toolcall.js'
-import { jsonSchemaUtils } from '../../schema.js'
+} from '~/types.js'
+import { jsonSchemaUtils } from '~/schema.js'
+import { parseResultFunc } from '~/providers/mcp/toolcall.js'
+
+import { BlaxelToolServerClient } from '~/core/index.js'
 
 import {
   McpTool as BlaxelMcpClient,

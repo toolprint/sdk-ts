@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "rootDir": ".",
-    "baseUrl": "src",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"]
+    },
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

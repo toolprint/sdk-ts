@@ -5,7 +5,9 @@ import {
   FetchLikeResponse
 } from 'eventsource'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
-import { RemoteClientConfig } from './../../../core/api/types.js'
+
+import { RemoteClientConfig } from '~/core/index.js'
+
 import { log } from '@repo/utils'
 
 // Get an SSE transport for a remote client

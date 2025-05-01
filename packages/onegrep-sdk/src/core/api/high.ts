@@ -1,4 +1,5 @@
-import { ToolServerId } from '../../types.js'
+import { ToolServerId } from '~/types.js'
+
 import { OneGrepApiClient } from './client.js'
 import {
   SearchResponseScoredItemTool,

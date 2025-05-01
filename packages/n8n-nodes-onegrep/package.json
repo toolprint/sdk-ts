@@ -2,7 +2,7 @@
   "name": "@onegrep/n8n-nodes-onegrep",
   "description": "OneGrep Node for n8n",
   "version": "0.0.7",
-  "private": false,
+  "private": true,
   "license": "MIT",
   "author": {
     "name": "OneGrep, Inc.",

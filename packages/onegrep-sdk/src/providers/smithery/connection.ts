@@ -1,16 +1,16 @@
-import { SmitheryToolServerClient } from '../../core/api/types.js'
+import { SmitheryToolServerClient } from '~/core/index.js'
 import {
   BasicToolDetails,
   ToolCallInput,
   ToolCallResponse,
   ToolHandle,
   ToolServerConnection
-} from '../../types.js'
-import { mcpCallTool } from '../../providers/mcp/toolcall.js'
+} from '~/types.js'
+
+import { mcpCallTool } from '~/providers/mcp/toolcall.js'
+import { ClientSession } from '~/providers/mcp/session.js'
 
 import { log } from '@repo/utils'
-
-import { ClientSession } from 'providers/mcp/session.js'
 
 /*
  * A connection to a Smithery tool server using HTTP Streaming transport

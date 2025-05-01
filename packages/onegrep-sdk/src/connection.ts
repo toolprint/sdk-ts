@@ -1,26 +1,25 @@
-import { SecretManager } from './secrets/types.js'
 import {
   BlaxelToolServerClient,
   SmitheryToolServerClient,
   ToolServerClient
-} from './core/api/types.js'
-import { createBlaxelConnection } from './providers/blaxel/connection.js'
-import { createSmitheryConnection } from './providers/smithery/connection.js'
+} from '~/core/index.js'
+import { createBlaxelConnection } from '~/providers/blaxel/connection.js'
+import { createSmitheryConnection } from '~/providers/smithery/connection.js'
 import {
   ConnectionManager,
   ToolServerConnection,
   ToolServerId
-} from './types.js'
+} from '~/types.js'
 import {
   MultiTransportClientSession,
   RefreshableMultiTransportClientSession
-} from './providers/mcp/session.js'
-import { ClientSessionFactory } from './providers/mcp/session.js'
-import { ClientSession } from './providers/mcp/session.js'
-import { ClientSessionManager } from './providers/mcp/session.js'
+} from '~/providers/mcp/session.js'
+import { ClientSessionFactory } from '~/providers/mcp/session.js'
+import { ClientSession } from '~/providers/mcp/session.js'
+import { ClientSessionManager } from '~/providers/mcp/session.js'
 
-import { createBlaxelMcpClientTransports as blaxelMcpTransportOptions } from './providers/blaxel/transport.js'
-import { createSmitheryTransports as smitheryMcpTransportOptions } from './providers/smithery/transport.js'
+import { createBlaxelMcpClientTransports as blaxelMcpTransportOptions } from '~/providers/blaxel/transport.js'
+import { createSmitheryTransports as smitheryMcpTransportOptions } from '~/providers/smithery/transport.js'
 
 /**
  * Creates a client session for a tool server based on the client type.

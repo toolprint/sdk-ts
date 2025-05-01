@@ -1,5 +1,5 @@
 import { Ajv } from 'ajv'
-import { JsonSchema, EquippedTool } from './types.js'
+import { JsonSchema, EquippedTool } from '~/types.js'
 import {
   jsonSchemaToZod,
   JsonSchema as ToZodJsonSchema

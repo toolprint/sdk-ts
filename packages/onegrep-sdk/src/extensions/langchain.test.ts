@@ -2,9 +2,9 @@ import { describe, it, expect, beforeAll } from 'vitest'
 import { createLangchainToolbox, LangchainToolbox } from './langchain.js'
 import { ToolInputParsingException } from '@langchain/core/tools'
 import { log } from '@repo/utils'
-import { createToolbox, Toolbox } from '../toolbox.js'
-import { clientFromConfig } from '../core/api/client.js'
-import { FilterOptions, ToolCallOutput } from '../types.js'
+import { createToolbox, Toolbox } from '~/toolbox.js'
+import { clientFromConfig } from '~/core/api/client.js'
+import { FilterOptions, ToolCallOutput } from '~/types.js'
 
 describe('Langchain Toolbox Tests', () => {
   let toolbox: Toolbox

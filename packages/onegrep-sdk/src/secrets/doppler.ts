@@ -1,9 +1,10 @@
 import DopplerSDK, { NamesResponse } from '@dopplerhq/node-sdk'
 
 import { SecretManager } from './types.js'
-import { OneGrepApiClient } from '../core/api/client.js'
-import { OneGrepApiHighLevelClient } from '../core/api/high.js'
-import { clientFromConfig } from '../core/api/client.js'
+
+import { OneGrepApiClient } from '~/core/index.js'
+import { OneGrepApiHighLevelClient } from '~/core/index.js'
+import { clientFromConfig } from '~/core/index.js'
 
 /**
  * A secret manager that uses pre-configured Doppler to store and retrieve SDK secrets.
