@@ -5,7 +5,7 @@ import {
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import { Implementation } from '@modelcontextprotocol/sdk/types.js'
 
-import { log } from '@repo/utils'
+import { log } from '~/core/log.js'
 
 class SettableTimer {
   private timer?: NodeJS.Timeout

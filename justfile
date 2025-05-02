@@ -94,28 +94,15 @@ bl-chat:
 gateway:
     pnpm turbo run start --filter=@onegrep/gateway
 
-# test all packages
+# test all packages (use `test name=".*"` to filter by test name regex)
 [group('test')]
-test:
-    pnpm turbo run test
+test name=".*":
+    pnpm turbo run test -- --testNamePattern={{name}}
 
-# test the sdk package
+# test the sdk package (use `test-sdk ".*"` to filter by test name regex)
 [group('test')]
-test-sdk:
-    pnpm turbo run test --filter=@onegrep/sdk
-
-# test the sdk package with blaxel toolcache
-[group('test')]
-test-blaxel-client:
-    cd packages/onegrep-sdk && pnpm test-debug src/providers/blaxel/clientManager.test.ts --run --testNamePattern="BlaxelClientManagerTests"
-
-[group('test')]
-test-toolbox:
-    cd packages/onegrep-sdk && pnpm test-debug src/toolbox.test.ts --run --testNamePattern="Toolbox Tests"
-
-[group('test')]
-test-toolcache:
-    cd packages/onegrep-sdk && pnpm test-debug src/toolcache.test.ts --run --testNamePattern="UniversalToolCacheTests"
+test-sdk name=".*":
+    pnpm turbo run test --filter=@onegrep/sdk -- --testNamePattern={{name}}
 
 # inspect the gateway
 [group('mcp-inspector')]
@@ -161,6 +148,11 @@ version-sdk:
 [group('publish')]
 publish-sdk:
     pnpm turbo run publish:npm --filter=@onegrep/sdk
+
+# publish the sdk (dry run)
+[group('publish')]
+publish-sdk-dry-run:
+    pnpm turbo run publish:npm:dry-run --filter=@onegrep/sdk
 
 # clean dist folders
 [group('clean')]

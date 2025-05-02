@@ -1,42 +1,67 @@
 import { dummyLogger, Logger } from 'ts-log'
-import { Env, getEnv } from './env.js'
+import { LogLevelDesc } from 'loglevel'
+import { z } from 'zod'
 
-function silentLogger(): Logger {
-  return dummyLogger
-}
+import { consoleLogger } from './loggers/console.js'
+import { fileLogger } from './loggers/file.js'
+import { multiLogger } from './loggers/multi.js'
 
-function consoleLogger(): Logger {
-  return console
-}
+import { getEnv, getEnvIssues, loggingEnvSchema, logModes } from './env.js'
 
-async function getLoggerFromEnv(env: Env): Promise<Logger> {
+export const silentLogger: Logger = dummyLogger
+
+export function getLogger(
+  logMode: z.infer<typeof logModes>,
+  loggerName?: string,
+  logLevelName?: string
+): Logger {
   let logger: Logger
-  if (env.LOG_MODE === 'silent') {
-    logger = silentLogger()
-  } else if (env.LOG_MODE === 'console') {
-    logger = consoleLogger()
+
+  // Convert the string log level to a LogLevelDesc (so consumers don't need to import loglevel)
+  const logLevelDesc = logLevelName as LogLevelDesc | undefined
+
+  if (logMode === 'off') {
+    logger = silentLogger
+  } else if (logMode === 'console') {
+    logger = consoleLogger(loggerName, logLevelDesc)
+  } else if (logMode === 'file') {
+    logger = fileLogger(loggerName, logLevelDesc)
+  } else if (logMode === 'all') {
+    const allLoggers: Logger[] = [
+      consoleLogger(loggerName, logLevelDesc),
+      fileLogger(loggerName, logLevelDesc)
+    ]
+    logger = multiLogger(allLoggers)
   } else {
-    throw new Error(`Invalid log mode: ${env.LOG_MODE}`)
+    throw new Error(`Unsupported log mode: ${logMode}`)
   }
+
   return logger
 }
 
-export let log: Logger = silentLogger()
+const initRootLogger = (): Logger => {
+  const issues = getEnvIssues(loggingEnvSchema)
+  if (issues) {
+    console.error('Invalid environment variables:', issues)
+    process.exit(1)
+  }
+  const env = getEnv(loggingEnvSchema)
 
-function initLogger(): void {
-  const env = getEnv()
-  getLoggerFromEnv(env)
-    .then((logger) => {
-      log = logger
-    })
-    .catch((error) => {
-      log = consoleLogger()
-      log.error(
-        'Failed to initialize requested logger, using console logger',
-        error
-      )
-    })
-  log.info('Logger initialized')
+  try {
+    return getLogger(env.LOG_MODE, undefined, env.LOG_LEVEL)
+  } catch (error) {
+    console.error(
+      'Failed to initialize requested log mode, using console log mode',
+      error
+    )
+    return consoleLogger()
+  }
 }
 
-initLogger()
+/**
+ * The root logger for the application.
+ * This is initialized when the module is imported.
+ */
+export const log: Logger = initRootLogger()
+
+log.debug('Root logger initialized')

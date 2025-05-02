@@ -19,7 +19,7 @@ import {
 
 import { z, ZodTypeAny } from 'zod'
 
-import { log } from '@repo/utils'
+import { log } from '~/core/log.js'
 
 function ensureZodObject<T extends z.ZodTypeAny>(
   schema: T

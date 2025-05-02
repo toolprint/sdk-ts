@@ -1,5 +1,3 @@
-import { log } from '@repo/utils'
-
 import { OneGrepApiClient } from '~/core/index.js'
 import { OneGrepApiHighLevelClient } from '~/core/index.js'
 import {
@@ -28,6 +26,8 @@ import {
 import { Keyv } from 'keyv'
 import { Cache, createCache } from 'cache-manager'
 import { ToolServerConnectionManager } from '~/connection.js'
+
+import { log } from '~/core/log.js'
 
 export class UniversalToolCache implements ToolCache {
   private highLevelClient: OneGrepApiHighLevelClient

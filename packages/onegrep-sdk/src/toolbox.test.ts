@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { Toolbox, getToolbox } from '~/toolbox.js'
-import { log } from '@repo/utils'
+
 import {
   ToolCallError,
   ToolCallResponse,
@@ -9,8 +9,12 @@ import {
   ToolDetails,
   FilterOptions
 } from '~/types.js'
-// import { jsonSchemaUtils } from './schema.js'
+
 import 'dotenv/config'
+
+import { getLogger } from '@repo/utils'
+
+const log = getLogger('console', 'test')
 
 describe('Base Toolbox Tests', () => {
   let toolbox: Toolbox

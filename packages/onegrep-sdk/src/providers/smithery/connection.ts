@@ -10,7 +10,7 @@ import {
 import { mcpCallTool } from '~/providers/mcp/toolcall.js'
 import { ClientSession } from '~/providers/mcp/session.js'
 
-import { log } from '@repo/utils'
+import { log } from '~/core/log.js'
 
 /*
  * A connection to a Smithery tool server using HTTP Streaming transport

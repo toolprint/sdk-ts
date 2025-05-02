@@ -4,8 +4,10 @@ import {
   jsonSchemaToZod,
   JsonSchema as ToZodJsonSchema
 } from '@onegrep/json-schema-to-zod'
-import { log } from '@repo/utils'
+
 import { v5 as uuidv5 } from 'uuid'
+
+import { log } from '~/core/log.js'
 
 const TOOL_SCHEMA_NAMESPACE = uuidv5('onegrep-sdk-tool-schemas', uuidv5.DNS)
 const INPUT_SCHEMA_NAMESPACE = uuidv5('input', TOOL_SCHEMA_NAMESPACE)

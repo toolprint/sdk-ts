@@ -2,30 +2,28 @@ import { clientFromConfig } from '~/core/index.js'
 import { UniversalToolCache } from '~/toolcache.js'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { ToolServerConnectionManager } from '~/connection.js'
-import { SecretManager } from '~/secrets/index.js'
+// import { SecretManager } from '~/secrets/index.js'
 
-class MockSecretManager implements SecretManager {
-  private secrets: Map<string, string>
+// class MockSecretManager implements SecretManager {
+//   private secrets: Map<string, string>
 
-  constructor() {
-    this.secrets = new Map()
-  }
+//   constructor() {
+//     this.secrets = new Map()
+//   }
 
-  async getSecret(secretName: string): Promise<string> {
-    return this.secrets.get(secretName) ?? ''
-  }
+//   async getSecret(secretName: string): Promise<string> {
+//     return this.secrets.get(secretName) ?? ''
+//   }
 
-  async getSecretNames(): Promise<string[]> {
-    return ['test-secret']
-  }
-}
+//   async getSecretNames(): Promise<string[]> {
+//     return ['test-secret']
+//   }
+// }
 
 describe.skip('UniversalToolCacheTests', () => {
   let tc: UniversalToolCache
-  let secretManager: SecretManager
 
   beforeEach(async () => {
-    secretManager = new MockSecretManager()
     tc = new UniversalToolCache(
       clientFromConfig(),
       new ToolServerConnectionManager()

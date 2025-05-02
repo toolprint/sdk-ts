@@ -25,7 +25,7 @@ import {
 } from '~/types.js'
 import { jsonSchemaUtils } from '~/schema.js'
 
-import { log } from '@repo/utils'
+import { log } from '~/core/log.js'
 
 export type McpCallToolResultContent = Array<
   TextContent | ImageContent | EmbeddedResource

@@ -16,9 +16,10 @@ import {
   createToolbox,
   ToolDetails
 } from '@onegrep/sdk'
-import { log } from '@repo/utils'
 
 import { ToolCallInput, ToolCallResponse } from '@onegrep/sdk'
+
+import { log } from './log.js'
 
 export const ToolNamespaceDelimiter = '.'
 

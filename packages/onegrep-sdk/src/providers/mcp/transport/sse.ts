@@ -8,7 +8,7 @@ import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 
 import { RemoteClientConfig } from '~/core/index.js'
 
-import { log } from '@repo/utils'
+import { log } from '~/core/log.js'
 
 // Get an SSE transport for a remote client
 export const createSSEClientTransport = (

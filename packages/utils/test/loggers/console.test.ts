@@ -11,6 +11,7 @@ import {
 import { consoleLogger } from '../../src/loggers/console.js'
 import { Logger } from 'ts-log'
 import chalk from 'chalk'
+import loglevel from 'loglevel'
 
 describe('ConsoleLogger', () => {
   // Verify chalk is in the environment
@@ -22,8 +23,8 @@ describe('ConsoleLogger', () => {
   })
 
   let logger: Logger
-  let consoleSpy: {
-    log: MockInstance
+  let loglevelLoggerSpy: {
+    trace: MockInstance
     debug: MockInstance
     info: MockInstance
     warn: MockInstance
@@ -31,16 +32,18 @@ describe('ConsoleLogger', () => {
   }
 
   beforeEach(async () => {
-    // Spy on console methods
-    consoleSpy = {
-      log: vi.spyOn(console, 'log'),
-      debug: vi.spyOn(console, 'debug'),
-      info: vi.spyOn(console, 'info'),
-      warn: vi.spyOn(console, 'warn'),
-      error: vi.spyOn(console, 'error')
-    }
+    logger = await consoleLogger('utils-test', 'trace')
 
-    logger = await consoleLogger()
+    const loglevelLogger = loglevel.getLogger('utils-test')
+
+    // Spy on console methods
+    loglevelLoggerSpy = {
+      trace: vi.spyOn(loglevelLogger, 'trace'),
+      debug: vi.spyOn(loglevelLogger, 'debug'),
+      info: vi.spyOn(loglevelLogger, 'info'),
+      warn: vi.spyOn(loglevelLogger, 'warn'),
+      error: vi.spyOn(loglevelLogger, 'error')
+    }
   })
 
   afterEach(() => {
@@ -51,7 +54,7 @@ describe('ConsoleLogger', () => {
   it('should log trace messages', () => {
     const message = 'Trace message'
     logger.trace(message)
-    expect(consoleSpy.log).toHaveBeenCalledWith(
+    expect(loglevelLoggerSpy.trace).toHaveBeenCalledWith(
       expect.stringContaining(message)
     )
   })
@@ -60,7 +63,7 @@ describe('ConsoleLogger', () => {
     const message = 'Trace message'
     const obj = { a: 1, b: 2 }
     logger.trace(message, obj)
-    expect(consoleSpy.log).toHaveBeenCalledWith(
+    expect(loglevelLoggerSpy.trace).toHaveBeenCalledWith(
       expect.stringContaining(message),
       obj
     )
@@ -69,15 +72,25 @@ describe('ConsoleLogger', () => {
   it('should log debug messages', () => {
     const message = 'Debug message'
     logger.debug(message)
-    expect(consoleSpy.debug).toHaveBeenCalledWith(
+    expect(loglevelLoggerSpy.debug).toHaveBeenCalledWith(
       expect.stringContaining(message)
+    )
+  })
+
+  it('should log debug messages with objects', () => {
+    const message = 'Debug message'
+    const obj = { a: 1, b: 2 }
+    logger.debug(message, obj)
+    expect(loglevelLoggerSpy.debug).toHaveBeenCalledWith(
+      expect.stringContaining(message),
+      obj
     )
   })
 
   it('should log info messages', () => {
     const message = 'Info message'
     logger.info(message)
-    expect(consoleSpy.info).toHaveBeenCalledWith(
+    expect(loglevelLoggerSpy.info).toHaveBeenCalledWith(
       expect.stringContaining(message)
     )
   })
@@ -85,7 +98,7 @@ describe('ConsoleLogger', () => {
   it('should log warning messages', () => {
     const message = 'Warning message'
     logger.warn(message)
-    expect(consoleSpy.warn).toHaveBeenCalledWith(
+    expect(loglevelLoggerSpy.warn).toHaveBeenCalledWith(
       expect.stringContaining(message)
     )
   })
@@ -93,7 +106,7 @@ describe('ConsoleLogger', () => {
   it('should log error messages', () => {
     const message = 'Error message'
     logger.error(message)
-    expect(consoleSpy.error).toHaveBeenCalledWith(
+    expect(loglevelLoggerSpy.error).toHaveBeenCalledWith(
       expect.stringContaining(message)
     )
   })
@@ -102,7 +115,7 @@ describe('ConsoleLogger', () => {
     const message = 'Error message'
     const error = new Error('Test error')
     logger.error(message, error)
-    expect(consoleSpy.error).toHaveBeenCalledWith(
+    expect(loglevelLoggerSpy.error).toHaveBeenCalledWith(
       expect.stringContaining(message),
       error
     )

@@ -19,7 +19,7 @@ import { settings as blaxelSettings } from '@blaxel/sdk'
 
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 
-import { log } from '@repo/utils'
+import { log } from '~/core/log.js'
 
 /**
  * A connection to a Blaxel tool server.

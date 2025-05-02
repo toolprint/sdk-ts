@@ -3,7 +3,9 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js'
 
 import express from 'express'
 
-import { log } from '@repo/utils'
+import { Gateway, createGateway } from './app.js'
+
+import { log } from './log.js'
 
 const PORT = process.env.PORT || 8000
 const SSE_CONNECTION_PATH = '/sse'

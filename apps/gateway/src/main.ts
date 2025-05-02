@@ -1,7 +1,7 @@
 import { argv } from 'process'
 import { launchCommand } from './command.js'
 import { stdioServer, sseServer } from './server.js'
-import { log } from '@repo/utils'
+import { log } from './log.js'
 
 async function main() {
   const program = launchCommand()

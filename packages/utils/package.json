@@ -21,8 +21,8 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "build": "rollup -c",
-    "test": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts --printConsoleTrace=true --silent=false ",
-    "test:watch": "LOG_MODE=console LOG_LEVEL=debug vitest --config vitest.config.ts --printConsoleTrace=true --silent=false --watch",
+    "test": "LOG_MODE=file LOG_LEVEL=debug vitest run --config vitest.config.ts --printConsoleTrace=true --silent=false ",
+    "test:watch": "LOG_MODE=file LOG_LEVEL=debug vitest watch --config vitest.config.ts --printConsoleTrace=true --silent=false",
     "clean:dist": "rimraf ./dist",
     "clean:modules": "rimraf ./node_modules"
   },
@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "dotenv": "^16.4.7",
+    "loglevel": "^1.9.2",
     "ts-log": "^2.2.7",
     "zod": "^3.24.2"
   },

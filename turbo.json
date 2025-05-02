@@ -48,7 +48,8 @@
         "test/**/*.ts",
         "test/**/*.tsx"
       ],
-      "outputs": []
+      "outputs": [],
+      "cache": false
     },
     "test:watch": {
       "env": [
@@ -84,6 +85,12 @@
       "dependsOn": ["package"]
     },
     "publish:github": {
+      "dependsOn": ["package"]
+    },
+    "publish:npm": {
+      "dependsOn": ["package"]
+    },
+    "publish:npm:dry-run": {
       "dependsOn": ["package"]
     },
     "clean": {
