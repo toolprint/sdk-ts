@@ -58,8 +58,20 @@ const formatMessage = (
  */
 export function fileLogger(
   loggerName?: string,
-  level: LogLevelDesc = loglevel.levels.INFO
+  logLevel?: LogLevelDesc
 ): Logger {
+  let logger: loglevel.Logger = loglevel // root logger
+
+  // if a logger name is provided, get a child logger instead of the root logger
+  if (loggerName) {
+    logger = loglevel.getLogger(loggerName)
+  }
+
+  // if a log level is provided, set the logger level
+  if (logLevel) {
+    logger.setLevel(logLevel)
+  }
+
   // Construct the log file path based on the logger name
   let logFilepath = getLogFilepath('onegrep.log')
   if (loggerName) {
@@ -67,8 +79,8 @@ export function fileLogger(
   }
 
   // Create a filter function to check if the message should be logged
-  const shouldLogMessage = (messageLevel: LogLevelDesc) => {
-    return level.valueOf() <= messageLevel.valueOf()
+  const shouldLogMessage = (messageLevel: number) => {
+    return messageLevel >= logger.getLevel()
   }
 
   // Create a write stream to the log file
@@ -78,7 +90,6 @@ export function fileLogger(
   class LoggerInstance implements Logger {
     trace(message?: any, ...optionalParams: any[]): void {
       const messageLevel = loglevel.levels.TRACE
-
       if (shouldLogMessage(messageLevel)) {
         fileOutput.write(
           `${formatMessage(messageLevel, message, ...optionalParams)}`
@@ -127,24 +138,3 @@ export function fileLogger(
 
   return new LoggerInstance()
 }
-
-// export const fileLogger = {
-//     log: (msg: string) => {
-//       if (currentLogLevel <= LOG_LEVEL_INFO) {
-//         fileOutput.write(`${msg}\n`)
-//       }
-//     },
-//     debug: (msg: string) => {
-//       if (currentLogLevel <= LOG_LEVEL_DEBUG) {
-//         fileOutput.write(`DEBUG: ${msg}\n`)
-//       }
-//     },
-//     info: (msg: string) => {
-//       if (currentLogLevel <= LOG_LEVEL_INFO) {
-//         fileOutput.write(`INFO: ${msg}\n`)
-//       }
-//     },
-//     success: (msg: string) => fileOutput.write(`SUCCESS: ${msg}\n`),
-//     warn: (msg: string) => fileOutput.write(`WARN: ${msg}\n`),
-//     error: (msg: string) => fileOutput.write(`ERROR: ${msg}\n`)
-//   } as const
