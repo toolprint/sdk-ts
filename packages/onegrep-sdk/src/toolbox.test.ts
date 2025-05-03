@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { Toolbox, getToolbox } from '~/toolbox.js'
+import { Toolbox, getToolbox } from './toolbox.js'
 
 import {
   ToolCallError,
@@ -8,7 +8,7 @@ import {
   ToolCallOutput,
   ToolDetails,
   FilterOptions
-} from '~/types.js'
+} from './types.js'
 
 import 'dotenv/config'
 

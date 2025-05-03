@@ -1,7 +1,7 @@
-import { clientFromConfig } from '~/core/index.js'
-import { UniversalToolCache } from '~/toolcache.js'
+import { clientFromConfig } from './core/index.js'
+import { UniversalToolCache } from './toolcache.js'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { ToolServerConnectionManager } from '~/connection.js'
+import { ToolServerConnectionManager } from './connection.js'
 // import { SecretManager } from '~/secrets/index.js'
 
 // class MockSecretManager implements SecretManager {

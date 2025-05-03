@@ -47,6 +47,16 @@ class SettableTimer {
   }
 }
 
+type ClientWithCallbacksPingResult = Awaited<
+  ReturnType<typeof Client.prototype.ping>
+>
+type ClientWithCallbacksListToolsResult = Awaited<
+  ReturnType<typeof Client.prototype.listTools>
+>
+type ClientWithCallbacksCallToolResult = Awaited<
+  ReturnType<typeof Client.prototype.callTool>
+>
+
 export class ClientWithCallbacks extends Client {
   private callbacks: Map<string, () => Promise<void>>
   private supportedMethods: Set<string> = new Set([
@@ -67,7 +77,7 @@ export class ClientWithCallbacks extends Client {
     this.callbacks.set(method, callback)
   }
 
-  async ping(options?: any) {
+  async ping(options?: any): Promise<ClientWithCallbacksPingResult> {
     const result = await super.ping(options)
     const callback = this.callbacks.get('ping')
     if (callback) {
@@ -76,7 +86,10 @@ export class ClientWithCallbacks extends Client {
     return result
   }
 
-  async listTools(params?: any, options?: any) {
+  async listTools(
+    params?: any,
+    options?: any
+  ): Promise<ClientWithCallbacksListToolsResult> {
     const result = await super.listTools(params, options)
     const callback = this.callbacks.get('listTools')
     if (callback) {
@@ -85,7 +98,10 @@ export class ClientWithCallbacks extends Client {
     return result
   }
 
-  async callTool(params: any, options?: any) {
+  async callTool(
+    params: any,
+    options?: any
+  ): Promise<ClientWithCallbacksCallToolResult> {
     const result = await super.callTool(params, options)
     const callback = this.callbacks.get('callTool')
     if (callback) {

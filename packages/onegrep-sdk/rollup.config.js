@@ -1,19 +1,13 @@
+import { defineConfig } from 'rollup'
+
 import typescript from '@rollup/plugin-typescript'
-import alias from '@rollup/plugin-alias'
+import tscAlias from 'rollup-plugin-tsc-alias'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import dts from 'rollup-plugin-dts'
 import json from '@rollup/plugin-json'
 import terser from '@rollup/plugin-terser'
-import { defineConfig } from 'rollup'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
-
-import path from 'path'
-import { fileURLToPath } from 'url'
-
-// Recreate __dirname functionality in ES modules
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 const config = defineConfig([
   {
@@ -34,13 +28,8 @@ const config = defineConfig([
     ],
     plugins: [
       peerDepsExternal(),
-      alias({
-        entries: [
-          {
-            find: '~',
-            replacement: path.resolve(__dirname, 'src')
-          }
-        ]
+      tscAlias({
+        tsconfig: './tsconfig.json'
       }),
       resolve({
         preferBuiltins: true,
@@ -53,7 +42,9 @@ const config = defineConfig([
       }),
       typescript({
         tsconfig: './tsconfig.json',
+        composite: true,
         declaration: true,
+        declarationMap: true,
         declarationDir: './dist',
         outDir: './dist'
       }),
@@ -77,17 +68,7 @@ const config = defineConfig([
         }
       })
     ],
-    external: [
-      'chalk',
-      'eventsource',
-      'uuid',
-      'zod',
-      'ajv',
-      'buffer',
-      '@zodios/core',
-      '@blaxel/sdk',
-      'pkce-challenge'
-    ], // Add any external dependencies here
+    external: [], // Add any external dependencies here
     treeshake: true
   },
   {
