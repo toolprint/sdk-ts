@@ -1,9 +1,9 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  entry: ['./index.ts'],
+  entry: ['src/index.ts'],
   noExternal: ['@repo'], // Bundle any package starting with `@repo` and their dependencies
-  external: ['thread-stream', 'fs'], // https://github.com/pinojs/pino/blob/main/docs/bundling.md
+  external: ['fs'],
   splitting: false,
   bundle: true,
   outDir: './dist',
@@ -11,5 +11,7 @@ export default defineConfig({
   env: { IS_SERVER_BUILD: 'true' },
   loader: { '.json': 'copy' },
   minify: true,
-  sourcemap: true
+  sourcemap: true,
+  format: ['cjs'],
+  dts: true
 })

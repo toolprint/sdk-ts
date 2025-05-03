@@ -1,10 +1,10 @@
+export * from './core/index.js'
+
 export * from './connection.js'
 export * from './schema.js'
 export * from './toolbox.js'
 export * from './toolcache.js'
 export * from './types.js'
-
-export * from './core/index.js'
 
 export * from './secrets/index.js'
 
