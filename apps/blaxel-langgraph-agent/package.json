@@ -18,7 +18,7 @@
   "dependencies": {
     "@blaxel/sdk": "0.1.9",
     "@onegrep/sdk": "workspace:*",
-    "@langchain/core": "^0.3.40",
+    "@langchain/core": "0.3.40",
     "@langchain/langgraph": "^0.2.46",
     "@opentelemetry/instrumentation-fastify": "^0.45.0",
     "fastify": "^5.2.1",

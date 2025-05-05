@@ -21,15 +21,6 @@ import { z, ZodTypeAny } from 'zod'
 
 import { log } from '~/core/log.js'
 
-function ensureZodObject<T extends z.ZodTypeAny>(
-  schema: T
-): T extends z.ZodObject<any> ? T : z.ZodObject<{ value: T }> {
-  if (schema instanceof z.ZodObject) {
-    return schema as any
-  }
-  return z.object({ value: schema }) as any
-}
-
 /**
  * Convert an EquippedTool to a DynamicStructuredTool that's compatible with LangChain agents
  */
@@ -41,11 +32,8 @@ const convertToLangChainTool = (equippedTool: EquippedTool): StructuredTool => {
 
   const zodOutputType: ZodTypeAny = z.any()
 
-  const inputZodObject: z.ZodObject<any> = ensureZodObject(zodInputType)
-  const outputZodObject: z.ZodObject<any> = ensureZodObject(zodOutputType)
-
-  type ToolInputType = z.infer<typeof inputZodObject>
-  type ToolOutputType = z.infer<typeof outputZodObject>
+  type ToolInputType = z.infer<typeof zodInputType>
+  type ToolOutputType = z.infer<typeof zodOutputType>
 
   // The tool call function with proper signature for LangChain
   const toolcallFunc = async (
@@ -64,11 +52,14 @@ const convertToLangChainTool = (equippedTool: EquippedTool): StructuredTool => {
   }
 
   // Create the dynamic structured tool
-  const dynamicToolInput: DynamicStructuredToolInput<ToolInputType> = {
+  const dynamicToolInput: DynamicStructuredToolInput<
+    ToolInputType,
+    ToolOutputType
+  > = {
     name: equippedTool.details.name,
     description: equippedTool.details.description,
-    schema: inputZodObject,
-    func: toolcallFunc
+    func: toolcallFunc,
+    schema: zodInputType
   }
 
   return new DynamicStructuredTool(dynamicToolInput)
@@ -76,6 +67,11 @@ const convertToLangChainTool = (equippedTool: EquippedTool): StructuredTool => {
 
 /**
  * A Langchain Toolbox that provides tools compatible with LangChain agents
+ *
+ * NOTE: For Blaxel to work with LangChain StructuredTools, we must pin
+ * @langchain/core to 0.3.40, as 0.3.44 has slight changes to the StructuredTool
+ * interface that break Blaxel.  We will need to find better ways to manage
+ * Toolbox interfaces to let us extend the Toolbox for various agent frameworks.
  */
 export class LangchainToolbox implements BaseToolbox<StructuredTool> {
   toolbox: Toolbox

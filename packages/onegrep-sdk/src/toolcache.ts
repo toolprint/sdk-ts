@@ -20,7 +20,10 @@ import {
   BasicToolDetails,
   EquippedTool,
   ToolHandle,
-  ConnectionManager
+  ConnectionManager,
+  ToolCallInput,
+  ToolCallResponse,
+  ToolCallError
 } from '~/types.js'
 
 import { Keyv } from 'keyv'
@@ -28,6 +31,53 @@ import { Cache, createCache } from 'cache-manager'
 import { ToolServerConnectionManager } from '~/connection.js'
 
 import { log } from '~/core/log.js'
+
+/**
+ * A wrapper around a ToolHandle that provides a safe way to call the tool.
+ * If the ToolHandle call fails, it will return a ToolCallError instead of
+ * throwing an unhandled error.
+ */
+class SafeToolHandle implements ToolHandle {
+  private unsafeCall: (input: ToolCallInput) => Promise<ToolCallResponse<any>>
+  private unsafeCallSync: (input: ToolCallInput) => ToolCallResponse<any>
+
+  constructor(readonly toolHandle: ToolHandle) {
+    this.unsafeCall = toolHandle.call
+    this.unsafeCallSync = toolHandle.callSync
+  }
+
+  private async safeCall(input: ToolCallInput): Promise<ToolCallResponse<any>> {
+    try {
+      return await this.unsafeCall(input)
+    } catch (error) {
+      log.error(`Broken ToolHandle: ${error}`)
+      return {
+        isError: true,
+        message: `Async ToolHandle call unexpectedly failed: ${error}`
+      } as ToolCallError
+    }
+  }
+
+  private safeCallSync(input: ToolCallInput): ToolCallResponse<any> {
+    try {
+      return this.unsafeCallSync(input)
+    } catch (error) {
+      log.error(`Broken ToolHandle: ${error}`)
+      return {
+        isError: true,
+        message: `Sync ToolHandle call unexpectedly failed: ${error}`
+      } as ToolCallError
+    }
+  }
+
+  call(input: ToolCallInput): Promise<ToolCallResponse<any>> {
+    return this.safeCall(input)
+  }
+
+  callSync(input: ToolCallInput): ToolCallResponse<any> {
+    return this.safeCallSync(input)
+  }
+}
 
 export class UniversalToolCache implements ToolCache {
   private highLevelClient: OneGrepApiHighLevelClient
@@ -163,18 +213,23 @@ export class UniversalToolCache implements ToolCache {
       )
 
       const getHandle = async (): Promise<ToolHandle> => {
-        const connection = await this.connectionManager.connect(serverClient)
-        log.info(`Got connection to tool server ${resource.tool.server_id}`)
+        try {
+          const connection = await this.connectionManager.connect(serverClient)
+          log.info(`Got connection to tool server ${resource.tool.server_id}`)
 
-        const toolHandle = await connection.getHandle(basicToolDetails)
-        log.info(`Got tool handle for ${resource.tool.id}`)
+          const toolHandle = await connection.getHandle(basicToolDetails)
+          log.info(`Got tool handle for ${resource.tool.id}`)
 
-        return toolHandle
+          return toolHandle
+        } catch (error) {
+          log.error(`Error grabbing tool handle: ${error}`)
+          throw error
+        }
       }
 
       return {
         details: toolDetails,
-        handle: await getHandle()
+        handle: new SafeToolHandle(await getHandle())
       }
     }
 

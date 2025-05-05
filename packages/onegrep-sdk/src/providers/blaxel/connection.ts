@@ -11,15 +11,23 @@ import { parseResultFunc } from '~/providers/mcp/toolcall.js'
 
 import { BlaxelToolServerClient } from '~/core/index.js'
 
-import {
-  McpTool as BlaxelMcpClient,
-  retrieveMCPClient
-} from '@blaxel/sdk/tools/mcpTool'
+import { getTool as getBlaxelServerTools } from '@blaxel/sdk'
 import { settings as blaxelSettings } from '@blaxel/sdk'
 
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 
 import { log } from '~/core/log.js'
+
+/**
+ * A tool from the Blaxel MCP server.
+ *
+ * ! Blaxel doesn't export the Tool type, so we're using this simplified version.
+ */
+interface BlaxelTool {
+  name: string
+  description: string
+  call(input: unknown): Promise<unknown>
+}
 
 /**
  * A connection to a Blaxel tool server.
@@ -30,22 +38,25 @@ import { log } from '~/core/log.js'
  */
 export class BlaxelToolServerConnection implements ToolServerConnection {
   private toolServerClient: BlaxelToolServerClient
-  private blaxelMcpClient: BlaxelMcpClient
-  private toolNames: Set<string>
+  private toolsByName: Map<string, BlaxelTool>
 
-  constructor(
-    toolServerClient: BlaxelToolServerClient,
-    blaxelMcpServer: BlaxelMcpClient
-  ) {
+  constructor(toolServerClient: BlaxelToolServerClient) {
     this.toolServerClient = toolServerClient
-    this.blaxelMcpClient = blaxelMcpServer
-    this.toolNames = new Set<string>()
+    this.toolsByName = new Map()
   }
 
   async initialize(): Promise<void> {
-    const tools = await await this.blaxelMcpClient.listTools()
+    // ! For now the Blaxel Function name is the same as the integration name.
+    const tools = await getBlaxelServerTools(
+      this.toolServerClient.blaxel_function
+    )
     log.info(`Found ${tools.length} tools on blaxel MCP server`)
-    this.toolNames = new Set(tools.values().map((tool) => tool.name))
+
+    this.toolsByName = new Map(tools.map((tool) => [tool.name, tool]))
+  }
+
+  private get toolNames(): Set<string> {
+    return new Set(this.toolsByName.keys())
   }
 
   async getHandle(toolDetails: BasicToolDetails): Promise<ToolHandle> {
@@ -71,10 +82,12 @@ export class BlaxelToolServerConnection implements ToolServerConnection {
         if (!valid) {
           throw new Error('Invalid tool input arguments')
         }
-        const result = (await this.blaxelMcpClient.call(
-          toolDetails.name,
-          toolCallInput.args
-        )) as CallToolResult // ! Why does blaxel not return a CallToolResult type?
+        const tool = this.toolsByName.get(toolDetails.name)
+        if (!tool) {
+          throw new Error(`Tool not found: ${toolDetails.name}`)
+        }
+
+        const result = (await tool.call(toolCallInput.args)) as CallToolResult // ! Why does blaxel not return a CallToolResult type?
         return parseResultFunc(result)
       } catch (error) {
         if (error instanceof Error) {
@@ -110,7 +123,7 @@ export class BlaxelToolServerConnection implements ToolServerConnection {
     log.info(
       `Closing connection to Blaxel Server ${this.toolServerClient.server_id}`
     )
-    return this.blaxelMcpClient.close()
+    // ! No need to close the Blaxel MCP client manually, it manages its own sessions.
   }
 }
 
@@ -146,8 +159,7 @@ export async function createBlaxelConnection(
       `Incorrect Blaxel workspace: ${workspace} !== ${client.blaxel_workspace}`
     )
   }
-  const blaxelMcpClient = retrieveMCPClient(client.blaxel_function)
-  const instance = new BlaxelToolServerConnection(client, blaxelMcpClient)
+  const instance = new BlaxelToolServerConnection(client)
   await instance.initialize()
   return instance
 }
