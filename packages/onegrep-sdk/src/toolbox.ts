@@ -11,6 +11,7 @@ import {
 import { createToolCache } from '~/toolcache.js'
 
 import { log } from '~/core/log.js'
+import { getDopplerSecretManager } from './secrets/doppler.js'
 
 export class Toolbox implements BaseToolbox<ToolDetails> {
   apiClient: OneGrepApiClient
@@ -53,6 +54,11 @@ export class Toolbox implements BaseToolbox<ToolDetails> {
 }
 
 export async function createToolbox(apiClient: OneGrepApiClient) {
+  const secretManager = await getDopplerSecretManager()
+  await secretManager.initialize()
+  // Sync the process environment before initializing the tool cache.
+  await secretManager.syncProcessEnvironment()
+
   const toolCache: ToolCache = await createToolCache(apiClient)
 
   // Make sure the tool cache is initialized on bootstrap

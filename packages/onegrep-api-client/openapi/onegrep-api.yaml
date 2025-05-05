@@ -173,6 +173,116 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+  /api/v1/providers/:
+    get:
+      tags:
+        - providers
+      summary: List Providers
+      operationId: list_providers_api_v1_providers__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ToolServerProvider'
+                type: array
+                title: Response List Providers Api V1 Providers  Get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+  /api/v1/providers/{provider_id}:
+    get:
+      tags:
+        - providers
+      summary: Get Provider
+      operationId: get_provider_api_v1_providers__provider_id__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: provider_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Provider Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolServerProvider'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/providers/{provider_id}/servers:
+    get:
+      tags:
+        - providers
+      summary: Get Servers
+      operationId: get_servers_api_v1_providers__provider_id__servers_get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: provider_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Provider Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ToolServer'
+                title: >-
+                  Response Get Servers Api V1 Providers  Provider Id  Servers
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/providers/{provider_id}/sync:
+    post:
+      tags:
+        - providers
+      summary: Sync Provider
+      operationId: sync_provider_api_v1_providers__provider_id__sync_post
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: provider_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Provider Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/integrations/:
     get:
       tags:
@@ -462,6 +572,400 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/tools/:
+    get:
+      tags:
+        - tools
+      summary: List Tools
+      description: List all tools for the current user.
+      operationId: list_tools_api_v1_tools__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Tool'
+                type: array
+                title: Response List Tools Api V1 Tools  Get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+  /api/v1/tools/{tool_id}:
+    get:
+      tags:
+        - tools
+      summary: Get Tool
+      operationId: get_tool_api_v1_tools__tool_id__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: tool_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Tool Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tool'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/tools/{tool_id}/properties:
+    get:
+      tags:
+        - tools
+      summary: Get Tool Properties
+      operationId: get_tool_properties_api_v1_tools__tool_id__properties_get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: tool_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Tool Id
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolProperties'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/tools/{tool_id}/resource:
+    get:
+      tags:
+        - tools
+      summary: Get Tool Resource
+      description: >-
+        Returns the hydrated details for a tool given the current user and
+        profile.
+      operationId: get_tool_resource_api_v1_tools__tool_id__resource_get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: tool_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Tool Id
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolResource'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/search/reindex:
+    post:
+      tags:
+        - search
+      summary: Reindex
+      description: Reindexes all tools and recipes for an organization.
+      operationId: reindex_api_v1_search_reindex_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+  /api/v1/search/reindex/tools:
+    post:
+      tags:
+        - search
+      summary: Reindex Tools
+      description: Reindexes all tools for an organization.
+      operationId: reindex_tools_api_v1_search_reindex_tools_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+  /api/v1/search/reindex/recipes:
+    post:
+      tags:
+        - search
+      summary: Reindex Recipes
+      description: Reindexes all recipes for an organization.
+      operationId: reindex_recipes_api_v1_search_reindex_recipes_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+  /api/v1/search/tools:
+    post:
+      tags:
+        - search
+      summary: Search Tools
+      description: >-
+        Searches for the best set of tools that semantically match the query and
+        returns them
+
+        along with a similarity score for each tool.
+      operationId: search_tools_api_v1_search_tools_post
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse_ScoredItem_Tool__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/search/recipes:
+    post:
+      tags:
+        - search
+      summary: Search Recipes
+      description: >-
+        Searches for the best set of recipes that semantically match the query
+        and returns them
+
+        along with a similarity score for each recipe.
+      operationId: search_recipes_api_v1_search_recipes_post
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse_ScoredItem_Recipe__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/recipes/:
+    get:
+      tags:
+        - recipes
+      summary: List Recipes
+      description: |-
+        List all recipes for the current user with pagination.
+
+        - Page numbers start at 1 (not 0)
+        - Results are sorted by creation date (newest first)
+        - Filtered by the user's organization and optionally by profile
+        - Profile can be specified via the X-ONEGREP-PROFILE-ID header
+      operationId: list_recipes_api_v1_recipes__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            description: Page number (1-indexed)
+            default: 1
+            title: Page
+          description: Page number (1-indexed)
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+            maximum: 100
+            minimum: 1
+            description: Items per page
+            default: 20
+            title: Page Size
+          description: Items per page
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse_UserRecipe_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+        - recipes
+      summary: Create Recipe
+      description: >-
+        Create a new recipe.
+
+
+        - Profile ID is specified via the X-ONEGREP-PROFILE-ID header
+
+        - If no profile ID is provided in the header, uses the organization's
+        default profile
+      operationId: create_recipe_api_v1_recipes__post
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUserRecipeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/recipes/{recipe_id}:
+    get:
+      tags:
+        - recipes
+      summary: Get Recipe
+      description: |-
+        Get a specific recipe by ID.
+
+        The recipe must belong to the user's organization.
+      operationId: get_recipe_api_v1_recipes__recipe_id__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Recipe Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/strategy/fake:
     post:
       tags:
@@ -517,6 +1021,95 @@ paths:
                 items:
                   $ref: '#/components/schemas/Strategy'
                 title: Response Get Strategy Api V1 Strategy  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/servers/:
+    get:
+      tags:
+        - servers
+      summary: List Servers
+      operationId: list_servers_api_v1_servers__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ToolServer'
+                type: array
+                title: Response List Servers Api V1 Servers  Get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+  /api/v1/servers/{server_id}:
+    get:
+      tags:
+        - servers
+      summary: Get Server
+      operationId: get_server_api_v1_servers__server_id__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Server Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolServer'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/servers/{server_id}/client:
+    get:
+      tags:
+        - servers
+      summary: Get Server Client
+      operationId: get_server_client_api_v1_servers__server_id__client_get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Server Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/MCPToolServerClient'
+                  - $ref: '#/components/schemas/BlaxelToolServerClient'
+                  - $ref: '#/components/schemas/SmitheryToolServerClient'
+                discriminator:
+                  propertyName: client_type
+                  mapping:
+                    mcp: '#/components/schemas/MCPToolServerClient'
+                    blaxel: '#/components/schemas/BlaxelToolServerClient'
+                    smithery: '#/components/schemas/SmitheryToolServerClient'
+                title: >-
+                  Response Get Server Client Api V1 Servers  Server Id  Client
+                  Get
         '422':
           description: Validation Error
           content:
@@ -916,599 +1509,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/providers/:
-    get:
-      tags:
-        - providers
-      summary: List Providers
-      operationId: list_providers_api_v1_providers__get
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/ToolServerProvider'
-                type: array
-                title: Response List Providers Api V1 Providers  Get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-  /api/v1/providers/{provider_id}:
-    get:
-      tags:
-        - providers
-      summary: Get Provider
-      operationId: get_provider_api_v1_providers__provider_id__get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: provider_id
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Provider Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ToolServerProvider'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/providers/{provider_id}/servers:
-    get:
-      tags:
-        - providers
-      summary: Get Servers
-      operationId: get_servers_api_v1_providers__provider_id__servers_get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: provider_id
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Provider Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ToolServer'
-                title: >-
-                  Response Get Servers Api V1 Providers  Provider Id  Servers
-                  Get
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/providers/{provider_id}/sync:
-    post:
-      tags:
-        - providers
-      summary: Sync Provider
-      operationId: sync_provider_api_v1_providers__provider_id__sync_post
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: provider_id
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Provider Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/servers/:
-    get:
-      tags:
-        - servers
-      summary: List Servers
-      operationId: list_servers_api_v1_servers__get
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/ToolServer'
-                type: array
-                title: Response List Servers Api V1 Servers  Get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-  /api/v1/servers/{server_id}:
-    get:
-      tags:
-        - servers
-      summary: Get Server
-      operationId: get_server_api_v1_servers__server_id__get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: server_id
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Server Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ToolServer'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/servers/{server_id}/client:
-    get:
-      tags:
-        - servers
-      summary: Get Server Client
-      operationId: get_server_client_api_v1_servers__server_id__client_get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: server_id
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Server Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/MCPToolServerClient'
-                  - $ref: '#/components/schemas/BlaxelToolServerClient'
-                  - $ref: '#/components/schemas/SmitheryToolServerClient'
-                discriminator:
-                  propertyName: client_type
-                  mapping:
-                    mcp: '#/components/schemas/MCPToolServerClient'
-                    blaxel: '#/components/schemas/BlaxelToolServerClient'
-                    smithery: '#/components/schemas/SmitheryToolServerClient'
-                title: >-
-                  Response Get Server Client Api V1 Servers  Server Id  Client
-                  Get
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/tools/:
-    get:
-      tags:
-        - tools
-      summary: List Tools
-      description: List all tools for the current user.
-      operationId: list_tools_api_v1_tools__get
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Tool'
-                type: array
-                title: Response List Tools Api V1 Tools  Get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-  /api/v1/tools/{tool_id}:
-    get:
-      tags:
-        - tools
-      summary: Get Tool
-      operationId: get_tool_api_v1_tools__tool_id__get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: tool_id
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Tool Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Tool'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/tools/{tool_id}/properties:
-    get:
-      tags:
-        - tools
-      summary: Get Tool Properties
-      operationId: get_tool_properties_api_v1_tools__tool_id__properties_get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: tool_id
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Tool Id
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ToolProperties'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/tools/{tool_id}/resource:
-    get:
-      tags:
-        - tools
-      summary: Get Tool Resource
-      description: >-
-        Returns the hydrated details for a tool given the current user and
-        profile.
-      operationId: get_tool_resource_api_v1_tools__tool_id__resource_get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: tool_id
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Tool Id
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ToolResource'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/recipes/:
-    get:
-      tags:
-        - recipes
-      summary: List Recipes
-      description: |-
-        List all recipes for the current user with pagination.
-
-        - Page numbers start at 1 (not 0)
-        - Results are sorted by creation date (newest first)
-        - Filtered by the user's organization and optionally by profile
-        - Profile can be specified via the X-ONEGREP-PROFILE-ID header
-      operationId: list_recipes_api_v1_recipes__get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            description: Page number (1-indexed)
-            default: 1
-            title: Page
-          description: Page number (1-indexed)
-        - name: page_size
-          in: query
-          required: false
-          schema:
-            type: integer
-            maximum: 100
-            minimum: 1
-            description: Items per page
-            default: 20
-            title: Page Size
-          description: Items per page
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedResponse_UserRecipe_'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    post:
-      tags:
-        - recipes
-      summary: Create Recipe
-      description: >-
-        Create a new recipe.
-
-
-        - Profile ID is specified via the X-ONEGREP-PROFILE-ID header
-
-        - If no profile ID is provided in the header, uses the organization's
-        default profile
-      operationId: create_recipe_api_v1_recipes__post
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NewUserRecipeRequest'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Recipe'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/recipes/{recipe_id}:
-    get:
-      tags:
-        - recipes
-      summary: Get Recipe
-      description: |-
-        Get a specific recipe by ID.
-
-        The recipe must belong to the user's organization.
-      operationId: get_recipe_api_v1_recipes__recipe_id__get
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: recipe_id
-          in: path
-          required: true
-          schema:
-            type: integer
-            title: Recipe Id
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Recipe'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/search/reindex:
-    post:
-      tags:
-        - search
-      summary: Reindex
-      description: Reindexes all tools and recipes for an organization.
-      operationId: reindex_api_v1_search_reindex_post
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-  /api/v1/search/reindex/tools:
-    post:
-      tags:
-        - search
-      summary: Reindex Tools
-      description: Reindexes all tools for an organization.
-      operationId: reindex_tools_api_v1_search_reindex_tools_post
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-  /api/v1/search/reindex/recipes:
-    post:
-      tags:
-        - search
-      summary: Reindex Recipes
-      description: Reindexes all recipes for an organization.
-      operationId: reindex_recipes_api_v1_search_reindex_recipes_post
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-  /api/v1/search/tools:
-    post:
-      tags:
-        - search
-      summary: Search Tools
-      description: >-
-        Searches for the best set of tools that semantically match the query and
-        returns them
-
-        along with a similarity score for each tool.
-      operationId: search_tools_api_v1_search_tools_post
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SearchRequest'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SearchResponse_ScoredItem_Tool__'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/search/recipes:
-    post:
-      tags:
-        - search
-      summary: Search Recipes
-      description: >-
-        Searches for the best set of recipes that semantically match the query
-        and returns them
-
-        along with a similarity score for each recipe.
-      operationId: search_recipes_api_v1_search_recipes_post
-      security:
-        - APIKeyHeader: []
-        - HTTPBearer: []
-      parameters:
-        - name: X-ONEGREP-PROFILE-ID
-          in: header
-          required: false
-          schema:
-            anyOf:
-              - type: string
-              - type: 'null'
-            title: X-Onegrep-Profile-Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SearchRequest'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SearchResponse_ScoredItem_Recipe__'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/sdk/initialize:
     get:
       tags:
@@ -1886,6 +1886,21 @@ components:
             - type: string
             - type: 'null'
           title: Doppler Service Token
+        doppler_env:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Doppler Env
+        doppler_project:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Doppler Project
+        doppler_config:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Doppler Config
         user_id:
           type: string
           title: User Id
@@ -2729,6 +2744,21 @@ components:
             - type: string
             - type: 'null'
           title: Doppler Service Token
+        doppler_env:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Doppler Env
+        doppler_project:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Doppler Project
+        doppler_config:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Doppler Config
       type: object
       title: ServiceTokenResponse
       description: Response including the service token for the SDK to use.

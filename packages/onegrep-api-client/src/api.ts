@@ -94,6 +94,9 @@ type InitializeResponse = {
   servers: Array<ToolServer>
   tools: Array<Tool>
   doppler_service_token?: ((string | null) | Array<string | null>) | undefined
+  doppler_env?: ((string | null) | Array<string | null>) | undefined
+  doppler_project?: ((string | null) | Array<string | null>) | undefined
+  doppler_config?: ((string | null) | Array<string | null>) | undefined
   user_id: string
   org_id: string
 }
@@ -534,7 +537,12 @@ const UserAccount: z.ZodType<UserAccount> = z
   .strict()
   .passthrough()
 const ServiceTokenResponse = z
-  .object({ doppler_service_token: z.union([z.string(), z.null()]) })
+  .object({
+    doppler_service_token: z.union([z.string(), z.null()]),
+    doppler_env: z.union([z.string(), z.null()]),
+    doppler_project: z.union([z.string(), z.null()]),
+    doppler_config: z.union([z.string(), z.null()])
+  })
   .partial()
   .strict()
   .passthrough()
@@ -573,6 +581,19 @@ const ValidationError: z.ZodType<ValidationError> = z
 const HTTPValidationError: z.ZodType<HTTPValidationError> = z
   .object({ detail: z.array(ValidationError) })
   .partial()
+  .strict()
+  .passthrough()
+const ToolServerProvider: z.ZodType<ToolServerProvider> = z
+  .object({ id: z.string().uuid(), name: z.string() })
+  .strict()
+  .passthrough()
+const ToolServer: z.ZodType<ToolServer> = z
+  .object({
+    provider_id: z.string().uuid(),
+    name: z.string(),
+    properties: z.object({}).partial().strict().passthrough().optional(),
+    id: z.string().uuid()
+  })
   .strict()
   .passthrough()
 const X_ONEGREP_PROFILE_ID = z.union([z.string(), z.null()]).optional()
@@ -686,19 +707,6 @@ const ToolProperties: z.ZodType<ToolProperties> = z
   .object({ tags: z.object({}).partial().strict().passthrough() })
   .strict()
   .passthrough()
-const ToolServer: z.ZodType<ToolServer> = z
-  .object({
-    provider_id: z.string().uuid(),
-    name: z.string(),
-    properties: z.object({}).partial().strict().passthrough().optional(),
-    id: z.string().uuid()
-  })
-  .strict()
-  .passthrough()
-const ToolServerProvider: z.ZodType<ToolServerProvider> = z
-  .object({ id: z.string().uuid(), name: z.string() })
-  .strict()
-  .passthrough()
 const CanonicalResource: z.ZodType<CanonicalResource> = z
   .object({
     org_id: z.string(),
@@ -752,21 +760,6 @@ const MultipleToolCustomTagsParamsRequest = z
   })
   .strict()
   .passthrough()
-const Recipe: z.ZodType<Recipe> = z
-  .object({
-    created_at: z.union([z.string(), z.null()]).optional(),
-    updated_at: z.union([z.string(), z.null()]).optional(),
-    goal: z
-      .string()
-      .describe('The goal that this recipe is helping an agent achieve.'),
-    instructions: z
-      .union([z.string(), z.null()])
-      .describe('The instructions for this recipe.'),
-    id: z.string().uuid().optional(),
-    tools: z.array(Tool)
-  })
-  .strict()
-  .passthrough()
 const SearchRequest = z
   .object({
     query: z.string().describe('The query used against the search index.'),
@@ -796,6 +789,141 @@ const SearchRequest = z
   })
   .strict()
   .passthrough()
+const PaginationMetadata: z.ZodType<PaginationMetadata> = z
+  .object({
+    page: z.number().int(),
+    page_size: z.number().int(),
+    total: z.number().int(),
+    pages: z.number().int(),
+    has_next: z.boolean(),
+    has_prev: z.boolean()
+  })
+  .strict()
+  .passthrough()
+const ScoredItem_Tool_: z.ZodType<ScoredItem_Tool_> = z
+  .object({
+    item: Tool.describe('A tool.'),
+    score: z.number().gte(0).lte(1).describe('The score of the item [0, 1].')
+  })
+  .strict()
+  .passthrough()
+const SearchResponse_ScoredItem_Tool__: z.ZodType<SearchResponse_ScoredItem_Tool__> =
+  z
+    .object({
+      pagination: PaginationMetadata.describe('Metadata for paginated results'),
+      results: z.array(ScoredItem_Tool_)
+    })
+    .strict()
+    .passthrough()
+const Recipe: z.ZodType<Recipe> = z
+  .object({
+    created_at: z.union([z.string(), z.null()]).optional(),
+    updated_at: z.union([z.string(), z.null()]).optional(),
+    goal: z
+      .string()
+      .describe('The goal that this recipe is helping an agent achieve.'),
+    instructions: z
+      .union([z.string(), z.null()])
+      .describe('The instructions for this recipe.'),
+    id: z.string().uuid().optional(),
+    tools: z.array(Tool)
+  })
+  .strict()
+  .passthrough()
+const ScoredItem_Recipe_: z.ZodType<ScoredItem_Recipe_> = z
+  .object({
+    item: Recipe.describe('A recipe.'),
+    score: z.number().gte(0).lte(1).describe('The score of the item [0, 1].')
+  })
+  .strict()
+  .passthrough()
+const SearchResponse_ScoredItem_Recipe__: z.ZodType<SearchResponse_ScoredItem_Recipe__> =
+  z
+    .object({
+      pagination: PaginationMetadata.describe('Metadata for paginated results'),
+      results: z.array(ScoredItem_Recipe_)
+    })
+    .strict()
+    .passthrough()
+const ToolResourceBase: z.ZodType<ToolResourceBase> = z
+  .object({
+    integration_name: z.string(),
+    tool_name: z.string(),
+    description: z.union([z.string(), z.null()]).optional()
+  })
+  .strict()
+  .passthrough()
+const RecipeTool: z.ZodType<RecipeTool> = z
+  .object({
+    tool_resource: ToolResourceBase.describe(
+      'Identification details about a tool in an integration.'
+    ),
+    usage_instructions: z
+      .union([z.string(), z.null()])
+      .describe(
+        'A more in-depth description of this tool and what it should be used for in the context of this recipe.'
+      )
+      .optional()
+  })
+  .strict()
+  .passthrough()
+const RecipeDetails_Output: z.ZodType<RecipeDetails_Output> = z
+  .object({
+    tools: z
+      .array(RecipeTool)
+      .describe('An unsorted list of tools that would be used in this recipe.')
+      .default([])
+  })
+  .partial()
+  .strict()
+  .passthrough()
+const UserRecipe: z.ZodType<UserRecipe> = z
+  .object({
+    id: z.number().int(),
+    goal: z
+      .string()
+      .describe('The goal that this recipe is helping an agent achieve.'),
+    details: z.object({}).partial().strict().passthrough().optional(),
+    org_id: z.string().describe('The organization ID that owns this recipe'),
+    profile_id: z
+      .string()
+      .describe('The profile ID within the organization that owns this recipe'),
+    created_at: z.string().datetime({ offset: true }).optional(),
+    details_data: RecipeDetails_Output.describe(
+      'Details about a recipe. This is an unordered list of tools that are used in the recipe.'
+    )
+  })
+  .strict()
+  .passthrough()
+const PaginatedResponse_UserRecipe_: z.ZodType<PaginatedResponse_UserRecipe_> =
+  z
+    .object({
+      items: z.array(UserRecipe),
+      pagination: PaginationMetadata.describe('Metadata for paginated results')
+    })
+    .strict()
+    .passthrough()
+const RecipeDetails_Input: z.ZodType<RecipeDetails_Input> = z
+  .object({
+    tools: z
+      .array(RecipeTool)
+      .describe('An unsorted list of tools that would be used in this recipe.')
+      .default([])
+  })
+  .partial()
+  .strict()
+  .passthrough()
+const NewUserRecipeRequest: z.ZodType<NewUserRecipeRequest> = z
+  .object({
+    goal: z
+      .string()
+      .describe('The goal that this recipe is helping an agent achieve.'),
+    details: RecipeDetails_Input.describe(
+      'Details about a recipe. This is an unordered list of tools that are used in the recipe.'
+    )
+  })
+  .strict()
+  .passthrough()
 const Strategy: z.ZodType<Strategy> = z
   .object({
     recipe_id: z
@@ -808,6 +936,43 @@ const Strategy: z.ZodType<Strategy> = z
       .describe(
         'List of one or more fully-hydrated tool resources that should be used in the strategy to achieve the goal.'
       )
+  })
+  .strict()
+  .passthrough()
+const MCPToolServerClient: z.ZodType<MCPToolServerClient> = z
+  .object({
+    server_id: z.string().uuid(),
+    client_type: z.string(),
+    transport_type: z.enum(['sse', 'websocket']),
+    url: z.string().min(1).url()
+  })
+  .strict()
+  .passthrough()
+const BlaxelToolServerClient: z.ZodType<BlaxelToolServerClient> = z
+  .object({
+    server_id: z.string().uuid(),
+    client_type: z.string(),
+    blaxel_workspace: z.string(),
+    blaxel_function: z.string()
+  })
+  .strict()
+  .passthrough()
+const SmitheryConnectionInfo: z.ZodType<SmitheryConnectionInfo> = z
+  .object({
+    type: z.enum(['ws', 'http']),
+    deployment_url: z.string().min(1).url().optional(),
+    config_schema: z
+      .union([z.object({}).partial().strict().passthrough(), z.boolean()])
+      .optional()
+      .default(true)
+  })
+  .strict()
+  .passthrough()
+const SmitheryToolServerClient: z.ZodType<SmitheryToolServerClient> = z
+  .object({
+    server_id: z.string().uuid(),
+    client_type: z.string(),
+    connections: z.array(SmitheryConnectionInfo)
   })
   .strict()
   .passthrough()
@@ -894,17 +1059,6 @@ const AuditLog: z.ZodType<AuditLog> = z
   })
   .strict()
   .passthrough()
-const PaginationMetadata: z.ZodType<PaginationMetadata> = z
-  .object({
-    page: z.number().int(),
-    page_size: z.number().int(),
-    total: z.number().int(),
-    pages: z.number().int(),
-    has_next: z.boolean(),
-    has_prev: z.boolean()
-  })
-  .strict()
-  .passthrough()
 const PaginatedResponse_AuditLog_: z.ZodType<PaginatedResponse_AuditLog_> = z
   .object({
     items: z.array(AuditLog),
@@ -912,152 +1066,6 @@ const PaginatedResponse_AuditLog_: z.ZodType<PaginatedResponse_AuditLog_> = z
   })
   .strict()
   .passthrough()
-const MCPToolServerClient: z.ZodType<MCPToolServerClient> = z
-  .object({
-    server_id: z.string().uuid(),
-    client_type: z.string(),
-    transport_type: z.enum(['sse', 'websocket']),
-    url: z.string().min(1).url()
-  })
-  .strict()
-  .passthrough()
-const BlaxelToolServerClient: z.ZodType<BlaxelToolServerClient> = z
-  .object({
-    server_id: z.string().uuid(),
-    client_type: z.string(),
-    blaxel_workspace: z.string(),
-    blaxel_function: z.string()
-  })
-  .strict()
-  .passthrough()
-const SmitheryConnectionInfo: z.ZodType<SmitheryConnectionInfo> = z
-  .object({
-    type: z.enum(['ws', 'http']),
-    deployment_url: z.string().min(1).url().optional(),
-    config_schema: z
-      .union([z.object({}).partial().strict().passthrough(), z.boolean()])
-      .optional()
-      .default(true)
-  })
-  .strict()
-  .passthrough()
-const SmitheryToolServerClient: z.ZodType<SmitheryToolServerClient> = z
-  .object({
-    server_id: z.string().uuid(),
-    client_type: z.string(),
-    connections: z.array(SmitheryConnectionInfo)
-  })
-  .strict()
-  .passthrough()
-const ToolResourceBase: z.ZodType<ToolResourceBase> = z
-  .object({
-    integration_name: z.string(),
-    tool_name: z.string(),
-    description: z.union([z.string(), z.null()]).optional()
-  })
-  .strict()
-  .passthrough()
-const RecipeTool: z.ZodType<RecipeTool> = z
-  .object({
-    tool_resource: ToolResourceBase.describe(
-      'Identification details about a tool in an integration.'
-    ),
-    usage_instructions: z
-      .union([z.string(), z.null()])
-      .describe(
-        'A more in-depth description of this tool and what it should be used for in the context of this recipe.'
-      )
-      .optional()
-  })
-  .strict()
-  .passthrough()
-const RecipeDetails_Output: z.ZodType<RecipeDetails_Output> = z
-  .object({
-    tools: z
-      .array(RecipeTool)
-      .describe('An unsorted list of tools that would be used in this recipe.')
-      .default([])
-  })
-  .partial()
-  .strict()
-  .passthrough()
-const UserRecipe: z.ZodType<UserRecipe> = z
-  .object({
-    id: z.number().int(),
-    goal: z
-      .string()
-      .describe('The goal that this recipe is helping an agent achieve.'),
-    details: z.object({}).partial().strict().passthrough().optional(),
-    org_id: z.string().describe('The organization ID that owns this recipe'),
-    profile_id: z
-      .string()
-      .describe('The profile ID within the organization that owns this recipe'),
-    created_at: z.string().datetime({ offset: true }).optional(),
-    details_data: RecipeDetails_Output.describe(
-      'Details about a recipe. This is an unordered list of tools that are used in the recipe.'
-    )
-  })
-  .strict()
-  .passthrough()
-const PaginatedResponse_UserRecipe_: z.ZodType<PaginatedResponse_UserRecipe_> =
-  z
-    .object({
-      items: z.array(UserRecipe),
-      pagination: PaginationMetadata.describe('Metadata for paginated results')
-    })
-    .strict()
-    .passthrough()
-const RecipeDetails_Input: z.ZodType<RecipeDetails_Input> = z
-  .object({
-    tools: z
-      .array(RecipeTool)
-      .describe('An unsorted list of tools that would be used in this recipe.')
-      .default([])
-  })
-  .partial()
-  .strict()
-  .passthrough()
-const NewUserRecipeRequest: z.ZodType<NewUserRecipeRequest> = z
-  .object({
-    goal: z
-      .string()
-      .describe('The goal that this recipe is helping an agent achieve.'),
-    details: RecipeDetails_Input.describe(
-      'Details about a recipe. This is an unordered list of tools that are used in the recipe.'
-    )
-  })
-  .strict()
-  .passthrough()
-const ScoredItem_Tool_: z.ZodType<ScoredItem_Tool_> = z
-  .object({
-    item: Tool.describe('A tool.'),
-    score: z.number().gte(0).lte(1).describe('The score of the item [0, 1].')
-  })
-  .strict()
-  .passthrough()
-const SearchResponse_ScoredItem_Tool__: z.ZodType<SearchResponse_ScoredItem_Tool__> =
-  z
-    .object({
-      pagination: PaginationMetadata.describe('Metadata for paginated results'),
-      results: z.array(ScoredItem_Tool_)
-    })
-    .strict()
-    .passthrough()
-const ScoredItem_Recipe_: z.ZodType<ScoredItem_Recipe_> = z
-  .object({
-    item: Recipe.describe('A recipe.'),
-    score: z.number().gte(0).lte(1).describe('The score of the item [0, 1].')
-  })
-  .strict()
-  .passthrough()
-const SearchResponse_ScoredItem_Recipe__: z.ZodType<SearchResponse_ScoredItem_Recipe__> =
-  z
-    .object({
-      pagination: PaginationMetadata.describe('Metadata for paginated results'),
-      results: z.array(ScoredItem_Recipe_)
-    })
-    .strict()
-    .passthrough()
 const InitializeResponse: z.ZodType<InitializeResponse> = z
   .object({
     clients: z.array(
@@ -1071,6 +1079,9 @@ const InitializeResponse: z.ZodType<InitializeResponse> = z
     servers: z.array(ToolServer),
     tools: z.array(Tool),
     doppler_service_token: z.union([z.string(), z.null()]).optional(),
+    doppler_env: z.union([z.string(), z.null()]).optional(),
+    doppler_project: z.union([z.string(), z.null()]).optional(),
+    doppler_config: z.union([z.string(), z.null()]).optional(),
     user_id: z.string(),
     org_id: z.string()
   })
@@ -1205,6 +1216,8 @@ export const schemas = {
   AccountCreateRequest,
   ValidationError,
   HTTPValidationError,
+  ToolServerProvider,
+  ToolServer,
   X_ONEGREP_PROFILE_ID,
   IntegrationConfigurationState,
   IntegrationAuthScheme,
@@ -1219,16 +1232,30 @@ export const schemas = {
   Tool,
   PolicyBase,
   ToolProperties,
-  ToolServer,
-  ToolServerProvider,
   CanonicalResource,
   ToolResource,
   ToolCustomTagsParamsRequest,
   ToolCustomTagSelectionParamsRequest,
   MultipleToolCustomTagsParamsRequest,
-  Recipe,
   SearchRequest,
+  PaginationMetadata,
+  ScoredItem_Tool_,
+  SearchResponse_ScoredItem_Tool__,
+  Recipe,
+  ScoredItem_Recipe_,
+  SearchResponse_ScoredItem_Recipe__,
+  ToolResourceBase,
+  RecipeTool,
+  RecipeDetails_Output,
+  UserRecipe,
+  PaginatedResponse_UserRecipe_,
+  RecipeDetails_Input,
+  NewUserRecipeRequest,
   Strategy,
+  MCPToolServerClient,
+  BlaxelToolServerClient,
+  SmitheryConnectionInfo,
+  SmitheryToolServerClient,
   Policy,
   NewPolicyRequest,
   ActionApprovalState,
@@ -1240,23 +1267,7 @@ export const schemas = {
   start_date,
   end_date,
   AuditLog,
-  PaginationMetadata,
   PaginatedResponse_AuditLog_,
-  MCPToolServerClient,
-  BlaxelToolServerClient,
-  SmitheryConnectionInfo,
-  SmitheryToolServerClient,
-  ToolResourceBase,
-  RecipeTool,
-  RecipeDetails_Output,
-  UserRecipe,
-  PaginatedResponse_UserRecipe_,
-  RecipeDetails_Input,
-  NewUserRecipeRequest,
-  ScoredItem_Tool_,
-  SearchResponse_ScoredItem_Tool__,
-  ScoredItem_Recipe_,
-  SearchResponse_ScoredItem_Recipe__,
   InitializeResponse,
   CreateInvitationRequest,
   IngressConfig,

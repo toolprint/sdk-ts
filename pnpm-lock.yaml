@@ -143,6 +143,36 @@ importers:
         specifier: ^4.19.2
         version: 4.19.2
 
+  apps/tmp:
+    dependencies:
+      '@blaxel/sdk':
+        specifier: ^0.1.9
+        version: 0.1.15(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1))(@opentelemetry/instrumentation-fastify@0.45.0(@opentelemetry/api@1.9.0))
+      '@onegrep/sdk':
+        specifier: ^0.0.1
+        version: 0.0.1(@blaxel/sdk@0.1.15(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1)))(axios@1.7.9)(chalk@5.4.1)(dotenv@16.4.7)
+      '@zodios/core':
+        specifier: ^10.9.6
+        version: 10.9.6(axios@1.7.9)(zod@3.24.3)
+      ajv:
+        specifier: ^8.17.1
+        version: 8.17.1
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
+      chalk:
+        specifier: ^5.4.1
+        version: 5.4.1
+      eventsource:
+        specifier: ^3.0.6
+        version: 3.0.6
+      uuid:
+        specifier: ^11.1.0
+        version: 11.1.0
+      zod:
+        specifier: ^3.24.3
+        version: 3.24.3
+
   packages/eslint-config:
     devDependencies:
       '@eslint/js':
@@ -2605,6 +2635,13 @@ packages:
     engines: {node: '>=20 <=22'}
     peerDependencies:
       zod: ^3.24.2
+
+  '@onegrep/sdk@0.0.1':
+    resolution: {integrity: sha512-nmIIN6BiGnTbp4t8jwaIRV8dQMylDvuC/Bvb7PCg5eiYJWKl2ramVzoyHps4H3u5D1QzALhXrEMKxNfOleVQgw==}
+    peerDependencies:
+      '@blaxel/sdk': 0.1.9
+      chalk: ^5.3.0
+      dotenv: ^16.4.7
 
   '@opentelemetry/api-logs@0.200.0':
     resolution: {integrity: sha512-IKJBQxh91qJ+3ssRly5hYEJ8NDHu9oY/B1PXVSCWf7zytmYO9RNLB0Ox9XQ/fJ8m6gY6Q6NtBWlmXfaXt5Uc4Q==}
@@ -13217,6 +13254,28 @@ snapshots:
   '@onegrep/json-schema-to-zod@1.2.1(zod@3.24.2)':
     dependencies:
       zod: 3.24.2
+
+  '@onegrep/json-schema-to-zod@1.2.1(zod@3.24.3)':
+    dependencies:
+      zod: 3.24.3
+
+  '@onegrep/sdk@0.0.1(@blaxel/sdk@0.1.15(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1)))(axios@1.7.9)(chalk@5.4.1)(dotenv@16.4.7)':
+    dependencies:
+      '@blaxel/sdk': 0.1.15(@google/generative-ai@0.21.0)(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(@langchain/openai@0.3.17(@langchain/core@0.3.40(openai@4.85.1(encoding@0.1.13)(ws@8.18.1)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.1))(@opentelemetry/instrumentation-fastify@0.45.0(@opentelemetry/api@1.9.0))
+      '@modelcontextprotocol/sdk': 1.11.0
+      '@onegrep/json-schema-to-zod': 1.2.1(zod@3.24.3)
+      '@zodios/core': 10.9.6(axios@1.7.9)(zod@3.24.3)
+      ajv: 8.17.1
+      buffer: 6.0.3
+      chalk: 5.4.1
+      date-fns: 4.1.0
+      dotenv: 16.4.7
+      eventsource: 3.0.6
+      uuid: 11.1.0
+      zod: 3.24.3
+    transitivePeerDependencies:
+      - axios
+      - supports-color
 
   '@opentelemetry/api-logs@0.200.0':
     dependencies:
