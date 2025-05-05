@@ -10,6 +10,8 @@ import {
 } from '~/types.js'
 import { createToolCache } from '~/toolcache.js'
 
+import { log } from '~/core/log.js'
+
 export class Toolbox implements BaseToolbox<ToolDetails> {
   apiClient: OneGrepApiClient
   toolCache: ToolCache
@@ -57,7 +59,7 @@ export async function createToolbox(apiClient: OneGrepApiClient) {
   const ok = await toolCache.refresh()
 
   if (!ok) {
-    throw new Error('Toolcache initialization failed')
+    log.error('Toolcache initialization failed. Tools will not be available.')
   }
 
   return new Toolbox(apiClient, toolCache)

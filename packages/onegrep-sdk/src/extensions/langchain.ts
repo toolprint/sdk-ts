@@ -52,10 +52,7 @@ const convertToLangChainTool = (equippedTool: EquippedTool): StructuredTool => {
   }
 
   // Create the dynamic structured tool
-  const dynamicToolInput: DynamicStructuredToolInput<
-    ToolInputType,
-    ToolOutputType
-  > = {
+  const dynamicToolInput: DynamicStructuredToolInput<ToolOutputType> = {
     name: equippedTool.details.name,
     description: equippedTool.details.description,
     func: toolcallFunc,

@@ -11,28 +11,53 @@ import {
   InitializeResponse
 } from './types.js'
 
+import { makeApiCallWithResult } from './utils.js'
+
 export class OneGrepApiHighLevelClient {
   constructor(private readonly apiClient: OneGrepApiClient) {}
 
+  async healthCheck(): Promise<boolean> {
+    const result = await makeApiCallWithResult<void>(async () => {
+      await this.apiClient.health_health_get()
+    })
+    return result.success
+  }
+
   async initialize(): Promise<InitializeResponse> {
-    return await this.apiClient.initialize_api_v1_sdk_initialize_get()
+    const result = await makeApiCallWithResult<InitializeResponse>(async () => {
+      return await this.apiClient.initialize_api_v1_sdk_initialize_get()
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
   }
 
   async getServerName(serverId: string): Promise<string> {
-    const toolServer =
-      await this.apiClient.get_server_api_v1_servers__server_id__get({
-        params: {
-          server_id: serverId
-        }
-      })
-    return toolServer.name
+    const result = await makeApiCallWithResult<ToolServer>(async () => {
+      const toolServer =
+        await this.apiClient.get_server_api_v1_servers__server_id__get({
+          params: {
+            server_id: serverId
+          }
+        })
+      return toolServer
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!.name
   }
 
   async getAllServers(): Promise<Map<ToolServerId, ToolServer>> {
-    const toolServers: ToolServer[] =
-      await this.apiClient.list_servers_api_v1_servers__get()
+    const result = await makeApiCallWithResult<ToolServer[]>(async () => {
+      return await this.apiClient.list_servers_api_v1_servers__get()
+    })
+    if (result.error) {
+      throw result.error
+    }
     const toolServersMap: Map<ToolServerId, ToolServer> = new Map()
-    for (const toolServer of toolServers) {
+    for (const toolServer of result.data!) {
       toolServersMap.set(toolServer.id, toolServer)
     }
     return toolServersMap
@@ -49,73 +74,112 @@ export class OneGrepApiHighLevelClient {
    * @returns The client for the given server.
    */
   async getServerClient(serverId: string): Promise<ToolServerClient> {
-    const toolServerClient =
-      await this.apiClient.get_server_client_api_v1_servers__server_id__client_get(
-        {
-          params: {
-            server_id: serverId
+    const result = await makeApiCallWithResult<ToolServerClient>(async () => {
+      const toolServerClient =
+        await this.apiClient.get_server_client_api_v1_servers__server_id__client_get(
+          {
+            params: {
+              server_id: serverId
+            }
           }
-        }
-      )
-    return toolServerClient
+        )
+      return toolServerClient
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
   }
 
   async listTools(): Promise<Tool[]> {
-    const tools = await this.apiClient.list_tools_api_v1_tools__get()
-    return tools
+    const result = await makeApiCallWithResult<Tool[]>(async () => {
+      return await this.apiClient.list_tools_api_v1_tools__get()
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
   }
 
   async getTool(toolId: string): Promise<Tool> {
-    const tool = await this.apiClient.get_tool_api_v1_tools__tool_id__get({
-      params: {
-        tool_id: toolId
-      }
+    const result = await makeApiCallWithResult<Tool>(async () => {
+      return await this.apiClient.get_tool_api_v1_tools__tool_id__get({
+        params: {
+          tool_id: toolId
+        }
+      })
     })
-    return tool
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
   }
 
   async getToolProperties(toolId: string): Promise<ToolProperties> {
-    const toolProperties =
-      await this.apiClient.get_tool_properties_api_v1_tools__tool_id__properties_get(
-        {
-          params: {
-            tool_id: toolId
+    const result = await makeApiCallWithResult<ToolProperties>(async () => {
+      const toolProperties =
+        await this.apiClient.get_tool_properties_api_v1_tools__tool_id__properties_get(
+          {
+            params: {
+              tool_id: toolId
+            }
           }
-        }
-      )
-    return toolProperties
+        )
+      return toolProperties
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
   }
 
   async getToolResource(toolId: string): Promise<ToolResource> {
-    const toolResource =
-      await this.apiClient.get_tool_resource_api_v1_tools__tool_id__resource_get(
-        {
-          params: {
-            tool_id: toolId
+    const result = await makeApiCallWithResult<ToolResource>(async () => {
+      const toolResource =
+        await this.apiClient.get_tool_resource_api_v1_tools__tool_id__resource_get(
+          {
+            params: {
+              tool_id: toolId
+            }
           }
-        }
-      )
-    return toolResource
+        )
+      return toolResource
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
   }
 
   async getToolResourcesForIntegration(
     integrationName: string
   ): Promise<ToolResource[]> {
-    return await this.apiClient.get_integration_tools_api_v1_integrations__integration_name__tools_get(
-      {
-        params: {
-          integration_name: integrationName
+    const result = await makeApiCallWithResult<ToolResource[]>(async () => {
+      return await this.apiClient.get_integration_tools_api_v1_integrations__integration_name__tools_get(
+        {
+          params: {
+            integration_name: integrationName
+          }
         }
-      }
-    )
+      )
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
   }
 
   async searchTools(query: string): Promise<SearchResponseScoredItemTool> {
-    const response = await this.apiClient.search_tools_api_v1_search_tools_post(
-      {
-        query: query
+    const result = await makeApiCallWithResult<SearchResponseScoredItemTool>(
+      async () => {
+        return await this.apiClient.search_tools_api_v1_search_tools_post({
+          query: query
+        })
       }
     )
-    return response
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
   }
 }

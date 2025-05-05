@@ -23,7 +23,9 @@
     "strictNullChecks": true,
     "preserveConstEnums": true,
     "resolveJsonModule": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]

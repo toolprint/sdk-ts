@@ -16,7 +16,7 @@
     "bl:chat": "bl chat --local blaxel-agent"
   },
   "dependencies": {
-    "@blaxel/sdk": "0.1.9",
+    "@blaxel/sdk": "0.1.15",
     "@onegrep/sdk": "workspace:*",
     "@langchain/core": "0.3.40",
     "@langchain/langgraph": "^0.2.46",

@@ -114,8 +114,8 @@ export class BlaxelToolServerConnection implements ToolServerConnection {
     }
 
     return {
-      call: (input: ToolCallInput) => call(input),
-      callSync: (_: ToolCallInput) => callSync(_)
+      call: call.bind(this),
+      callSync: callSync.bind(this)
     }
   }
 

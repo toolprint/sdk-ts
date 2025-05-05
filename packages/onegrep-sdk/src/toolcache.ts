@@ -1,14 +1,3 @@
-import { OneGrepApiClient } from '~/core/index.js'
-import { OneGrepApiHighLevelClient } from '~/core/index.js'
-import {
-  ToolProperties,
-  ToolServerClient,
-  SearchResponseScoredItemTool,
-  ToolResource,
-  Tool,
-  InitializeResponse
-} from '~/core/index.js'
-
 import {
   ScoredResult,
   ToolCache,
@@ -24,13 +13,25 @@ import {
   ToolCallInput,
   ToolCallResponse,
   ToolCallError
-} from '~/types.js'
+} from './types.js'
+
+import { OneGrepApiClient } from '~/core/index.js'
+import { OneGrepApiHighLevelClient } from '~/core/index.js'
+import {
+  ToolProperties,
+  ToolServerClient,
+  SearchResponseScoredItemTool,
+  ToolResource,
+  Tool,
+  InitializeResponse
+} from '~/core/index.js'
 
 import { Keyv } from 'keyv'
 import { Cache, createCache } from 'cache-manager'
 import { ToolServerConnectionManager } from '~/connection.js'
 
 import { log } from '~/core/log.js'
+import { OneGrepApiError } from './core/api/utils.js'
 
 /**
  * A wrapper around a ToolHandle that provides a safe way to call the tool.
@@ -76,6 +77,48 @@ class SafeToolHandle implements ToolHandle {
 
   callSync(input: ToolCallInput): ToolCallResponse<any> {
     return this.safeCallSync(input)
+  }
+}
+
+class ToolCacheError extends Error {
+  constructor(message: string, cause?: Error) {
+    super(message, { cause })
+    this.name = 'ToolCacheError'
+  }
+}
+
+type MethodDecorator = (
+  target: any,
+  propertyKey: string | symbol,
+  descriptor: PropertyDescriptor
+) => PropertyDescriptor | void
+
+function handleErrors(): MethodDecorator {
+  return function (
+    _: any,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
+    const originalMethod = descriptor.value
+    descriptor.value = async function (...args: any[]) {
+      try {
+        return await originalMethod.apply(this, args)
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error instanceof OneGrepApiError) {
+            log.error(
+              `Issue with OneGrep API in ${propertyKey.toString()}: ${error.message}`
+            )
+          }
+          throw new ToolCacheError(
+            `Error in ${propertyKey.toString()}: ${error.message}`,
+            error
+          )
+        }
+        throw error
+      }
+    }
+    return descriptor
   }
 }
 
@@ -248,6 +291,7 @@ export class UniversalToolCache implements ToolCache {
     return toolDetails
   }
 
+  @handleErrors()
   async listTools(): Promise<Map<ToolId, BasicToolDetails>> {
     const tools: Tool[] = await this.highLevelClient.listTools()
     console.debug(`Found ${tools.length} tools`)
@@ -267,11 +311,13 @@ export class UniversalToolCache implements ToolCache {
     return basicTools
   }
 
+  @handleErrors()
   async listIntegrations(): Promise<string[]> {
     // TODO: Replace with endpoint which lists integration names
     return await this.highLevelClient.getAllServerNames()
   }
 
+  @handleErrors()
   async clearServerClientCache(): Promise<boolean> {
     /**
      * Clear the server client cache.
@@ -282,6 +328,7 @@ export class UniversalToolCache implements ToolCache {
     return true
   }
 
+  @handleErrors()
   async filterTools(
     filterOptions?: FilterOptions
   ): Promise<Map<ToolId, ToolDetails>> {
@@ -326,10 +373,12 @@ export class UniversalToolCache implements ToolCache {
     return result
   }
 
+  @handleErrors()
   async get(toolId: ToolId): Promise<ToolDetails> {
     return await this.getToolDetails(toolId)
   }
 
+  @handleErrors()
   async search(query: string): Promise<ScoredResult<ToolDetails>[]> {
     log.info(`Searching for tools with query: ${query}`)
 
@@ -349,42 +398,55 @@ export class UniversalToolCache implements ToolCache {
     return results
   }
 
+  @handleErrors()
   async refresh(): Promise<boolean> {
-    log.info('Refreshing toolcache')
+    try {
+      log.info('Refreshing toolcache')
 
-    const initResponse: InitializeResponse =
-      await this.highLevelClient.initialize()
-    log.info(
-      `Refresh item counts: servers: ${initResponse.servers.length}, tools: ${initResponse.tools.length}`
-    )
-
-    for (const server of initResponse.servers) {
-      this.serverNameCache.set(server.id, server.name)
-    }
-    log.debug(`Set ${initResponse.servers.length} server names in cache`)
-
-    for (const client of initResponse.clients) {
-      this.serverClientCache.set(client.server_id, client)
-    }
-    log.debug(`Set ${initResponse.clients.length} server clients in cache`)
-
-    for (const tool of initResponse.tools) {
-      this.toolBasicDetailsCache.set(
-        tool.id,
-        await this.convertToolToBasicDetails(tool)
+      const initResponse: InitializeResponse =
+        await this.highLevelClient.initialize()
+      log.info(
+        `Refresh item counts: servers: ${initResponse.servers.length}, tools: ${initResponse.tools.length}`
       )
-    }
-    log.debug(`Set ${initResponse.tools.length} tool basic details in cache`)
 
-    return true
+      for (const server of initResponse.servers) {
+        this.serverNameCache.set(server.id, server.name)
+      }
+      log.debug(`Set ${initResponse.servers.length} server names in cache`)
+
+      for (const client of initResponse.clients) {
+        this.serverClientCache.set(client.server_id, client)
+      }
+      log.debug(`Set ${initResponse.clients.length} server clients in cache`)
+
+      for (const tool of initResponse.tools) {
+        this.toolBasicDetailsCache.set(
+          tool.id,
+          await this.convertToolToBasicDetails(tool)
+        )
+      }
+      log.debug(`Set ${initResponse.tools.length} tool basic details in cache`)
+
+      return true
+    } catch (error) {
+      if (error instanceof OneGrepApiError) {
+        log.error(
+          `Issue with OneGrep API when refreshing toolcache: ${error.message}`
+        )
+        return false
+      }
+      throw error
+    }
   }
 
+  @handleErrors()
   async refreshTool(toolId: ToolId): Promise<ToolDetails> {
     await this.invalidateToolBasicDetailsCache(toolId)
 
     return await this.get(toolId)
   }
 
+  @handleErrors()
   async cleanup(): Promise<void> {
     await this.connectionManager.close()
   }

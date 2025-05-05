@@ -49,5 +49,8 @@
     "@zodios/core": "^10.9.6",
     "zod": "^3.24.2",
     "dotenv": "^16.4.7"
+  },
+  "peerDependencies": {
+    "axios": "^1.7.9"
   }
 }

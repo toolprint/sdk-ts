@@ -1,9 +1,16 @@
-import { type ZodiosOptions } from '@zodios/core'
+import {
+  type ZodiosOptions,
+  type ZodiosInstance,
+  type ApiOf
+} from '@zodios/core'
 
-import { createApiClient } from '@repo/onegrep-api-client'
+import { createApiClient, api } from '@repo/onegrep-api-client'
 import { getEnv, sdkApiSchema } from '@repo/utils'
 
-export type OneGrepApiClient = ReturnType<typeof createApiClient>
+import { log } from '../log.js'
+
+// Use the default Zodios to re-export the type as our own type
+export type OneGrepApiClient = ZodiosInstance<ApiOf<typeof api>>
 
 /**
  * Create a raw API Client given multiple optional parameters. A baseURL is always required.
@@ -14,7 +21,7 @@ export function createApiClientFromParams(clientParams: {
   baseUrl: string
   apiKey?: string
   accessToken?: string
-}) {
+}): OneGrepApiClient {
   const { baseUrl, apiKey, accessToken } = clientParams
 
   let authSchemeProvided = false
@@ -40,9 +47,14 @@ export function createApiClientFromParams(clientParams: {
       headers: headers
     }
   }
-  // console.debug(`Creating client pointing to ${baseUrl}`)
+  log.debug(`Creating client pointing to ${baseUrl}`)
 
-  return createApiClient(baseUrl, options) as OneGrepApiClient
+  try {
+    return createApiClient(baseUrl, options) as OneGrepApiClient
+  } catch (error) {
+    log.error(`Error creating OneGrep API Client: ${error}`)
+    throw error
+  }
 }
 
 /**

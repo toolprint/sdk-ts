@@ -13,7 +13,7 @@ async function main() {
   const app = Fastify()
 
   const toolbox = await createLangchainToolbox(await getToolbox())
-  console.info(toolbox.listTools())
+  logger.info(toolbox.listTools())
 
   app.addHook('onRequest', async (request, reply) => {
     logger.info(`${request.method} ${request.url}`)
