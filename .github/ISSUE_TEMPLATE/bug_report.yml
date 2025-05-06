@@ -1,0 +1,106 @@
+name: Bug Report
+description: Report a bug in the OneGrep TypeScript SDK
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Bug Severity
+      description: How severe is this bug?
+      options:
+        - Critical (Breaking deployed agents)
+        - Minor (Non-breaking/superficial)
+      default: 1
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: providers
+    attributes:
+      label: Affected Providers
+      description: Which providers are affected by this bug?
+      options:
+        - label: Blaxel
+        - label: Smithery
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: runtimes
+    attributes:
+      label: Affected Runtimes
+      description: Which runtimes are affected by this bug?
+      options:
+        - label: LangChain
+        - label: Other (please specify in description)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of the bug
+      placeholder: |
+        What went wrong? What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this bug?
+      placeholder: |
+        1. Initialize toolbox with '...'
+        2. Call method '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: code_example
+    attributes:
+      label: Code Example
+      description: Provide a minimal code example that reproduces the issue
+      render: typescript
+      placeholder: |
+        ```typescript
+        import { getToolbox } from '@onegrep/sdk'
+
+        // Your reproduction code here
+        ```
+    validations:
+      required: true
+
+  - type: input
+    id: sdk_version
+    attributes:
+      label: SDK Version
+      description: What version of the SDK are you using?
+      placeholder: e.g., 1.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: node_version
+    attributes:
+      label: Node.js Version
+      description: What version of Node.js are you using?
+      placeholder: e.g., 18.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Include any relevant logs or error messages
+      render: shell
+      placeholder: |
+        ```
+        Paste your logs here
+        ```
+    validations:
+      required: false 

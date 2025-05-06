@@ -1,168 +1,352 @@
-# typescript-sdk
+<div align="center">
+  <img src="assets/onegrep.png" alt="OneGrep Logo" width="200"/>
 
-[![Release](https://img.shields.io/github/v/release/OneGrep/typescript-sdk)](https://img.shields.io/github/v/release/OneGrep/typescript-sdk)
-[![Build status](https://img.shields.io/github/actions/workflow/status/OneGrep/typescript-sdk/main.yml?branch=main)](https://github.com/OneGrep/typescript-sdk/actions/workflows/main.yml?query=branch%3Amain)
-[![codecov](https://codecov.io/gh/OneGrep/typescript-sdk/branch/main/graph/badge.svg)](https://codecov.io/gh/OneGrep/typescript-sdk)
-[![Commit activity](https://img.shields.io/github/commit-activity/m/OneGrep/typescript-sdk)](https://img.shields.io/github/commit-activity/m/OneGrep/typescript-sdk)
-[![License](https://img.shields.io/github/license/OneGrep/typescript-sdk)](https://img.shields.io/github/license/OneGrep/typescript-sdk)
+# OneGrep TypeScript SDK
 
-OneGrep TypeScript SDK
+[![Release](https://img.shields.io/github/v/release/OneGrep/typescript-sdk)](https://github.com/OneGrep/typescript-sdk/releases/latest)
+[![PNPM](https://img.shields.io/badge/pnpm-v10.4.1-orange)](https://pnpm.io)
+[![Node](https://img.shields.io/badge/node-%3E%3D22.14.0-brightgreen)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/typescript-5.x-blue)](https://www.typescriptlang.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-- **Github repository**: <https://github.com/onegrep/typescript-sdk/>
-- **Documentation** <https://onegrep.github.io/typescript-sdk/>
+**Build agents that pick tools like experts, secure by default**
+
+_Import a single SDK to power your agents with semantic tool search, trainable contexts, and feedback-driven selection that gets smarter over time. Access tools from any provider through a unified API with configurable security policies and guardrails._
+
+[Documentation](docs/apiSpec.md) |
+[API Reference](docs/apiSpec.md#api-methods) |
+[Getting Started](#getting-started) |
+[Join our Community](https://join.slack.com/t/onegrep-community/shared_invite/placeholder)
+
+</div>
+
+## 📚 Table of Contents
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Supported Providers](#supported-providers)
+- [Security & Guardrails](#security--guardrails)
+- [API Reference](#api-reference)
+- [Contributing](#contributing)
+- [License](#license)
+
+## ✨ Features
+
+### 🎯 Intelligent Tool Selection
+
+- **Semantic Search**: Find the right tools based on natural language descriptions and agent goals
+- **Context Training**: Train custom tool contexts to improve selection accuracy for your specific use cases
+- **Feedback Learning**: Selection gets smarter over time by learning from agent interactions and success patterns
+- **Adaptive Ranking**: Tools are ranked based on historical performance and contextual relevance
+
+### 🔌 Universal Connectivity
+
+- **Multi-Provider Support**: Connect to any [supported provider](#supported-providers) through a single unified API
+- **Type-Safe Integration**: Full TypeScript support with type definitions for all API operations
+- **Simple Authentication**: Unified authentication handling across all providers
+- **Provider Agnostic**: Write code once, switch providers anytime
+- **OpenAPI Integration** `coming soon`: Register any OpenAPI server as a tool source automatically
+
+### 🛡️ Security & Control
+
+- **Guardrails & Access Control**: Configure tool execution rules and approval flows - from automatic execution to human-in-the-loop oversight
+- **Audit Logging**: Comprehensive logging of all tool selections and executions
+- **Network Security**: Secure HTTPS connections with JWT and API key-based authentication schemes
 
 ## 🚀 Getting Started
 
-TODO: add getting started
+### Join the Sandbox
 
-### Prerequisites
+1. **Request Access**
 
-- [Just](https://just.systems/) command runner
-- [Node.js](https://nodejs.org/) (v22 or higher)
-- [PNPM](https://pnpm.io/) (v10 or higher)
+   - Visit [onegrep.dev](https://www.onegrep.dev/) to join the waitlist
+   - You'll receive an invite to the OneGrep sandbox environment
 
-### Installation
+2. **Install the CLI**
 
-## Initial setup
+```bash
+# Install the OneGrep CLI
+npx -y @onegrep/cli onegrep-cli
 
-Install the dependencies:
-
-```shell
-just install
+# Create your account
+npx @onegrep/cli account
+# Select "Create Account" when prompted
 ```
 
-Build the project:
+### Sandbox Environment
 
-```shell
-# Using build cache
-just build
+The OneGrep sandbox comes pre-configured with:
 
-# Without build cache
-just rebuild
+- A collection of popular AI tools across different categories (chat, search, code analysis, etc.)
+- Example tool contexts trained for common agent scenarios
+- Pre-configured security policies and guardrails
+- Sample agent implementations using different frameworks
+
+### Exploring the Sandbox
+
+Let's try out some common workflows using the CLI:
+
+#### 1. Search for Tools
+
+Find tools that match your agent's goals using natural language:
+
+```bash
+# Start the CLI tool explorer
+npx @onegrep/cli tools
+
+# Select "search" from the menu
+# Enter your query when prompted:
+"I want to be able to find recent issues in the MCP repository and what the web says about how to fix them"
+
+# The CLI will return ranked tools matching your query
 ```
 
-Run the tests:
+#### 2. Execute Tools
 
-```shell
-just test
+Try out tools directly from the CLI:
+
+```bash
+# Start the CLI tool explorer
+npx @onegrep/cli tools
+
+# Select "Explore integrations"
+# Select "exa" from the list
+# Enter your query when prompted:
+"what are the recent developments in MCP"
+
+# The tool will execute and return results
 ```
 
-## Run an example Agent
+#### 3. Train Tool Context
 
-In the examples directory, there is an example agent that uses the SDK and Blaxel to run a simple agent.
+Improve tool selection by adding custom context:
 
-You'll need the Blaxel CLI and a free Blaxel account with some deployed MCP Servers before you can run the example locally.
+```bash
+# Start the CLI tool explorer
+npx @onegrep/cli tools
 
-Use the Blaxel Getting Started guide to install the Blaxel CLI and create a free account: <https://docs.blaxel.ai/Get-started>
+# Select "Explore integrations"
+# Select any tool
+# Choose "Add property"
+# Create a new property (e.g., "use_case")
+# Add a value (e.g., "mcp monitoring")
 
-Make sure `blaxel-search` is installed on your Blaxel account and the Blaxel CLI is logged in.
+# Now search again:
+npx @onegrep/cli tools
+# Select "search"
+# Try a query related to your tag:
+"I need to monitor MCP status"
 
-```shell
-# Start the Agent locally
+# Your trained tool should appear at the top of the results
+```
+
+### Using the SDK
+
+Once you have sandbox access, install the SDK:
+
+```bash
+# Install using PNPM
+pnpm add @onegrep/sdk
+```
+
+Set up your environment:
+
+```bash
+# Get your API key from the CLI
+npx @onegrep/cli account
+# Select "Show authentication status"
+# Your API key will be displayed
+
+# Set the API key in your environment
+export ONEGREP_API_KEY="your_sandbox_api_key"
+```
+
+#### Run an Agent
+
+Let's start with a complete example of running an agent that uses OneGrep for dynamic tool selection. This example uses LangChain for the agent loop and Blaxel for managing the agent runtime.
+
+First, install the Just command runner:
+
+```bash
+brew install just
+```
+
+Then run the example agent:
+
+```bash
+# Terminal 1: Start the agent server
 just bl-serve
 
-# Open a terminal chat window with the Agent
+# Terminal 2: Open a chat session with the agent
 just bl-chat
 ```
 
-## Using the SDK
+This will start a local agent that:
 
-Add the SDK to your project:
+- Uses OneGrep SDK for intelligent tool selection
+- Implements a ReAct agent loop with LangChain
+- Runs in a secure Blaxel runtime environment
 
-```shell
-npm add @onegrep/sdk
-```
+#### LangChain Integration
 
-Export the following environment variables for your application:
-
-```shell
-export ONEGREP_API_KEY=<your-onegrep-api-key>
-export ONEGREP_API_URL=<your-onegrep-api-url>
-```
-
-Import the SDK and create a toolbox somewhere it the boot-sequence of your application:
+OneGrep seamlessly integrates with LangChain, providing type-safe tool bindings:
 
 ```typescript
 import { getToolbox } from '@onegrep/sdk'
+import { createLangchainToolbox } from '@onegrep/sdk/extensions/langchain'
 
+// Initialize toolboxes
 const toolbox = await getToolbox()
-
-// Optionally, create a LangchainToolbox for use with LangGraph framework directly
-import { createLangchainToolbox } from '@onegrep/sdk'
 const langchainToolbox = await createLangchainToolbox(toolbox)
-```
 
-NOTE: It is recommended to create toolboxes as soon as possible in the boot-sequence of your application as a singleton and reuse it throughout your application. It will perform caching operations and manage connections to Tool Servers.
-
-In your agent loop, you can use the toolbox to search for tools based on natural language queries, then bind it to the LangGraph agent:
-
-```typescript
-const searchResults: ScoredResult<StructuredTool>[] = await toolbox.search(
-  'What is the weather in Tokyo?'
+// Search for relevant tools based on your agent's goals
+const searchResults = await toolbox.search(
+  'Find recent news about AI developments'
 )
 
-// Extract the tools from the search results
+// Tools are already structured for LangChain
 const tools = searchResults.map((result) => result.result)
 
+// Use in your LangChain agent
 const agent = await createReactAgent({
-  llm: 'your-llm-model-of-choice',
-  prompt: 'If the user ask for the weather, use the weather tool.',
-  tools: tools
+  llm: new ChatOpenAI(),
+  tools: tools,
+  prompt: 'Use the most relevant tools to find and analyze AI news.'
+})
+
+// Tools are now available to your agent with proper typing and validation
+const result = await agent.invoke({
+  input: "What's the latest news about LangChain?"
 })
 ```
 
-## 🛠 Tech Stack
+For more examples and detailed API documentation, check out our [Documentation](docs/apiSpec.md).
 
-- **Build System**: [Turborepo](https://turborepo.org/)
-- **Package Manager**: [PNPM](https://pnpm.io/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Bundle**: [rollup](https://rollupjs.org/)
-- **Task Runner**: [Just](https://just.systems/)
+## 🔗 Supported Providers
 
-## 📦 Project Structure
+OneGrep integrates with the following tool providers:
 
-This repository includes the following packages/apps:
+### [Blaxel](https://blaxel.ai)
 
-Apps:
+The AI-first tool hosting platform with built-in security and scalability. Blaxel provides a wide range of pre-built tools and supports custom tool deployment.
 
-- `blaxel-langgraph-agent`: A simple LangGraph agent that uses the OneGrep SDK and Blaxel
+### [Smithery](https://smithery.dev)
 
-Packages:
+A modern tool hosting platform focused on developer experience and enterprise features. Smithery offers extensive tool management capabilities and robust security controls.
 
-- `onegrep-sdk`: The SDK used by your agents
-- `onegrep-api-client`: The generated OpenAPI client
+Want to add support for your tool hosting platform? [Create a Provider Support Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+)!
 
-### Utilities
+## 📖 Next Steps
 
-This Turborepo has some additional tools already setup for you:
+Ready to explore more advanced capabilities? Check out our [API Reference](docs/apiSpec.md#api-methods) to learn about:
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-- [Husky](https://typicode.github.io/husky/#/) for git hooks
+- Advanced filtering and search options
+- Custom tool context training
+- Batch operations and error handling
+- Security policy configuration
+- And more!
 
-## Useful Links
+## 🤝 Contributing
 
-Learn more about the power of Turborepo:
+We welcome contributions to the OneGrep TypeScript SDK! Here's how you can help:
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+### Development Setup
 
-## 📚 Documentation
+```bash
+# Clone the repository
+git clone https://github.com/OneGrep/typescript-sdk.git
+cd typescript-sdk
 
-For more detailed documentation about each package, please refer to their respective README files:
+# Install dependencies
+pnpm install
 
-- [OneGrep SDK](packages/onegrep-sdk/README.md)
-- [OneGrep Gateway](apps/onegrep-gateway/README.md)
-- [Blaxel LangGraph Agent](apps/blaxel-langgraph-agent/README.md)
+# Run tests
+pnpm test
+```
 
-## Additional Notes
+### Making Changes
 
-- All packages in the repo that are part of a `pnpm pack` dependency chain must have a version (even if it's 0.0.0). [Related issue](https://github.com/pnpm/pnpm/issues/4164#issuecomment-1236762286)
+1. Create an issue first to discuss the change
+2. Fork the repository
+3. Create a feature branch referencing the issue (`git checkout -b issue-123/amazing-feature`)
+4. Make your changes
+5. Run tests and ensure they pass (`pnpm test`)
+6. Commit your changes (`git commit -m 'Add amazing feature'`)
+7. Push to your branch (`git push origin issue-123/amazing-feature`)
+8. Open a Pull Request with:
+   - Title: `[Issue-123] Add amazing feature`
+   - Description: Include "Fixes #123" or "Resolves #123" to link the issue
+
+### Feature Requests
+
+Have an idea for a new feature? [Create a Feature Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml) using one of these types:
+
+- General SDK Enhancement
+- New Runtime Support
+- New Provider Support
+
+The template will guide you through providing:
+
+1. Feature type selection
+2. Use case description
+3. Proposed solution with example code
+4. Alternative approaches considered
+
+### Bug Reports
+
+Found a bug? [Create a Bug Report](https://github.com/OneGrep/typescript-sdk/issues/new?template=bug_report.yml) with:
+
+**Required Information:**
+
+- Bug severity (Critical/Minor)
+- Affected providers and runtimes
+- Clear description and reproduction steps
+- Code example
+- Environment details
+
+The template will guide you through providing all necessary information to help us resolve the issue quickly.
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Authentication Errors
+
+```bash
+Error: Failed to authenticate with OneGrep API
+```
+
+- Ensure `ONEGREP_API_KEY` is set in your environment
+- Verify your API key is valid by running `npx @onegrep/cli account`
+- Check if your API URL is correct (`ONEGREP_API_URL`)
+
+#### Tool Not Found
+
+```typescript
+Error: Web search tool not found
+```
+
+- Confirm you have access to the required provider (Blaxel/Smithery)
+- Check if the tool name matches exactly
+- Try listing available tools: `await toolbox.listTools()`
+
+#### Tool Execution Failures
+
+```typescript
+Error: Tool execution failed: Invalid input
+```
+
+- Verify input matches the tool's schema
+- Check network connectivity to the tool provider
+- Ensure you have necessary permissions
+
+### Getting Help
+
+- Join our [Community Slack](https://join.slack.com/t/onegrep-community/shared_invite/placeholder)
+- Open an [Issue](https://github.com/OneGrep/typescript-sdk/issues)
+- Check our [API Reference](docs/apiSpec.md) for detailed documentation
 
 ## 📝 License
 
