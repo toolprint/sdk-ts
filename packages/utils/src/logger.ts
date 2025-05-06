@@ -76,7 +76,7 @@ const initRootLogger = (): Logger => {
  * The root logger for the application.
  * This is initialized when the module is imported.
  */
-const rootLogger: Logger = initRootLogger()
+export const rootLogger: Logger = initRootLogger()
 
 /**
  * Wraps the console object with a logger instance.
@@ -84,10 +84,4 @@ const rootLogger: Logger = initRootLogger()
  */
 export function wrapConsole() {
   console = asConsole(rootLogger)
-}
-
-// If the log mode is file, wrap the console object with a logger instance.
-// If any dependencies use the console object, they will now log to a file instead.
-if (getEnv(loggingEnvSchema).LOG_MODE === 'file') {
-  wrapConsole()
 }
