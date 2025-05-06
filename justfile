@@ -82,13 +82,12 @@ dev-n8n:
 # tail all onegrep logs
 [group('logs')]
 tail-logs:
-    tail -f ~/.onegrep/*.log
+    multitail -q 1 ~/.onegrep/*.log
 
 # tail the sdk log
 [group('logs')]
 tail-sdk-logs:
-    touch ~/.onegrep/onegrep.sdk.log
-    tail -f ~/.onegrep/onegrep.sdk.log
+    tail -F ~/.onegrep/onegrep.sdk.log
 
 # clear logs
 [group('logs')]

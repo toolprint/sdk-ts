@@ -12,11 +12,11 @@ import {
 
 import 'dotenv/config'
 
-import { getLogger } from '@repo/utils'
-
 import { fail } from 'assert'
 
-const log = getLogger('console', 'test')
+import { testLog } from '../test/log.test.js'
+
+const log = testLog
 
 describe('Base Toolbox Tests', () => {
   let toolbox: Toolbox

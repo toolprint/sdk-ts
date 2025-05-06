@@ -16,7 +16,6 @@ import { getDopplerSecretManager } from './secrets/doppler.js'
 
 import { createToolCache } from '~/toolcache.js'
 
-import { log } from '~/core/log.js'
 import {
   apiKeyBlaxelClientSessionMaker,
   apiKeySmitheryClientSessionMaker,
@@ -24,6 +23,8 @@ import {
 } from './connection.js'
 import { ClientSessionMaker } from './connection.js'
 import { SecretManager } from './secrets/index.js'
+
+import { log } from '~/core/log.js'
 
 export class Toolbox implements BaseToolbox<ToolDetails> {
   apiClient: OneGrepApiClient

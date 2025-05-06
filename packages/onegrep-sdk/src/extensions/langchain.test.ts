@@ -2,13 +2,13 @@ import { describe, it, expect, beforeAll } from 'vitest'
 import { createLangchainToolbox, LangchainToolbox } from './langchain.js'
 import { ToolInputParsingException } from '@langchain/core/tools'
 
-import { createToolbox, Toolbox } from '~/toolbox.js'
-import { clientFromConfig } from '~/core/api/client.js'
-import { FilterOptions, ToolCallOutput } from '~/types.js'
+import { createToolbox, Toolbox } from '../toolbox.js'
+import { clientFromConfig } from '../core/api/client.js'
+import { FilterOptions, ToolCallOutput } from '../types.js'
 
-import { getLogger } from '@repo/utils'
+import { testLog } from '../../test/log.test.js'
 
-const log = getLogger('console', 'test')
+const log = testLog
 
 describe('Langchain Toolbox Tests', () => {
   let toolbox: Toolbox

@@ -8,6 +8,16 @@ import { multiLogger } from './loggers/multi.js'
 
 import { getEnv, getEnvIssues, loggingEnvSchema, logModes } from './env.js'
 
+export const asConsole = (logger: Logger): Console => {
+  return {
+    log: logger.info.bind(logger),
+    debug: logger.debug.bind(logger),
+    info: logger.info.bind(logger),
+    warn: logger.warn.bind(logger),
+    error: logger.error.bind(logger)
+  } as Console
+}
+
 export const silentLogger: Logger = dummyLogger
 
 export function getLogger(
@@ -36,6 +46,10 @@ export function getLogger(
     throw new Error(`Unsupported log mode: ${logMode}`)
   }
 
+  logger.debug(
+    `${loggerName ?? 'Root'} logger initialized with log level ${logLevelName}`
+  )
+
   return logger
 }
 
@@ -62,6 +76,18 @@ const initRootLogger = (): Logger => {
  * The root logger for the application.
  * This is initialized when the module is imported.
  */
-export const log: Logger = initRootLogger()
+const rootLogger: Logger = initRootLogger()
 
-log.debug('Root logger initialized')
+/**
+ * Wraps the console object with a logger instance.
+ * This is useful for injecting into third party libraries that don't accept a logger instance.
+ */
+export function wrapConsole() {
+  console = asConsole(rootLogger)
+}
+
+// If the log mode is file, wrap the console object with a logger instance.
+// If any dependencies use the console object, they will now log to a file instead.
+if (getEnv(loggingEnvSchema).LOG_MODE === 'file') {
+  wrapConsole()
+}

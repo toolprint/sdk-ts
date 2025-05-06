@@ -30,8 +30,9 @@ import { Keyv } from 'keyv'
 import { Cache, createCache } from 'cache-manager'
 import { ToolServerConnectionManager } from '~/connection.js'
 
-import { log } from '~/core/log.js'
 import { OneGrepApiError } from './core/api/utils.js'
+
+import { log } from '~/core/log.js'
 
 /**
  * A wrapper around a ToolHandle that provides a safe way to call the tool.
@@ -292,7 +293,7 @@ export class UniversalToolCache implements ToolCache {
   @handleErrors()
   async listTools(): Promise<Map<ToolId, BasicToolDetails>> {
     const tools: Tool[] = await this.highLevelClient.listTools()
-    console.debug(`Found ${tools.length} tools`)
+    log.debug(`Found ${tools.length} tools`)
 
     const basicTools: Map<ToolId, BasicToolDetails> = new Map()
 
@@ -330,9 +331,7 @@ export class UniversalToolCache implements ToolCache {
   async filterTools(
     filterOptions?: FilterOptions
   ): Promise<Map<ToolId, ToolDetails>> {
-    console.info(
-      `Filtering tools with options: ${JSON.stringify(filterOptions)}`
-    )
+    log.info(`Filtering tools with options: ${JSON.stringify(filterOptions)}`)
     if (!filterOptions) {
       throw new Error(
         'No filter options provided. If you want to list tools, use the `.listTools()` method.'

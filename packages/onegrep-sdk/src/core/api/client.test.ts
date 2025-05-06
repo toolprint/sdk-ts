@@ -1,9 +1,9 @@
 import { clientFromConfig } from './client.js'
 import { describe, it, expect } from 'vitest'
 
-import { getLogger } from '@repo/utils'
+import { testLog } from '../../../test/log.test.js'
 
-const log = getLogger('console', 'test')
+const log = testLog
 
 describe('API Client Integration Tests', () => {
   it.skip('should successfully call the health endpoint', async () => {

@@ -2,6 +2,11 @@ import { clientFromConfig } from './core/index.js'
 import { UniversalToolCache } from './toolcache.js'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { ToolServerConnectionManager } from './connection.js'
+
+import { testLog } from '../test/log.test.js'
+
+const log = testLog
+
 // import { SecretManager } from '~/secrets/index.js'
 
 // class MockSecretManager implements SecretManager {

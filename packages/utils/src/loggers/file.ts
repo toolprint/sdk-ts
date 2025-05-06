@@ -73,7 +73,8 @@ export function fileLogger(
   }
 
   // Construct the log file path based on the logger name
-  let logFilepath = getLogFilepath('onegrep.log')
+  // Console is considered the root logger
+  let logFilepath = getLogFilepath('console.log')
   if (loggerName) {
     logFilepath = getLogFilepath(`onegrep.${loggerName}.log`)
   }
