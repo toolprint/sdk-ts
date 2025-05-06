@@ -5,7 +5,11 @@ import {
 } from '~/core/index.js'
 import { createBlaxelConnection } from '~/providers/blaxel/connection.js'
 import { createSmitheryConnection } from '~/providers/smithery/connection.js'
-import { ConnectionManager, ToolServerConnection } from '~/types.js'
+import {
+  ConnectionManager,
+  ToolServerConnection,
+  ToolServerId
+} from '~/types.js'
 import {
   MultiTransportClientSession,
   RefreshableMultiTransportClientSession
@@ -14,39 +18,113 @@ import { ClientSessionFactory } from '~/providers/mcp/session.js'
 import { ClientSession } from '~/providers/mcp/session.js'
 import { ClientSessionManager } from '~/providers/mcp/session.js'
 
-import { createBlaxelMcpClientTransports as blaxelMcpTransportOptions } from '~/providers/blaxel/transport.js'
+import {
+  createBlaxelMcpClientTransports as blaxelMcpTransportOptions,
+  BlaxelSettings
+} from '~/providers/blaxel/transport.js'
 import { createSmitheryTransports as smitheryMcpTransportOptions } from '~/providers/smithery/transport.js'
 
-import { Cache, createCache } from 'cache-manager'
-import Keyv from 'keyv'
-
 import { log } from '~/core/log.js'
+import { xBlaxelHeaders } from './providers/blaxel/api.js'
+
+/**
+ * A function that creates a client session for a tool server client
+ */
+export interface ClientSessionMaker<T extends ToolServerClient> {
+  create: (client: T) => Promise<ClientSession>
+}
+
+export const blaxelClientSessionMaker: ClientSessionMaker<BlaxelToolServerClient> =
+  {
+    create: async (client: BlaxelToolServerClient) => {
+      return Promise.resolve(
+        new RefreshableMultiTransportClientSession(
+          blaxelMcpTransportOptions(client.blaxel_function)
+        )
+      )
+    }
+  }
+
+export const apiKeyBlaxelClientSessionMaker = (
+  apiKey: string,
+  workspace: string,
+  providedSettings?: BlaxelSettings
+): ClientSessionMaker<BlaxelToolServerClient> => {
+  const headerOverrides = xBlaxelHeaders(apiKey, workspace)
+  log.trace('Blaxel header overrides', headerOverrides)
+
+  return {
+    create: async (client: BlaxelToolServerClient) => {
+      return Promise.resolve(
+        new MultiTransportClientSession(
+          blaxelMcpTransportOptions(
+            client.blaxel_function,
+            providedSettings,
+            headerOverrides
+          )
+        )
+      )
+    }
+  }
+}
+
+export const smitheryClientSessionMaker: ClientSessionMaker<SmitheryToolServerClient> =
+  {
+    create: async (client: SmitheryToolServerClient) => {
+      return Promise.resolve(
+        new MultiTransportClientSession(smitheryMcpTransportOptions(client))
+      )
+    }
+  }
+
+export const apiKeySmitheryClientSessionMaker = (
+  apiKey: string
+): ClientSessionMaker<SmitheryToolServerClient> => {
+  return {
+    create: async (client: SmitheryToolServerClient) => {
+      return Promise.resolve(
+        new MultiTransportClientSession(
+          smitheryMcpTransportOptions(client, apiKey)
+        )
+      )
+    }
+  }
+}
+
+class RegisteredClientSessionFactory {
+  private clientTypeToSessionMaker: Map<
+    string,
+    ClientSessionMaker<ToolServerClient>
+  >
+
+  constructor(
+    sessionMakers?: Map<string, ClientSessionMaker<ToolServerClient>>
+  ) {
+    this.clientTypeToSessionMaker = sessionMakers ?? new Map()
+  }
+
+  register(
+    client_type: string,
+    sessionMaker: ClientSessionMaker<ToolServerClient>
+  ) {
+    this.clientTypeToSessionMaker.set(client_type, sessionMaker)
+  }
+
+  create(client: ToolServerClient): Promise<ClientSession> {
+    if (!this.clientTypeToSessionMaker.has(client.client_type)) {
+      throw new Error(
+        `Session maker not registered for client type: ${client.client_type}`
+      )
+    }
+    return this.clientTypeToSessionMaker.get(client.client_type)!.create(client)
+  }
+}
 
 /**
  * Creates a client session for a tool server based on the client type.
  */
-const toolServerSessionFactory: ClientSessionFactory<
-  ToolServerClient,
-  ClientSession
-> = {
-  create: async (client: ToolServerClient) => {
-    if (client.client_type === 'blaxel') {
-      const blaxelClient = client as BlaxelToolServerClient
-      return new RefreshableMultiTransportClientSession(
-        blaxelMcpTransportOptions(blaxelClient.blaxel_function)
-      )
-    }
-    if (client.client_type === 'smithery') {
-      const smitheryClient = client as SmitheryToolServerClient
-      return new MultiTransportClientSession(
-        smitheryMcpTransportOptions(smitheryClient)
-      )
-    }
-    throw new Error(
-      `Unsupported tool server client type: ${client.client_type}`
-    )
-  }
-}
+export const defaultToolServerSessionFactory: RegisteredClientSessionFactory =
+  new RegisteredClientSessionFactory()
 
 /**
  * Manages tool server sessions for different tool servers.
@@ -55,10 +133,17 @@ const toolServerSessionFactory: ClientSessionFactory<
  *
  * Must use close() to clean up sessions
  */
-export const toolServerSessionManager = new ClientSessionManager<
-  ToolServerClient,
-  ClientSession
->(toolServerSessionFactory, (client) => Promise.resolve(client.server_id))
+export function createToolServerSessionManager(
+  factory: ClientSessionFactory<
+    ToolServerClient,
+    ClientSession
+  > = defaultToolServerSessionFactory
+): ClientSessionManager<ToolServerClient, ClientSession> {
+  return new ClientSessionManager<ToolServerClient, ClientSession>(
+    factory,
+    (client) => Promise.resolve(client.server_id) // KeyExtractor uses the server_id as the key
+  )
+}
 
 /**
  * Manages connections to tool servers of different types.
@@ -68,27 +153,68 @@ export const toolServerSessionManager = new ClientSessionManager<
  * Must use close() to clean up connections
  */
 export class ToolServerConnectionManager implements ConnectionManager {
-  // private connections: Map<ToolServerId, ToolServerConnection>
-  private connectionCache: Cache
+  private readonly toolServerSessionManager: ClientSessionManager<
+    ToolServerClient,
+    ClientSession
+  >
+  private openConnections: Map<ToolServerId, ToolServerConnection>
 
-  constructor() {
-    // this.connections = new Map()
-    this.connectionCache = createCache({
-      cacheId: 'tool-server-connection-cache',
-      stores: [new Keyv({ ttl: 1000 * 60 * 5 })] // 5 minutes
-    })
+  constructor(
+    factory: ClientSessionFactory<
+      ToolServerClient,
+      ClientSession
+    > = defaultToolServerSessionFactory
+  ) {
+    this.toolServerSessionManager = createToolServerSessionManager(factory)
+    this.openConnections = new Map()
+  }
+
+  private async removeClosedConnection(
+    client: ToolServerClient
+  ): Promise<void> {
+    this.openConnections.delete(client.server_id)
+    log.debug(`Removed closed connection for tool server ${client.server_id}`)
   }
 
   private async newConnection(
     client: ToolServerClient
   ): Promise<ToolServerConnection> {
+    // ! Extend the onClose callback to remove the closed connection from the open connections map
+    async function extendOnClose(
+      manager: ToolServerConnectionManager,
+      mcpClientSession: ClientSession
+    ) {
+      const originalOnClose = mcpClientSession.onClose
+      mcpClientSession.onClose = async () => {
+        await originalOnClose?.()
+        await manager.removeClosedConnection(client)
+      }
+    }
+
     if (client.client_type === 'blaxel') {
-      return await createBlaxelConnection(client as BlaxelToolServerClient)
+      // ! Use the SDK's MCP client sessions if the environment variable is set
+      if (process.env.ONEGREP_SDK_BLAXEL_USE_SDK_SESSIONS) {
+        return await createBlaxelConnection(client as BlaxelToolServerClient)
+      }
+
+      // Otherwise we manage our own sessions
+      const mcpClientSession =
+        await this.toolServerSessionManager.getSession(client)
+      extendOnClose(this, mcpClientSession)
+
+      return await createBlaxelConnection(
+        client as BlaxelToolServerClient,
+        mcpClientSession
+      )
     }
     if (client.client_type === 'smithery') {
+      const mcpClientSession =
+        await this.toolServerSessionManager.getSession(client)
+      extendOnClose(this, mcpClientSession)
+
       return await createSmitheryConnection(
         client as SmitheryToolServerClient,
-        await toolServerSessionManager.getSession(client)
+        mcpClientSession
       )
     }
 
@@ -98,34 +224,35 @@ export class ToolServerConnectionManager implements ConnectionManager {
   }
 
   /**
-   * Get a cached connection for a tool server client.
-   *
-   * returns an active connection for a given server id if one exists
-   * otherwise returns undefined
-   */
-  private async getCachedConnection(
-    client: ToolServerClient
-  ): Promise<ToolServerConnection> {
-    return await this.connectionCache.wrap(client.server_id, async () => {
-      log.info(`Creating new connection for ${client.server_id}`)
-      return await this.newConnection(client)
-    })
-  }
-
-  /**
    * Connect to a tool server and return a connection.
    *
    * returns an active connection for a given server id if one exists
    * otherwise creates a new connection and caches it
    */
   async connect(client: ToolServerClient): Promise<ToolServerConnection> {
-    return await this.getCachedConnection(client)
+    if (this.openConnections.has(client.server_id)) {
+      log.info(`Returning open connection for tool server: ${client.server_id}`)
+      return this.openConnections.get(client.server_id)!
+    }
+    const connection = await this.newConnection(client)
+    this.openConnections.set(client.server_id, connection)
+    log.info(
+      `Opening ${connection.constructor.name} for tool server: ${client.server_id}`
+    )
+
+    await connection.initialize()
+    log.info(`Connection initialized for tool server: ${client.server_id}`)
+
+    return connection
   }
 
   /**
    * Close all connections.
    */
   async close(): Promise<void> {
-    await this.connectionCache.clear()
+    for (const connection of this.openConnections.values()) {
+      await connection.close()
+    }
+    this.openConnections.clear()
   }
 }

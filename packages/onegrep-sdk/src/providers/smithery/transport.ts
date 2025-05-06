@@ -6,19 +6,12 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import { SmitheryToolServerClient } from '~/core/index.js'
 
 export function createSmitheryTransports(
-  toolServerClient: SmitheryToolServerClient
+  toolServerClient: SmitheryToolServerClient,
+  apiKey?: string
 ): Transport[] {
-  // ! Use secret manager to get the smithery api key?
-  // const secretNames = await secretManager.getSecretNames()
-  // if (!secretNames.includes('SMITHERY_API_KEY')) {
-  //     throw new Error('SMITHERY_API_KEY secret not found')
-  // }
-
-  const smitheryApiKey = process.env.SMITHERY_API_KEY
+  const smitheryApiKey = apiKey ?? process.env.SMITHERY_API_KEY
   if (!smitheryApiKey) {
-    throw new Error(
-      'SMITHERY_API_KEY environment variable is required for Smithery connections'
-    )
+    throw new Error('Smithery API key is required for Smithery connections')
   }
 
   // ! TODO: Parse and validate config from secret manager?

@@ -14,6 +14,8 @@ import 'dotenv/config'
 
 import { getLogger } from '@repo/utils'
 
+import { fail } from 'assert'
+
 const log = getLogger('console', 'test')
 
 describe('Base Toolbox Tests', () => {
@@ -259,7 +261,9 @@ describe('Blaxel Toolbox Tests', () => {
     })
     expect(response).toBeDefined()
     expect(response).toBeTypeOf('object')
-    expect(response.isError).toBe(false)
+    if (response.isError) {
+      fail(`Tool call failed with error: ${JSON.stringify(response.message)}`)
+    }
 
     const output = response as ToolCallOutput<any>
     log.info(`Output: ${JSON.stringify(output)}`)

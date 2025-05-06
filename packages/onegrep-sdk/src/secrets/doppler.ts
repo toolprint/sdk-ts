@@ -5,6 +5,7 @@ import { SecretManager } from './types.js'
 import { InitializeResponse, OneGrepApiClient } from '~/core/index.js'
 import { OneGrepApiHighLevelClient } from '~/core/index.js'
 import { clientFromConfig } from '~/core/index.js'
+
 import { log } from '~/core/log.js'
 
 /**
@@ -88,13 +89,45 @@ export class DopplerSecretManager implements SecretManager {
     return secretsMap
   }
 
+  /**
+   * Fetches secrets by name from Doppler.
+   *
+   * If requireAll is true, and any of the requested secrets are not found, an error is thrown.
+   * If requireAll is false (default), and any of the requested secrets are not found, they are logged as warnings.
+   */
+  async getSecrets(
+    secretNames: string[],
+    requireAll: boolean = false
+  ): Promise<Map<string, string>> {
+    const secretsMap = await this.fetchSecrets()
+    const missingSecrets = secretNames.filter(
+      (secretName) => !secretsMap.has(secretName)
+    )
+    if (missingSecrets.length > 0) {
+      if (requireAll) {
+        throw new Error(
+          `Missing required secrets: ${missingSecrets.join(', ')}`
+        )
+      } else {
+        log.warn(
+          `Missing requested optional secrets: ${missingSecrets.join(', ')}`
+        )
+      }
+    }
+
+    return secretsMap
+  }
+
   async syncProcessEnvironment(): Promise<void> {
     const secretsMap = await this.fetchSecrets()
 
     // Forcibly export it to the environment so that a subsequent library can pick it up.
     for (const [secretName, secretValue] of secretsMap.entries()) {
+      log.debug(`Syncing secret ${secretName} to process environment`)
       process.env[secretName] = secretValue
     }
+
+    log.info(`Synced ${secretsMap.size} secrets to process environment`)
   }
 
   private get doppler(): DopplerSDK {

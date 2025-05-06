@@ -8,15 +8,18 @@ import {
 } from '~/types.js'
 import { jsonSchemaUtils } from '~/schema.js'
 import { parseResultFunc } from '~/providers/mcp/toolcall.js'
+import { mcpCallTool } from '~/providers/mcp/toolcall.js'
+import { ClientSession } from '~/providers/mcp/session.js'
 
 import { BlaxelToolServerClient } from '~/core/index.js'
 
-import { getTool as getBlaxelServerTools } from '@blaxel/sdk'
-import { settings as blaxelSettings } from '@blaxel/sdk'
+import { getTool as getBlaxelServerTools, Function } from '@blaxel/sdk'
 
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 
 import { log } from '~/core/log.js'
+import { getDopplerSecretManager } from '~/secrets/doppler.js'
+import { getBlaxeApiClientFromSecrets, getBlaxelFunction } from './api.js'
 
 /**
  * A tool from the Blaxel MCP server.
@@ -38,24 +41,41 @@ interface BlaxelTool {
  */
 export class BlaxelToolServerConnection implements ToolServerConnection {
   private toolServerClient: BlaxelToolServerClient
+  private mcpClientSession: ClientSession | undefined
   private toolsByName: Map<string, BlaxelTool>
 
-  constructor(toolServerClient: BlaxelToolServerClient) {
+  constructor(
+    toolServerClient: BlaxelToolServerClient,
+    mcpClientSession?: ClientSession
+  ) {
     this.toolServerClient = toolServerClient
+    this.mcpClientSession = mcpClientSession
     this.toolsByName = new Map()
   }
 
-  async initialize(): Promise<void> {
-    // ! For now the Blaxel Function name is the same as the integration name.
-    const tools = await getBlaxelServerTools(
-      this.toolServerClient.blaxel_function
-    )
-    log.info(`Found ${tools.length} tools on blaxel MCP server`)
-
-    this.toolsByName = new Map(tools.map((tool) => [tool.name, tool]))
+  /**
+   * Whether we should use a direct connection to the Blaxel MCP server.
+   *
+   * If we have a direct session, we should use it.
+   * If we don't have a direct session, we should use the Blaxel SDK's MCP client.
+   */
+  private get useDirectConnection(): boolean {
+    return this.mcpClientSession !== undefined
   }
 
-  private get toolNames(): Set<string> {
+  async initialize(): Promise<void> {
+    // If we don't have a direct session, we should get register the BlaxelTools
+    if (!this.useDirectConnection) {
+      // ! For now the Blaxel Function name is the same as the integration name.
+      const tools = await getBlaxelServerTools(
+        this.toolServerClient.blaxel_function
+      )
+      this.toolsByName = new Map(tools.map((tool) => [tool.name, tool]))
+      log.debug(`Registered ${this.registeredToolNames.size} blaxel tools`)
+    }
+  }
+
+  private get registeredToolNames(): Set<string> {
     return new Set(this.toolsByName.keys())
   }
 
@@ -66,10 +86,30 @@ export class BlaxelToolServerConnection implements ToolServerConnection {
       )
     }
 
-    if (!this.toolNames.has(toolDetails.name)) {
-      throw new Error(`Tool not found: ${toolDetails.name}`)
+    // Only try to validate the tool name if we're using the Blaxel SDK's MCP client.
+    if (!this.useDirectConnection) {
+      if (!this.registeredToolNames.has(toolDetails.name)) {
+        throw new Error(`Tool not found: ${toolDetails.name}`)
+      }
     }
 
+    // Call using our own MCP client.
+    const callDirect = async (
+      toolCallInput: ToolCallInput
+    ): Promise<ToolCallResponse<any>> => {
+      return await mcpCallTool(
+        this.mcpClientSession!.client,
+        toolDetails,
+        toolCallInput
+      )
+    }
+
+    // Call using our own MCP client.
+    const callSyncDirect = (_: ToolCallInput): ToolCallResponse<any> => {
+      throw new Error('Blaxel tools do not support sync calls')
+    }
+
+    // Call using the Blaxel SDK's MCP client.
     const call = async (
       toolCallInput: ToolCallInput
     ): Promise<ToolCallResponse<any>> => {
@@ -104,6 +144,7 @@ export class BlaxelToolServerConnection implements ToolServerConnection {
       }
     }
 
+    // Call using the Blaxel SDK's MCP client.
     const callSync = (_: ToolCallInput): ToolCallResponse<any> => {
       throw new Error('Blaxel tools do not support sync calls')
 
@@ -113,9 +154,16 @@ export class BlaxelToolServerConnection implements ToolServerConnection {
       // return parseResultFunc(result);
     }
 
-    return {
-      call: call.bind(this),
-      callSync: callSync.bind(this)
+    if (this.useDirectConnection) {
+      return {
+        call: callDirect.bind(this),
+        callSync: callSyncDirect.bind(this)
+      }
+    } else {
+      return {
+        call: call.bind(this),
+        callSync: callSync.bind(this)
+      }
     }
   }
 
@@ -123,43 +171,50 @@ export class BlaxelToolServerConnection implements ToolServerConnection {
     log.info(
       `Closing connection to Blaxel Server ${this.toolServerClient.server_id}`
     )
-    // ! No need to close the Blaxel MCP client manually, it manages its own sessions.
+    // Only close if we have a direct MCP session
+    // When using Blaxel SDK's MCP client it manages its own sessions.
+    if (this.mcpClientSession) {
+      await this.mcpClientSession.close()
+    }
   }
 }
 
 export async function createBlaxelConnection(
-  client: BlaxelToolServerClient
+  client: BlaxelToolServerClient,
+  mcpClientSession?: ClientSession
 ): Promise<ToolServerConnection> {
-  // NOTE: Using the Blaxel SDK to retrieve their MCP client
-  // will automatically use their auth mechanism pulling from the environment.
-  // This is not currently easy to override, so it is important to ensure Blaxel is authenticated
-  // and the current workspace matches the tool server's workspace.
-  try {
-    blaxelSettings.authenticate()
-  } catch (error) {
-    log.error(
-      `Blaxel authentication failed in connection attempt for tool server ${client.server_id}`,
-      error
-    )
-    throw new Error('Failed to authenticate with Blaxel', { cause: error })
-  }
-  const workspace = blaxelSettings.workspace
-  if (!workspace) {
-    log.error(
-      `Blaxel workspace not found in connection attempt for tool server ${client.server_id}`
-    )
-    throw new Error('Blaxel workspace not found')
+  // If we've been given a direct session, use it instead of the Blaxel SDK's.
+  if (mcpClientSession) {
+    return new BlaxelToolServerConnection(client, mcpClientSession)
   }
 
-  if (workspace !== client.blaxel_workspace) {
-    log.error(
-      `Configured Blaxel workspace does not match requested workspace: ${workspace} !== ${client.blaxel_workspace}`
+  // Verify the we can authenticate with Blaxel and that the workspace matches the tool server's workspace.
+  try {
+    const customBlaxelApiClient = await getBlaxeApiClientFromSecrets(
+      await getDopplerSecretManager()
     )
-    throw new Error(
-      `Incorrect Blaxel workspace: ${workspace} !== ${client.blaxel_workspace}`
+    const blaxelFunction: Function = await getBlaxelFunction(
+      client.blaxel_function,
+      customBlaxelApiClient
+    )
+
+    if (!blaxelFunction) {
+      throw new Error(
+        `Blaxel function not found using provided authentication: ${client.blaxel_function}`
+      )
+    }
+
+    log.debug(
+      `Blaxel function found for tool server ${client.server_id}: ${client.blaxel_function}`,
+      blaxelFunction
+    )
+  } catch (error) {
+    // ! TODO: Warn for now, but we should probably throw an error here when we can reliably validate the Blaxel function.
+    log.warn(
+      `Unable to verify Blaxel authentication for tool server ${client.server_id}`,
+      error
     )
   }
-  const instance = new BlaxelToolServerConnection(client)
-  await instance.initialize()
-  return instance
+
+  return new BlaxelToolServerConnection(client)
 }

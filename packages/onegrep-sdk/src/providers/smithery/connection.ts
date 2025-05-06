@@ -139,7 +139,7 @@ export class SmitheryToolServerConnection implements ToolServerConnection {
     const call = async (
       input: ToolCallInput
     ): Promise<ToolCallResponse<any>> => {
-      return mcpCallTool(this.mcpClientSession.client, toolDetails, input)
+      return await mcpCallTool(this.mcpClientSession.client, toolDetails, input)
     }
 
     const callSync = (_: ToolCallInput): ToolCallResponse<any> => {
@@ -161,7 +161,5 @@ export async function createSmitheryConnection(
   client: SmitheryToolServerClient,
   mcpClientSession: ClientSession
 ): Promise<ToolServerConnection> {
-  const instance = new SmitheryToolServerConnection(client, mcpClientSession)
-  await instance.initialize()
-  return instance
+  return new SmitheryToolServerConnection(client, mcpClientSession)
 }

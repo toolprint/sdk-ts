@@ -79,15 +79,31 @@ dev:
 dev-n8n:
     pnpm turbo run dev --filter=@onegrep/sdk/n8n-nodes-onegrep
 
+# tail all onegrep logs
+[group('logs')]
+tail-logs:
+    tail -f ~/.onegrep/*.log
+
+# tail the sdk log
+[group('logs')]
+tail-sdk-logs:
+    touch ~/.onegrep/onegrep.sdk.log
+    tail -f ~/.onegrep/onegrep.sdk.log
+
+# clear logs
+[group('logs')]
+clear-logs:
+    rm -f ~/.onegrep/*.log
+
 # blaxel serve agent
 [group('blaxel')]
 bl-serve:
-    pnpm turbo run bl:serve --filter=@repo/blaxel-langgraph-agent
+    cd apps/blaxel-langgraph-agent && pnpm bl:serve
 
 # open blaxel chat for local agent
 [group('blaxel')]
 bl-chat:
-    pnpm turbo run bl:chat --filter=@repo/blaxel-langgraph-agent
+    cd apps/blaxel-langgraph-agent && pnpm bl:chat
 
 # start the gateway
 [group('gateway')]
