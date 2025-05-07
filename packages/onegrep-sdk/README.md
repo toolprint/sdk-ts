@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/onegrep.png" alt="OneGrep Logo" width="200"/>
+  <img src="../../assets/onegrep.png" alt="OneGrep Logo" width="200"/>
 
 # OneGrep TypeScript SDK
 
