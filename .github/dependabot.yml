@@ -1,0 +1,41 @@
+# Basic dependabot.yml file with version updates for npm packages
+
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    # Look for package files in the root directory
+    directory: "/"
+    # Check for updates once a week
+    schedule:
+      interval: "weekly"
+    # Specify labels for pull requests
+    labels:
+      - "dependencies"
+      - "security"
+    # Set reviewers for pull requests
+    reviewers:
+      - "@onegrep/admins"
+    # Group all updates together
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    # Limit the number of open pull requests for version updates
+    open-pull-requests-limit: 10
+
+  # Also check for updates in the packages directory
+  - package-ecosystem: "npm"
+    directory: "/packages/onegrep-sdk"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "security"
+    reviewers:
+      - "@onegrep/admins"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 10

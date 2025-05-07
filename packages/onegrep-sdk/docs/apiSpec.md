@@ -16,6 +16,9 @@
   - [CrewAI](#crewai)
   - [OpenAI Assistants](#openai-assistants)
   - [Anthropic Claude](#anthropic-claude)
+- [Provider Integration](#provider-integration)
+  - [Blaxel](#blaxel)
+  - [Smithery](#smithery)
 
 ## Authentication
 
@@ -209,12 +212,16 @@ _Coming Soon_
 
 Want to add support for your tool hosting platform? [Create a Provider Support Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+) and select "New Provider Support" as the feature type.
 
-### [Blaxel](https://blaxel.ai)
+## Provider Integration
 
-The AI-first tool hosting platform with built-in security and scalability. Blaxel provides a wide range of pre-built tools and supports custom tool deployment.
-
-### [Smithery](https://smithery.dev)
-
-A modern tool hosting platform focused on developer experience and enterprise features. Smithery offers extensive tool management capabilities and robust security controls.
+OneGrep is designed to work with multiple tool providers, each offering their own unique capabilities and features. Below are the providers we currently support.
 
 Want to add support for your tool hosting platform? [Create a Provider Support Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+) and select "New Provider Support" as the feature type.
+
+### Blaxel
+
+[Blaxel](https://blaxel.ai)
+
+### Smithery
+
+[Smithery](https://smithery.dev)

@@ -13,8 +13,8 @@
 
 _Import a single SDK to power your agents with semantic tool search, trainable contexts, and feedback-driven selection that gets smarter over time. Access tools from any provider through a unified API with configurable security policies and guardrails._
 
-[Documentation](packages/onegrep-sdk/docs/apiSpec.md) |
-[API Reference](packages/onegrep-sdk/docs/apiSpec.md#api-methods) |
+[Documentation](docs/apiSpec.md) |
+[API Reference](docs/apiSpec.md#api-methods) |
 [Getting Started](#getting-started) |
 [Join our Community](https://join.slack.com/t/onegrep-community/shared_invite/placeholder)
 
@@ -222,7 +222,7 @@ const result = await agent.invoke({
 })
 ```
 
-For more examples and detailed API documentation, check out our [Documentation](packages/onegrep-sdk/docs/apiSpec.md).
+For more examples and detailed API documentation, check out our [Documentation](docs/apiSpec.md).
 
 ## 🔗 Supported Providers
 
@@ -240,7 +240,7 @@ Want to add support for your tool hosting platform? [Create a Provider Support R
 
 ## 📖 Next Steps
 
-Ready to explore more advanced capabilities? Check out our [API Reference](packages/onegrep-sdk/docs/apiSpec.md#api-methods) to learn about:
+Ready to explore more advanced capabilities? Check out our [API Reference](docs/apiSpec.md#api-methods) to learn about:
 
 - Advanced filtering and search options
 - Custom tool context training
@@ -346,7 +346,7 @@ Error: Tool execution failed: Invalid input
 
 - Join our [Community Slack](https://join.slack.com/t/onegrep-community/shared_invite/placeholder)
 - Open an [Issue](https://github.com/OneGrep/typescript-sdk/issues)
-- Check our [API Reference](packages/onegrep-sdk/docs/apiSpec.md) for detailed documentation
+- Check our [API Reference](docs/apiSpec.md) for detailed documentation
 
 ## 📝 License
 
