@@ -1,3 +1,4 @@
+import { initialize } from '@blaxel/core'
 import {
   BlaxelToolServerClient,
   SmitheryToolServerClient,
@@ -52,7 +53,10 @@ export const apiKeyBlaxelClientSessionMaker = (
 ): ClientSessionMaker<BlaxelToolServerClient> => {
   const headerOverrides = xBlaxelHeaders(apiKey, workspace)
   log.trace('Blaxel header overrides', headerOverrides)
-
+  initialize({
+    apikey: apiKey,
+    workspace: workspace
+  })
   return {
     create: async (client: BlaxelToolServerClient) => {
       return Promise.resolve(

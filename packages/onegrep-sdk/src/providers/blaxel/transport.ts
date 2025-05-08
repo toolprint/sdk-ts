@@ -1,6 +1,6 @@
 import { env } from 'process'
 
-import { BlaxelMcpClientTransport, settings } from '@blaxel/sdk'
+import { BlaxelMcpClientTransport, settings } from '@blaxel/core'
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import { log } from '~/core/log.js'
 

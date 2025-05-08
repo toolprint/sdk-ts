@@ -1,8 +1,7 @@
 import { env, logger } from '@blaxel/core'
+import { createLangchainToolbox, getToolbox } from '@onegrep/sdk'
 import Fastify from 'fastify'
 import agent from './agent.js'
-import { getToolbox } from '@onegrep/sdk'
-import { createLangchainToolbox } from '@onegrep/sdk'
 
 interface RequestBody {
   inputs: string

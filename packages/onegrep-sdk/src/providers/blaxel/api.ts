@@ -1,13 +1,18 @@
-import {
-  Client,
-  Config,
-  createClient,
-  createConfig
-} from '@hey-api/client-fetch'
-
-import { settings, getFunction, Function } from '@blaxel/sdk'
+import { Function, getFunction, initialize, settings } from '@blaxel/core'
 
 import { SecretManager } from '~/secrets/types.js'
+
+export const initializeBlaxelApiClient: (
+  apikey?: string,
+  workspace?: string,
+  baseUrl?: string
+) => void = (apikey, workspace, baseUrl) => {
+  initialize({
+    proxy: baseUrl ?? settings.baseUrl,
+    apikey: apikey ?? settings.authorization,
+    workspace: workspace ?? settings.workspace
+  })
+}
 
 export const xBlaxelHeaders: (
   apiKey: string,
@@ -19,33 +24,21 @@ export const xBlaxelHeaders: (
   }
 }
 
-export const customBlaxelApiClient: (
-  headerOverrides?: Record<string, string>,
-  baseUrl?: string
-) => Client = (headerOverrides, baseUrl) => {
-  const config: Config = createConfig({
-    baseUrl: baseUrl ?? settings.baseUrl,
-    headers: headerOverrides ?? settings.headers
-  })
-  return createClient(config)
-}
-
-export const getBlaxeApiClientFromSecrets: (
+export const initializeBlaxelApiClientFromSecrets: (
   secretsManager: SecretManager
-) => Promise<Client> = async (secretsManager) => {
+) => Promise<void> = async (secretsManager) => {
   const requiredSecretNames = ['BL_API_KEY', 'BL_WORKSPACE']
   const secrets = await secretsManager.getSecrets(requiredSecretNames, true)
-  return customBlaxelApiClient(
-    xBlaxelHeaders(secrets.get('BL_API_KEY')!, secrets.get('BL_WORKSPACE')!)
+  initializeBlaxelApiClient(
+    secrets.get('BL_API_KEY')!,
+    secrets.get('BL_WORKSPACE')!
   )
 }
 
 export const getBlaxelFunction: (
-  functionName: string,
-  client?: Client
-) => Promise<Function> = async (functionName, client) => {
+  functionName: string
+) => Promise<Function> = async (functionName) => {
   const response = await getFunction({
-    client: client,
     path: {
       functionName: functionName
     }

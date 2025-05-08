@@ -1,25 +1,27 @@
+import { ClientSession } from '~/providers/mcp/session.js'
+import { mcpCallTool, parseResultFunc } from '~/providers/mcp/toolcall.js'
+import { jsonSchemaUtils } from '~/schema.js'
 import {
   BasicToolDetails,
-  ToolCallResponse,
+  ToolCallError,
   ToolCallInput,
+  ToolCallResponse,
   ToolHandle,
-  ToolServerConnection,
-  ToolCallError
+  ToolServerConnection
 } from '~/types.js'
-import { jsonSchemaUtils } from '~/schema.js'
-import { parseResultFunc } from '~/providers/mcp/toolcall.js'
-import { mcpCallTool } from '~/providers/mcp/toolcall.js'
-import { ClientSession } from '~/providers/mcp/session.js'
 
 import { BlaxelToolServerClient } from '~/core/index.js'
 
-import { getTool as getBlaxelServerTools, Function } from '@blaxel/sdk'
+import { Function, getTool as getBlaxelServerTools } from '@blaxel/core'
 
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 
 import { log } from '~/core/log.js'
 import { getDopplerSecretManager } from '~/secrets/doppler.js'
-import { getBlaxeApiClientFromSecrets, getBlaxelFunction } from './api.js'
+import {
+  getBlaxelFunction,
+  initializeBlaxelApiClientFromSecrets
+} from './api.js'
 
 /**
  * A tool from the Blaxel MCP server.
@@ -190,12 +192,9 @@ export async function createBlaxelConnection(
 
   // Verify the we can authenticate with Blaxel and that the workspace matches the tool server's workspace.
   try {
-    const customBlaxelApiClient = await getBlaxeApiClientFromSecrets(
-      await getDopplerSecretManager()
-    )
+    await initializeBlaxelApiClientFromSecrets(await getDopplerSecretManager())
     const blaxelFunction: Function = await getBlaxelFunction(
-      client.blaxel_function,
-      customBlaxelApiClient
+      client.blaxel_function
     )
 
     if (!blaxelFunction) {
