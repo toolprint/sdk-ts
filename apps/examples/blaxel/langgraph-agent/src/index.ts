@@ -1,4 +1,4 @@
-import { env, logger } from '@blaxel/sdk'
+import { env, logger } from '@blaxel/core'
 import Fastify from 'fastify'
 import agent from './agent.js'
 import { getToolbox } from '@onegrep/sdk'

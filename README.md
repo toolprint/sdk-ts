@@ -65,7 +65,7 @@ _Import a single SDK to power your agents with semantic tool search, trainable c
 
 ```bash
 # Install the OneGrep CLI
-npx -y @onegrep/cli onegrep-cli
+npx -y @onegrep/cli
 
 # Create your account
 npx @onegrep/cli account
@@ -158,6 +158,8 @@ npx @onegrep/cli account
 
 # Set the API key in your environment
 export ONEGREP_API_KEY="your_sandbox_api_key"
+# Set the URL to your onegrep deployment (or the public sandbox)
+export ONEGREP_API_URL="https://www.test-sandbox.onegrep.dev"
 ```
 
 #### Run an Agent
@@ -252,15 +254,13 @@ We welcome contributions to the OneGrep TypeScript SDK! Here's how you can help:
 ### Development Setup
 
 ```bash
-# Clone the repository
+# Fork the repository & clone it
 git clone https://github.com/OneGrep/typescript-sdk.git
 cd typescript-sdk
 
-# Install dependencies
-pnpm install
-
-# Run tests
-pnpm test
+# Install dependencies & build
+just install
+just build
 ```
 
 ### Making Changes
@@ -269,10 +269,9 @@ pnpm test
 2. Fork the repository
 3. Create a feature branch referencing the issue (`git checkout -b issue-123/amazing-feature`)
 4. Make your changes
-5. Run tests and ensure they pass (`pnpm test`)
-6. Commit your changes (`git commit -m 'Add amazing feature'`)
-7. Push to your branch (`git push origin issue-123/amazing-feature`)
-8. Open a Pull Request with:
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to your branch (`git push origin issue-123/amazing-feature`)
+7. Open a Pull Request with:
    - Title: `[Issue-123] Add amazing feature`
    - Description: Include "Fixes #123" or "Resolves #123" to link the issue
 

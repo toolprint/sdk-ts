@@ -93,16 +93,16 @@ tail-sdk-logs:
 [group('logs')]
 clear-logs:
     rm -f ~/.onegrep/*.log
-
+ 
 # blaxel serve agent
 [group('blaxel')]
 bl-serve:
-    cd apps/examples/blaxel/blaxel-langgraph-agent && pnpm bl:serve
+    cd apps/examples/blaxel/langgraph-agent && pnpm bl:serve
 
 # open blaxel chat for local agent
 [group('blaxel')]
 bl-chat:
-    cd apps/examples/blaxel/blaxel-langgraph-agent && pnpm bl:chat
+    cd apps/examples/blaxel/langgraph-agent && pnpm bl:chat
 
 # start the gateway
 [group('gateway')]
