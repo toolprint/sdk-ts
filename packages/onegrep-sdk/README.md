@@ -22,15 +22,12 @@ _Import a single SDK to power your agents with semantic tool search, trainable c
 
 ## 📚 Table of Contents
 
-- [Features](#features)
-- [Getting Started](#getting-started)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Supported Providers](#supported-providers)
-- [Security & Guardrails](#security--guardrails)
-- [API Reference](#api-reference)
-- [Contributing](#contributing)
-- [License](#license)
+- [✨ Features](#-features)
+- [🚀 Getting Started](#-getting-started)
+- [🔗 Supported Providers](#-supported-providers)
+- [📖 Next Steps](#-next-steps)
+- [🤝 Contributing](#-contributing)
+- [📝 License](#-license)
 
 ## ✨ Features
 
