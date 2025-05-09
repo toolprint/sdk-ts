@@ -65,7 +65,7 @@ _Import a single SDK to power your agents with semantic tool search, trainable c
 
 ```bash
 # Install the OneGrep CLI
-npx -y @onegrep/cli onegrep-cli
+npx -y @onegrep/cli
 
 # Create your account
 npx @onegrep/cli account
@@ -80,6 +80,8 @@ The OneGrep sandbox comes pre-configured with:
 - Example tool contexts trained for common agent scenarios
 - Pre-configured security policies and guardrails
 - Sample agent implementations using different frameworks
+
+> _A special thanks to [**Blaxel**](https://blaxel.ai/) for providing hosting services for MCP servers for the OneGrep Sandbox._
 
 ### Exploring the Sandbox
 
@@ -118,29 +120,6 @@ npx @onegrep/cli tools
 
 #### 3. Train Tool Context
 
-Improve tool selection by adding custom context:
-
-```bash
-# Start the CLI tool explorer
-npx @onegrep/cli tools
-
-# Select "Explore integrations"
-# Select any tool
-# Choose "Add property"
-# Create a new property (e.g., "use_case")
-# Add a value (e.g., "mcp monitoring")
-
-# Now search again:
-npx @onegrep/cli tools
-# Select "search"
-# Try a query related to your tag:
-"I need to monitor MCP status"
-
-# Your trained tool should appear at the top of the results
-```
-
-### Using the SDK
-
 Once you have sandbox access, install the SDK:
 
 ```bash
@@ -158,16 +137,20 @@ npx @onegrep/cli account
 
 # Set the API key in your environment
 export ONEGREP_API_KEY="your_sandbox_api_key"
+# Set the URL to your onegrep deployment (or the public sandbox)
+export ONEGREP_API_URL="https://test-sandbox.onegrep.dev"
 ```
 
 #### Run an Agent
 
-Let's start with a complete example of running an agent that uses OneGrep for dynamic tool selection. This example uses LangChain for the agent loop and Blaxel for managing the agent runtime.
+Let's start with a complete example of running an agent that uses OneGrep for dynamic tool selection. This example uses [**Langchain**](https://github.com/langchain-ai/langchain) for the agent loop and [**Blaxel**](https://blaxel.ai/) for managing the agent runtime.
 
-First, install the Just command runner:
+First, install the [**Just**](https://github.com/casey/just) command runner:
 
 ```bash
 brew install just
+just install
+just build
 ```
 
 Then run the example agent:
@@ -233,7 +216,7 @@ The AI-first tool hosting platform with built-in security and scalability. Blaxe
 
 A modern tool hosting platform focused on developer experience and enterprise features. Smithery offers extensive tool management capabilities and robust security controls.
 
-Want to add support for your tool hosting platform? [Create a Provider Support Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+)!
+> Want to add support for your tool hosting platform? Please reach out to us at support@onegrep.dev or [Create a Provider Support Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+)!
 
 ## 📖 Next Steps
 
@@ -252,15 +235,13 @@ We welcome contributions to the OneGrep TypeScript SDK! Here's how you can help:
 ### Development Setup
 
 ```bash
-# Clone the repository
+# Fork the repository & clone it
 git clone https://github.com/OneGrep/typescript-sdk.git
 cd typescript-sdk
 
-# Install dependencies
-pnpm install
-
-# Run tests
-pnpm test
+# Install dependencies & build
+just install
+just build
 ```
 
 ### Making Changes

@@ -159,7 +159,7 @@ npx @onegrep/cli account
 # Set the API key in your environment
 export ONEGREP_API_KEY="your_sandbox_api_key"
 # Set the URL to your onegrep deployment (or the public sandbox)
-export ONEGREP_API_URL="https://www.test-sandbox.onegrep.dev"
+export ONEGREP_API_URL="https://test-sandbox.onegrep.dev"
 ```
 
 #### Run an Agent
@@ -170,6 +170,8 @@ First, install the Just command runner:
 
 ```bash
 brew install just
+just install
+just build
 ```
 
 Then run the example agent:
