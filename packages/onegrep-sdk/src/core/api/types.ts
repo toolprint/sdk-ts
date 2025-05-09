@@ -18,6 +18,9 @@ export type BlaxelToolServerClient = z.infer<
 export type SmitheryToolServerClient = z.infer<
   typeof schemas.SmitheryToolServerClient
 >
+export type ToolServerLaunchConfig = z.infer<
+  typeof schemas.ToolServerLaunchConfig
+>
 
 export type ToolServerClient =
   | MCPToolServerClient

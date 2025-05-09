@@ -122,6 +122,9 @@ type SmitheryToolServerClient = {
   server_id: string
   client_type: string
   connections: Array<SmitheryConnectionInfo>
+  launch_config?:
+    | ((ToolServerLaunchConfig | null) | Array<ToolServerLaunchConfig | null>)
+    | undefined
 }
 type SmitheryConnectionInfo = {
   /**
@@ -138,6 +141,10 @@ type SmitheryConnectionInfo = {
      */
     (({} | boolean) | Array<{} | boolean>)
     | undefined
+}
+type ToolServerLaunchConfig = {
+  source: string
+  secret_name: string
 }
 type ToolServerProvider = {
   id: string
@@ -939,6 +946,10 @@ const Strategy: z.ZodType<Strategy> = z
   })
   .strict()
   .passthrough()
+const ToolServerProperties = z
+  .object({ properties: z.object({}).partial().strict().passthrough() })
+  .strict()
+  .passthrough()
 const MCPToolServerClient: z.ZodType<MCPToolServerClient> = z
   .object({
     server_id: z.string().uuid(),
@@ -968,11 +979,16 @@ const SmitheryConnectionInfo: z.ZodType<SmitheryConnectionInfo> = z
   })
   .strict()
   .passthrough()
+const ToolServerLaunchConfig: z.ZodType<ToolServerLaunchConfig> = z
+  .object({ source: z.string(), secret_name: z.string() })
+  .strict()
+  .passthrough()
 const SmitheryToolServerClient: z.ZodType<SmitheryToolServerClient> = z
   .object({
     server_id: z.string().uuid(),
     client_type: z.string(),
-    connections: z.array(SmitheryConnectionInfo)
+    connections: z.array(SmitheryConnectionInfo),
+    launch_config: z.union([ToolServerLaunchConfig, z.null()]).optional()
   })
   .strict()
   .passthrough()
@@ -1252,9 +1268,11 @@ export const schemas = {
   RecipeDetails_Input,
   NewUserRecipeRequest,
   Strategy,
+  ToolServerProperties,
   MCPToolServerClient,
   BlaxelToolServerClient,
   SmitheryConnectionInfo,
+  ToolServerLaunchConfig,
   SmitheryToolServerClient,
   Policy,
   NewPolicyRequest,
@@ -2158,6 +2176,65 @@ along with a similarity score for each tool.`,
       BlaxelToolServerClient,
       SmitheryToolServerClient
     ]),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/servers/:server_id/properties',
+    alias: 'get_server_properties_api_v1_servers__server_id__properties_get',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'server_id',
+        type: 'Path',
+        schema: z.string()
+      }
+    ],
+    response: z
+      .object({ properties: z.object({}).partial().strict().passthrough() })
+      .strict()
+      .passthrough(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'patch',
+    path: '/api/v1/servers/:server_id/properties/:key',
+    alias:
+      'patch_server_properties_api_v1_servers__server_id__properties__key__patch',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: z.object({}).partial().strict().passthrough()
+      },
+      {
+        name: 'server_id',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'key',
+        type: 'Path',
+        schema: z.string()
+      }
+    ],
+    response: z
+      .object({ properties: z.object({}).partial().strict().passthrough() })
+      .strict()
+      .passthrough(),
     errors: [
       {
         status: 422,

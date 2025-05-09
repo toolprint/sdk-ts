@@ -96,6 +96,7 @@ const registerSessionMakers = async (secretManager: SecretManager) => {
   // Smithery provider requires an API key
   if (secrets.has('SMITHERY_API_KEY')) {
     const smitherySessionMaker = apiKeySmitheryClientSessionMaker(
+      secretManager,
       secrets.get('SMITHERY_API_KEY')!
     )
     defaultToolServerSessionFactory.register(

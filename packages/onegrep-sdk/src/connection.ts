@@ -27,6 +27,21 @@ import { createSmitheryTransports as smitheryMcpTransportOptions } from '~/provi
 
 import { log } from '~/core/log.js'
 import { xBlaxelHeaders } from './providers/blaxel/api.js'
+import { SecretManager } from './secrets/index.js'
+
+export class ClientSessionError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'ClientSessionError'
+  }
+}
+
+export class InvalidTransportConfigError extends ClientSessionError {
+  constructor(message: string) {
+    super(message)
+    this.name = 'InvalidTransportConfigError'
+  }
+}
 
 /**
  * A function that creates a client session for a tool server client
@@ -82,13 +97,48 @@ export const smitheryClientSessionMaker: ClientSessionMaker<SmitheryToolServerCl
   }
 
 export const apiKeySmitheryClientSessionMaker = (
+  secretManager: SecretManager,
   apiKey: string
 ): ClientSessionMaker<SmitheryToolServerClient> => {
   return {
     create: async (client: SmitheryToolServerClient) => {
+      // Initialize the config with an empty object by default
+      let smitheryConfig: Record<string, any> = {}
+
+      const launchConfig = client.launch_config
+      if (
+        launchConfig &&
+        typeof launchConfig === 'object' &&
+        'source' in launchConfig
+      ) {
+        // ! We only support Doppler source for now
+        if (launchConfig.source === 'doppler') {
+          log.debug('Loading Smithery launch config from Doppler')
+
+          const secretName = launchConfig.secret_name
+          const hasSecret = await secretManager.hasSecret(secretName)
+
+          // If the secret exists, parse it and use it as the config
+          if (hasSecret) {
+            const secret = await secretManager.getSecret(secretName)
+            try {
+              smitheryConfig = JSON.parse(secret)
+            } catch (error) {
+              throw new ClientSessionError(
+                `Failed to parse Smithery launch config: ${error}`
+              )
+            }
+            log.debug('Smithery launch config parsed successfully from Doppler')
+          } else {
+            log.warn(
+              'Smithery launch config not found in Doppler, using empty config'
+            )
+          }
+        }
+      }
       return Promise.resolve(
         new MultiTransportClientSession(
-          smitheryMcpTransportOptions(client, apiKey)
+          smitheryMcpTransportOptions(client, smitheryConfig, apiKey)
         )
       )
     }

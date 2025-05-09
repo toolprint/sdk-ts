@@ -1075,6 +1075,78 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/servers/{server_id}/properties:
+    get:
+      tags:
+        - servers
+      summary: Get Server Properties
+      operationId: get_server_properties_api_v1_servers__server_id__properties_get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Server Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolServerProperties'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/servers/{server_id}/properties/{key}:
+    patch:
+      tags:
+        - servers
+      summary: Patch Server Properties
+      operationId: >-
+        patch_server_properties_api_v1_servers__server_id__properties__key__patch
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: server_id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Server Id
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: Value
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolServerProperties'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/servers/{server_id}/client:
     get:
       tags:
@@ -2800,6 +2872,10 @@ components:
             $ref: '#/components/schemas/SmitheryConnectionInfo'
           type: array
           title: Connections
+        launch_config:
+          anyOf:
+            - $ref: '#/components/schemas/ToolServerLaunchConfig'
+            - type: 'null'
       type: object
       required:
         - server_id
@@ -3032,6 +3108,31 @@ components:
         - name
         - id
       title: ToolServer
+    ToolServerLaunchConfig:
+      properties:
+        source:
+          type: string
+          const: doppler
+          title: Source
+        secret_name:
+          type: string
+          title: Secret Name
+      type: object
+      required:
+        - source
+        - secret_name
+      title: ToolServerLaunchConfig
+      description: The launch config for a tool server.
+    ToolServerProperties:
+      properties:
+        properties:
+          type: object
+          title: Properties
+      type: object
+      required:
+        - properties
+      title: ToolServerProperties
+      description: Properties for a tool server.
     ToolServerProvider:
       properties:
         id:

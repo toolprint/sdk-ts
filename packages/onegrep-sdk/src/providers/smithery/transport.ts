@@ -3,20 +3,20 @@ import { createSmitheryUrl } from '@smithery/sdk'
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 
-import { SmitheryToolServerClient } from '~/core/index.js'
+import { log, SmitheryToolServerClient } from '~/core/index.js'
+import { jsonSchemaUtils } from '~/schema.js'
+import { InvalidTransportConfigError } from '~/connection.js'
 
 export function createSmitheryTransports(
   toolServerClient: SmitheryToolServerClient,
+  config: Record<string, any> = {},
   apiKey?: string
 ): Transport[] {
   const smitheryApiKey = apiKey ?? process.env.SMITHERY_API_KEY
   if (!smitheryApiKey) {
-    throw new Error('Smithery API key is required for Smithery connections')
-  }
-
-  // ! TODO: Parse and validate config from secret manager?
-  const config = {
-    env: {}
+    throw new InvalidTransportConfigError(
+      'Smithery API key is required for Smithery connections'
+    )
   }
 
   // Smithery is moving to prioritize http-streaming transport
@@ -25,10 +25,25 @@ export function createSmitheryTransports(
     (c) => c.type === 'http'
   )
   if (!http_connection) {
-    throw new Error('No HTTP connection found')
+    throw new InvalidTransportConfigError('No HTTP connection found')
   }
   if (!http_connection.deployment_url) {
-    throw new Error('No deployment URL found for HTTP connection')
+    throw new InvalidTransportConfigError(
+      'No deployment URL found for HTTP connection'
+    )
+  }
+
+  // Validate the provided config against the config schema
+  if (http_connection.config_schema) {
+    log.debug('Validating Smithery launch config')
+    const validator = jsonSchemaUtils.getValidator(
+      http_connection.config_schema
+    )
+    if (!validator(config)) {
+      throw new InvalidTransportConfigError(
+        `Invalid Smithery launch config for: ${toolServerClient.server_id}`
+      )
+    }
   }
 
   // ! NOTE: do not log the `smithery_transport_url` as it contains the api key

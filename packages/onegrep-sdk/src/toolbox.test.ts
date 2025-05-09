@@ -319,4 +319,37 @@ describe('Smithery Toolbox Tests', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 1000))
   })
+
+  it('should be able to make a tool call with valid input and server config', async () => {
+    const toolDetails = await toolbox.get(
+      'a029eb98-b9f6-54e5-95c9-c4586fad0e4d'
+    ) // ! @flrngel/mcp-painter
+    expect(toolDetails).toBeDefined()
+    log.info(`found tool: ${toolDetails.name}`)
+
+    const tool: EquippedTool = await toolDetails.equip()
+    expect(tool).toBeDefined()
+    if (!tool) {
+      throw new Error('Tool not found')
+    }
+    log.info(`equipped tool: ${tool.details.name}`)
+
+    const args = {
+      width: 100,
+      height: 100
+    }
+
+    const response: ToolCallResponse<any> = await tool.handle.call({
+      args: args,
+      approval: undefined
+    })
+    expect(response).toBeDefined()
+    expect(response).toBeTypeOf('object')
+    expect(response.isError).toBe(false)
+
+    const output = response as ToolCallOutput<any>
+    log.info(`Output: ${JSON.stringify(output)}`)
+
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+  })
 })

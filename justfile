@@ -21,7 +21,7 @@ reinstall:
 # generate code for all packages
 [group('generate')]
 generate:
-    pnpm turbo run generate
+    pnpm turbo run generate --force
     ./fix-api-client.sh # ! There's a bug in the api client generator for discriminated unions
 
 # prettier format code for all packages

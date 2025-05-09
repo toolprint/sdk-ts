@@ -2,7 +2,7 @@ import os from 'os'
 import fs from 'fs'
 import { join } from 'path'
 
-import { settings as blaxelSettings } from '@blaxel/sdk'
+import { settings as blaxelSettings } from '@blaxel/core'
 
 import { getDopplerSecretManager } from '~/secrets/doppler.js'
 

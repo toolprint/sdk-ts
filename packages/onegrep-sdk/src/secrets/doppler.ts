@@ -142,6 +142,11 @@ export class DopplerSecretManager implements SecretManager {
     return Array.from(secretsMap.keys())
   }
 
+  async hasSecret(secretName: string): Promise<boolean> {
+    const secretsMap = await this.fetchSecrets()
+    return secretsMap.has(secretName)
+  }
+
   async getSecret(secretName: string): Promise<string> {
     const secretsMap = await this.fetchSecrets()
     const secretValue = secretsMap.get(secretName)

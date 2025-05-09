@@ -3,6 +3,7 @@ import { env } from 'process'
 import { BlaxelMcpClientTransport, settings } from '@blaxel/core'
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import { log } from '~/core/log.js'
+import { InvalidTransportConfigError } from '~/connection.js'
 
 export type BlaxelSettings = typeof settings
 
@@ -66,16 +67,25 @@ export function createBlaxelMcpClientTransports(
   const useSettings = providedSettings ?? settings
 
   const urlUtils = new BlaxelUrlUtils(functionName, useSettings)
-  const url = urlUtils.url.toString()
-  const fallbackUrl = urlUtils.fallbackUrl?.toString()
-  log.trace('BlaxelMcpClientTransports urls', { url, fallbackUrl })
 
-  const transportHeaders = headerOverrides ?? useSettings.headers
-  log.trace('BlaxelMcpClientTransports headers', transportHeaders)
+  try {
+    const url = urlUtils.url.toString()
+    const fallbackUrl = urlUtils.fallbackUrl?.toString()
+    log.trace('BlaxelMcpClientTransports urls', { url, fallbackUrl })
 
-  const transports = [new BlaxelMcpClientTransport(url, transportHeaders)]
-  if (fallbackUrl) {
-    transports.push(new BlaxelMcpClientTransport(fallbackUrl, transportHeaders))
+    const transportHeaders = headerOverrides ?? useSettings.headers
+    log.trace('BlaxelMcpClientTransports headers', transportHeaders)
+
+    const transports = [new BlaxelMcpClientTransport(url, transportHeaders)]
+    if (fallbackUrl) {
+      transports.push(
+        new BlaxelMcpClientTransport(fallbackUrl, transportHeaders)
+      )
+    }
+    return transports
+  } catch (error) {
+    throw new InvalidTransportConfigError(
+      `Failed to create Blaxel MCP client transports for: ${functionName}`
+    )
   }
-  return transports
 }
