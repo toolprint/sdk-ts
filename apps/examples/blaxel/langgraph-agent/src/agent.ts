@@ -24,7 +24,7 @@ export default async function agent(
   const streamResponse = await createReactAgent({
     llm: await blModel('sandbox-openai'),
     prompt: 'If the user ask for the weather, use the weather tool.',
-    tools: tools as unknown
+    tools: tools
   }).stream({
     messages: [new HumanMessage(input)]
   })

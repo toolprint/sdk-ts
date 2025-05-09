@@ -5,12 +5,13 @@ export default defineConfig({
   root: '.',
   test: {
     typecheck: {
-      tsconfig: 'tsconfig.check.json'
+      tsconfig: 'tsconfig.json'
     },
     clearMocks: true,
     globals: true,
     setupFiles: ['dotenv/config'],
-    testTimeout: 30000
+    testTimeout: 30000,
+    include: ['test/**/*.test.ts', 'src/**/*.test.ts']
   },
   resolve: {
     conditions: ['source'],

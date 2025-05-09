@@ -3,5 +3,7 @@
     {
       "mode": "auto"
     }
-  ]
+  ],
+  "vitest.enable": true,
+  "vitest.autoDetect": true
 }
