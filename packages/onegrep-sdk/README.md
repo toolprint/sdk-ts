@@ -120,6 +120,29 @@ npx @onegrep/cli tools
 
 #### 3. Train Tool Context
 
+Improve tool selection by adding custom context:
+
+```bash
+# Start the CLI tool explorer
+npx @onegrep/cli tools
+
+# Select "Explore integrations"
+# Select any tool
+# Choose "Add property"
+# Create a new property (e.g., "use_case")
+# Add a value (e.g., "mcp monitoring")
+
+# Now search again:
+npx @onegrep/cli tools
+# Select "search"
+# Try a query related to your tag:
+"I need to monitor MCP status"
+
+# Your trained tool should appear at the top of the results
+```
+
+### Using the SDK
+
 Once you have sandbox access, install the SDK:
 
 ```bash
@@ -210,11 +233,11 @@ OneGrep integrates with the following tool providers:
 
 ### [Blaxel](https://blaxel.ai)
 
-The AI-first tool hosting platform with built-in security and scalability. Blaxel provides a wide range of pre-built tools and supports custom tool deployment.
+A computing platform for agentic AI that delivers the services and infrastructure needed to build and deploy AI agents. Blaxel has a wide range of pre-built tool servers and supports custom tool deployment.
 
-### [Smithery](https://smithery.dev)
+### [Smithery](https://smithery.ai)
 
-A modern tool hosting platform focused on developer experience and enterprise features. Smithery offers extensive tool management capabilities and robust security controls.
+Smithery is a platform that helps developers find and deploy AI agent-compatible services that follow the Model Context Protocols (MCP) specification. It serves as a central hub for discovering and hosting MCP servers, with the goal of making agentic services more accessible.
 
 > Want to add support for your tool hosting platform? Please reach out to us at support@onegrep.dev or [Create a Provider Support Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+)!
 
@@ -250,10 +273,9 @@ just build
 2. Fork the repository
 3. Create a feature branch referencing the issue (`git checkout -b issue-123/amazing-feature`)
 4. Make your changes
-5. Run tests and ensure they pass (`pnpm test`)
-6. Commit your changes (`git commit -m 'Add amazing feature'`)
-7. Push to your branch (`git push origin issue-123/amazing-feature`)
-8. Open a Pull Request with:
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to your branch (`git push origin issue-123/amazing-feature`)
+7. Open a Pull Request with:
    - Title: `[Issue-123] Add amazing feature`
    - Description: Include "Fixes #123" or "Resolves #123" to link the issue
 
