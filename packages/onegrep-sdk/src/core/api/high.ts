@@ -8,7 +8,9 @@ import {
   ToolResource,
   ToolServer,
   ToolServerClient,
-  InitializeResponse
+  InitializeResponse,
+  UpsertSecretRequest,
+  UpsertSecretResponse
 } from './types.js'
 
 import { makeApiCallWithResult } from './utils.js'
@@ -31,6 +33,43 @@ export class OneGrepApiHighLevelClient {
       throw result.error
     }
     return result.data!
+  }
+
+  async getSecret(secretName: string): Promise<any> {
+    const result = await makeApiCallWithResult<any>(async () => {
+      return await this.apiClient.get_secret_api_v1_secrets__secret_name__get({
+        params: { secret_name: secretName }
+      })
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  async upsertSecret(secretName: string, secret: string): Promise<boolean> {
+    const result = await makeApiCallWithResult<UpsertSecretResponse>(
+      async () => {
+        const body: UpsertSecretRequest = {
+          value_type: 'string',
+          value: secret
+        }
+        return await this.apiClient.upsert_secret_api_v1_secrets__secret_name__put(
+          {
+            request: body
+          },
+          {
+            params: {
+              secret_name: secretName
+            }
+          }
+        )
+      }
+    )
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!.success
   }
 
   async getServerName(serverId: string): Promise<string> {

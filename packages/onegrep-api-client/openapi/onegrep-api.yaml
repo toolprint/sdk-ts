@@ -173,6 +173,117 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
         - HTTPBearer: []
+  /api/v1/secrets/:
+    get:
+      tags:
+        - secrets
+      summary: Get Secrets
+      operationId: get_secrets_api_v1_secrets__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/secrets/{secret_name}:
+    get:
+      tags:
+        - secrets
+      summary: Get Secret
+      operationId: get_secret_api_v1_secrets__secret_name__get
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: secret_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Secret Name
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Get Secret Api V1 Secrets  Secret Name  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+        - secrets
+      summary: Upsert Secret
+      operationId: upsert_secret_api_v1_secrets__secret_name__put
+      security:
+        - APIKeyHeader: []
+        - HTTPBearer: []
+      parameters:
+        - name: secret_name
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Secret Name
+        - name: X-ONEGREP-PROFILE-ID
+          in: header
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: >-
+                #/components/schemas/Body_upsert_secret_api_v1_secrets__secret_name__put
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpsertSecretResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/providers/:
     get:
       tags:
@@ -1825,6 +1936,14 @@ components:
         - blaxel_function
       title: BlaxelToolServerClient
       description: A client for a tool server that is a blaxel server.
+    Body_upsert_secret_api_v1_secrets__secret_name__put:
+      properties:
+        request:
+          $ref: '#/components/schemas/UpsertSecretRequest'
+      type: object
+      required:
+        - request
+      title: Body_upsert_secret_api_v1_secrets__secret_name__put
     CanonicalResource:
       properties:
         org_id:
@@ -3173,6 +3292,37 @@ components:
         - status
         - apiVersion
       title: TraefikIngressRoute
+    UpsertSecretRequest:
+      properties:
+        value_type:
+          type: string
+          enum:
+            - string
+            - object
+          title: Value Type
+        value:
+          anyOf:
+            - type: string
+            - type: object
+          title: Value
+      type: object
+      required:
+        - value_type
+        - value
+      title: UpsertSecretRequest
+    UpsertSecretResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        secret_name:
+          type: string
+          title: Secret Name
+      type: object
+      required:
+        - success
+        - secret_name
+      title: UpsertSecretResponse
     UserAccount:
       properties:
         created_at:

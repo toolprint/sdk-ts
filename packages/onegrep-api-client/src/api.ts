@@ -78,6 +78,16 @@ type AuthenticationMethod =
    * @enum propelauth, api_key
    */
   'propelauth' | 'api_key'
+type Body_upsert_secret_api_v1_secrets__secret_name__put = {
+  request: UpsertSecretRequest
+}
+type UpsertSecretRequest = {
+  /**
+   * @enum string, object
+   */
+  value_type: 'string' | 'object'
+  value: (string | {}) | Array<string | {}>
+}
 type HTTPValidationError = Partial<{
   detail: Array<ValidationError>
 }>
@@ -590,6 +600,20 @@ const HTTPValidationError: z.ZodType<HTTPValidationError> = z
   .partial()
   .strict()
   .passthrough()
+const X_ONEGREP_PROFILE_ID = z.union([z.string(), z.null()]).optional()
+const UpsertSecretRequest: z.ZodType<UpsertSecretRequest> = z
+  .object({
+    value_type: z.enum(['string', 'object']),
+    value: z.union([z.string(), z.object({}).partial().strict().passthrough()])
+  })
+  .strict()
+  .passthrough()
+const Body_upsert_secret_api_v1_secrets__secret_name__put: z.ZodType<Body_upsert_secret_api_v1_secrets__secret_name__put> =
+  z.object({ request: UpsertSecretRequest }).strict().passthrough()
+const UpsertSecretResponse = z
+  .object({ success: z.boolean(), secret_name: z.string() })
+  .strict()
+  .passthrough()
 const ToolServerProvider: z.ZodType<ToolServerProvider> = z
   .object({ id: z.string().uuid(), name: z.string() })
   .strict()
@@ -603,7 +627,6 @@ const ToolServer: z.ZodType<ToolServer> = z
   })
   .strict()
   .passthrough()
-const X_ONEGREP_PROFILE_ID = z.union([z.string(), z.null()]).optional()
 const IntegrationConfigurationState = z.enum([
   'agent_local',
   'cloud_hosted_available',
@@ -1232,9 +1255,12 @@ export const schemas = {
   AccountCreateRequest,
   ValidationError,
   HTTPValidationError,
+  X_ONEGREP_PROFILE_ID,
+  UpsertSecretRequest,
+  Body_upsert_secret_api_v1_secrets__secret_name__put,
+  UpsertSecretResponse,
   ToolServerProvider,
   ToolServer,
-  X_ONEGREP_PROFILE_ID,
   IntegrationConfigurationState,
   IntegrationAuthScheme,
   IntegrationOAuthAuthorizer,
@@ -2123,6 +2149,84 @@ along with a similarity score for each tool.`,
       }
     ],
     response: SearchResponse_ScoredItem_Tool__,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/secrets/',
+    alias: 'get_secrets_api_v1_secrets__get',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: z.unknown(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/secrets/:secret_name',
+    alias: 'get_secret_api_v1_secrets__secret_name__get',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'secret_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: z.object({}).partial().strict().passthrough(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'put',
+    path: '/api/v1/secrets/:secret_name',
+    alias: 'upsert_secret_api_v1_secrets__secret_name__put',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: Body_upsert_secret_api_v1_secrets__secret_name__put
+      },
+      {
+        name: 'secret_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: UpsertSecretResponse,
     errors: [
       {
         status: 422,

@@ -6,6 +6,9 @@ import { schemas } from '@repo/onegrep-api-client'
 
 export type InitializeResponse = z.infer<typeof schemas.InitializeResponse>
 
+export type UpsertSecretRequest = z.infer<typeof schemas.UpsertSecretRequest>
+export type UpsertSecretResponse = z.infer<typeof schemas.UpsertSecretResponse>
+
 export type AccountInformation = z.infer<typeof schemas.AccountInformation>
 
 export type ToolServerProvider = z.infer<typeof schemas.ToolServerProvider>
