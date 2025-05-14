@@ -1,13 +1,11 @@
 import { describe, it, expect } from 'vitest'
 
-import { flags } from './flags.js'
-
 import { testLog } from '../../test/log.test.js'
 
 const log = testLog
 
 import { OneGrepApiHighLevelClient } from './api/high.js'
-import { FlagsProvider } from './flags.js'
+import { FlagsProvider, getFlagsProvider } from './flags.js'
 
 class MockHighLevelClient extends OneGrepApiHighLevelClient {
   constructor() {
@@ -33,7 +31,7 @@ class MockHighLevelClient extends OneGrepApiHighLevelClient {
   }
 }
 
-const flagsProvider = new FlagsProvider(new MockHighLevelClient())
+const flagsProvider = getFlagsProvider(new MockHighLevelClient())
 
 describe('FlagsProvider', () => {
   it('should get flags', async () => {

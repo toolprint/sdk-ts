@@ -1,6 +1,5 @@
 import { Keyv } from 'keyv'
 import { Cache, createCache } from 'cache-manager'
-import { clientFromConfig } from './api/client.js'
 import { OneGrepApiHighLevelClient } from './api/high.js'
 import { log } from './log.js'
 
@@ -50,6 +49,8 @@ export class FlagsProvider {
   }
 }
 
-export const flags = new FlagsProvider(
-  new OneGrepApiHighLevelClient(clientFromConfig())
-)
+export const getFlagsProvider = (
+  apiClient: OneGrepApiHighLevelClient
+): FlagsProvider => {
+  return new FlagsProvider(apiClient)
+}
