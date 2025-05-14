@@ -6,30 +6,15 @@ import {
 } from 'eventsource'
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 
-import { RemoteClientConfig } from '~/core/index.js'
-
 import { log } from '~/core/log.js'
 
-// Get an SSE transport for a remote client
-export const createSSEClientTransport = (
-  clientConfig: RemoteClientConfig,
-  apiKey: string | undefined,
-  ignoreReadyCheck: boolean
+// Get an SSE transport for the OneGrep Gateway
+export const createGatewaySSETransport = (
+  url: URL,
+  additionalHeaders?: Record<string, string>,
+  apiKey?: string
 ) => {
-  // Check if the client config reports server as ready
-  if (!clientConfig.ready) {
-    if (!ignoreReadyCheck) {
-      throw new Error(`Server ${clientConfig.name} is not ready`)
-    } else {
-      log.warn(`Server ${clientConfig.name} reporting as not ready`)
-    }
-  }
-
-  const url = clientConfig.endpoint
-  if (!url) {
-    throw new Error('Endpoint is undefined')
-  }
-  const headers = clientConfig.required_headers || {}
+  const headers = additionalHeaders || {}
   if (apiKey) {
     log.debug(`Adding api key to headers`)
     headers['X-ONEGREP-API-KEY'] = apiKey
@@ -65,7 +50,7 @@ export const createSSEClientTransport = (
     requestInit: requestInit
   }
 
-  const transport = new SSEClientTransport(new URL(url), sse_opts)
+  const transport = new SSEClientTransport(url, sse_opts)
 
   transport.onclose = () => {
     log.debug(`SSE transport closed`)

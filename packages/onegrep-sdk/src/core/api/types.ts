@@ -5,6 +5,8 @@ import { schemas } from '@repo/onegrep-api-client'
 // Export types from the generated API client for use in the high-level API client
 
 export type InitializeResponse = z.infer<typeof schemas.InitializeResponse>
+export type AuthenticationStatus = z.infer<typeof schemas.AuthenticationStatus>
+export type FlagsResponse = z.infer<typeof schemas.GetAllFlagsResponse>
 
 export type UpsertSecretRequest = z.infer<typeof schemas.UpsertSecretRequest>
 export type UpsertSecretResponse = z.infer<typeof schemas.UpsertSecretResponse>
@@ -46,5 +48,3 @@ export type SearchResponseScoredItemRecipe = z.infer<
 export type SearchResponse =
   | SearchResponseScoredItemTool
   | SearchResponseScoredItemRecipe
-
-export type RemoteClientConfig = z.infer<typeof schemas.RemoteClientConfig>

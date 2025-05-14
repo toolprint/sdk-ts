@@ -10,7 +10,9 @@ import {
   ToolServerClient,
   InitializeResponse,
   UpsertSecretRequest,
-  UpsertSecretResponse
+  UpsertSecretResponse,
+  FlagsResponse,
+  AuthenticationStatus
 } from './types.js'
 
 import { makeApiCallWithResult } from './utils.js'
@@ -28,6 +30,28 @@ export class OneGrepApiHighLevelClient {
   async initialize(): Promise<InitializeResponse> {
     const result = await makeApiCallWithResult<InitializeResponse>(async () => {
       return await this.apiClient.initialize_api_v1_sdk_initialize_get()
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  async authStatus(): Promise<AuthenticationStatus> {
+    const result = await makeApiCallWithResult<AuthenticationStatus>(
+      async () => {
+        return await this.apiClient.get_auth_status_api_v1_account_auth_status_get()
+      }
+    )
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  async getFlags(): Promise<FlagsResponse> {
+    const result = await makeApiCallWithResult<FlagsResponse>(async () => {
+      return await this.apiClient.get_all_flags_api_v1_flags__get()
     })
     if (result.error) {
       throw result.error

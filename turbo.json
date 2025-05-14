@@ -4,15 +4,13 @@
   "globalEnv": ["NODE_ENV", "ONEGREP_*"],
   "globalDependencies": ["**/.env.*local"],
   "tasks": {
-    "client:updateSpec": {
-      "dependsOn": [],
-      "outputs": ["openapi/*"]
-    },
     "generate": {
       "outputs": ["src/**/*.ts"]
     },
     "@repo/onegrep-api-client#generate": {
-      "dependsOn": ["client:updateSpec"]
+      "dependsOn": [],
+      "inputs": ["openapi/onegrep-api.yaml"],
+      "outputs": ["src/**/*.ts"]
     },
     "build": {
       "dependsOn": ["^build"],

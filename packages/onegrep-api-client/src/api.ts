@@ -2,37 +2,37 @@ import { makeApi, Zodios, type ZodiosOptions } from '@zodios/core'
 import { z } from 'zod'
 
 type AccountInformation = {
-  user_id: string
   account: UserAccount
   organization: Organization
+  user_id: string
 }
 type UserAccount = {
-  created_at?: ((string | null) | Array<string | null>) | undefined
-  updated_at?: ((string | null) | Array<string | null>) | undefined
-  id: string
+  api_key: string
   belongs_to_organization_id?:
     | ((string | null) | Array<string | null>)
     | undefined
-  api_key: string
+  created_at?: ((string | null) | Array<string | null>) | undefined
   doppler_service_token_id?:
     | ((string | null) | Array<string | null>)
     | undefined
+  id: string
+  updated_at?: ((string | null) | Array<string | null>) | undefined
 }
 type Organization = {
   created_at?: ((string | null) | Array<string | null>) | undefined
-  updated_at?: ((string | null) | Array<string | null>) | undefined
+  created_by_user_id?: ((string | null) | Array<string | null>) | undefined
   id: string
   owner_id?: ((string | null) | Array<string | null>) | undefined
-  created_by_user_id?: ((string | null) | Array<string | null>) | undefined
+  updated_at?: ((string | null) | Array<string | null>) | undefined
 }
 type ActionApprovalRequest = {
+  created_at?: string | undefined
   id: (number | null) | Array<number | null>
+  last_updated_at?: string | undefined
+  payload?: (({} | null) | Array<{} | null>) | undefined
   policy_id: string
   state?: ActionApprovalState | undefined
-  created_at?: string | undefined
-  last_updated_at?: string | undefined
   updated_by_user_id: string
-  payload?: (({} | null) | Array<{} | null>) | undefined
 }
 type ActionApprovalState =
   /**
@@ -43,20 +43,20 @@ type ActionApprovalState =
   'pending' | 'approved' | 'rejected'
 type ApprovalAndPolicy = {
   approval: ActionApprovalRequest
-  policy: Policy
   canonical_resource_name: string
   integration_name: string
+  policy: Policy
   tool_name: string
 }
 type Policy = {
-  created_at?: ((string | null) | Array<string | null>) | undefined
-  updated_at?: ((string | null) | Array<string | null>) | undefined
-  event_name: string
-  description?: ((string | null) | Array<string | null>) | undefined
   access_policy: AccessPolicyType
-  organization_id?: ((string | null) | Array<string | null>) | undefined
   canonical_resource_name: string
+  created_at?: ((string | null) | Array<string | null>) | undefined
+  description?: ((string | null) | Array<string | null>) | undefined
+  event_name: string
   id?: string | undefined
+  organization_id?: ((string | null) | Array<string | null>) | undefined
+  updated_at?: ((string | null) | Array<string | null>) | undefined
 }
 type AccessPolicyType =
   /**
@@ -67,11 +67,11 @@ type AccessPolicyType =
   'ALWAYS' | 'NEVER' | 'REQUIRES_PERMISSION'
 type AuthenticationStatus = {
   credentials_provided: boolean
+  is_authenticated: boolean
   method?:
     | ((AuthenticationMethod | null) | Array<AuthenticationMethod | null>)
     | undefined
   user_id?: ((string | null) | Array<string | null>) | undefined
-  is_authenticated: boolean
 }
 type AuthenticationMethod =
   /**
@@ -82,11 +82,11 @@ type Body_upsert_secret_api_v1_secrets__secret_name__put = {
   request: UpsertSecretRequest
 }
 type UpsertSecretRequest = {
+  value: (string | {}) | Array<string | {}>
   /**
    * @enum string, object
    */
   value_type: 'string' | 'object'
-  value: (string | {}) | Array<string | {}>
 }
 type HTTPValidationError = Partial<{
   detail: Array<ValidationError>
@@ -100,19 +100,19 @@ type InitializeResponse = {
   clients: Array<
     MCPToolServerClient | BlaxelToolServerClient | SmitheryToolServerClient
   >
+  doppler_config?: ((string | null) | Array<string | null>) | undefined
+  doppler_env?: ((string | null) | Array<string | null>) | undefined
+  doppler_project?: ((string | null) | Array<string | null>) | undefined
+  doppler_service_token?: ((string | null) | Array<string | null>) | undefined
+  org_id: string
   providers: Array<ToolServerProvider>
   servers: Array<ToolServer>
   tools: Array<Tool>
-  doppler_service_token?: ((string | null) | Array<string | null>) | undefined
-  doppler_env?: ((string | null) | Array<string | null>) | undefined
-  doppler_project?: ((string | null) | Array<string | null>) | undefined
-  doppler_config?: ((string | null) | Array<string | null>) | undefined
   user_id: string
-  org_id: string
 }
 type MCPToolServerClient = {
-  server_id: string
   client_type: string
+  server_id: string
   /**
    * @enum sse, websocket
    */
@@ -123,55 +123,50 @@ type MCPToolServerClient = {
   url: string
 }
 type BlaxelToolServerClient = {
-  server_id: string
-  client_type: string
-  blaxel_workspace: string
   blaxel_function: string
+  blaxel_workspace: string
+  client_type: string
+  server_id: string
 }
 type SmitheryToolServerClient = {
-  server_id: string
   client_type: string
   connections: Array<SmitheryConnectionInfo>
   launch_config?:
     | ((ToolServerLaunchConfig | null) | Array<ToolServerLaunchConfig | null>)
     | undefined
+  server_id: string
 }
 type SmitheryConnectionInfo = {
-  /**
-   * @enum ws, http
-   */
-  type: 'ws' | 'http'
-  deployment_url?: /**
-   * @minLength 1
-   */
-  string | undefined
   config_schema?:
     | /**
      * @default true
      */
     (({} | boolean) | Array<{} | boolean>)
     | undefined
+  deployment_url?: /**
+   * @minLength 1
+   */
+  string | undefined
+  /**
+   * @enum ws, http
+   */
+  type: 'ws' | 'http'
 }
 type ToolServerLaunchConfig = {
-  source: string
   secret_name: string
+  source: string
 }
 type ToolServerProvider = {
   id: string
   name: string
 }
 type ToolServer = {
-  provider_id: string
+  id: string
   name: string
   properties?: {} | undefined
-  id: string
+  provider_id: string
 }
 type Tool = {
-  server_id: string
-  /**
-   * The name of the tool (should be unique within a server).
-   */
-  name: string
   description?:
     | /**
      * A description of the tool.
@@ -194,6 +189,7 @@ type Tool = {
           >
       )
     | undefined
+  id: string
   input_schema?:
     | /**
      * A JSON schema for the tool's input (defaults to 'always valid').
@@ -202,11 +198,15 @@ type Tool = {
      */
     (({} | boolean) | Array<{} | boolean>)
     | undefined
-  id: string
+  /**
+   * The name of the tool (should be unique within a server).
+   */
+  name: string
+  server_id: string
 }
 type IntegrationConfigDetails = {
-  name: string
   configuration_state: IntegrationConfigurationState
+  name: string
   template: IntegrationTemplate
 }
 type IntegrationConfigurationState =
@@ -219,30 +219,35 @@ the integration separately depending on our infrastucture selection.
  */
   'agent_local' | 'cloud_hosted_available' | 'cloud_hosted_configured'
 type IntegrationTemplate = {
-  /**
-   * The version of the integration template.
-   */
-  version: string
-  name: string
-  repository: string
-  sha: string
+  args: MCPIntegrationArgs
   auth_scheme?:
     | ((IntegrationAuthScheme | null) | Array<IntegrationAuthScheme | null>)
     | undefined
+  default_policies: IntegrationDefaultPolicies
+  name: string
   oauth_authorizer?:
     | (
         | (IntegrationOAuthAuthorizer | null)
         | Array<IntegrationOAuthAuthorizer | null>
       )
     | undefined
-  args: MCPIntegrationArgs
+  repository: string
   secrets?:
     | (
         | (Array<IntegrationSecret> | null)
         | Array<Array<IntegrationSecret> | null>
       )
     | undefined
-  default_policies: IntegrationDefaultPolicies
+  sha: string
+  /**
+   * The version of the integration template.
+   */
+  version: string
+}
+type MCPIntegrationArgs = {
+  args?: ((Array<string> | null) | Array<Array<string> | null>) | undefined
+  command: string
+  type: string
 }
 type IntegrationAuthScheme =
   /**
@@ -251,21 +256,6 @@ type IntegrationAuthScheme =
    * @enum token, oauth_1_0, oauth_2_0
    */
   'token' | 'oauth_1_0' | 'oauth_2_0'
-type IntegrationOAuthAuthorizer =
-  /**
-   * @enum google, meta
-   */
-  'google' | 'meta'
-type MCPIntegrationArgs = {
-  type: string
-  command: string
-  args?: ((Array<string> | null) | Array<Array<string> | null>) | undefined
-}
-type IntegrationSecret = {
-  name: string
-  generation_link?: ((string | null) | Array<string | null>) | undefined
-  value?: ((string | null) | Array<string | null>) | undefined
-}
 type IntegrationDefaultPolicies = {
   /**
    * Policies for tools in this integration.
@@ -273,21 +263,31 @@ type IntegrationDefaultPolicies = {
   tools: Array<PolicyAccessRule>
 }
 type PolicyAccessRule = {
-  event_name: string
-  description?: ((string | null) | Array<string | null>) | undefined
   access_policy: AccessPolicyType
+  description?: ((string | null) | Array<string | null>) | undefined
+  event_name: string
+}
+type IntegrationOAuthAuthorizer =
+  /**
+   * @enum google, meta
+   */
+  'google' | 'meta'
+type IntegrationSecret = {
+  generation_link?: ((string | null) | Array<string | null>) | undefined
+  name: string
+  value?: ((string | null) | Array<string | null>) | undefined
 }
 type NewPolicyRequest = {
-  integration_name: string
-  event_name: string
   access_policy: AccessPolicyType
+  event_name: string
+  integration_name: string
 }
 type NewUserRecipeRequest = {
+  details: RecipeDetails_Input
   /**
    * The goal that this recipe is helping an agent achieve.
    */
   goal: string
-  details: RecipeDetails_Input
 }
 type RecipeDetails_Input = Partial<{
   /**
@@ -307,44 +307,46 @@ type RecipeTool = {
     | undefined
 }
 type ToolResourceBase = {
+  description?: ((string | null) | Array<string | null>) | undefined
   integration_name: string
   tool_name: string
-  description?: ((string | null) | Array<string | null>) | undefined
 }
 type PaginatedResponse_AuditLog_ = {
   items: Array<AuditLog>
   pagination: PaginationMetadata
 }
 type AuditLog = {
-  id?: ((number | null) | Array<number | null>) | undefined
-  policy_id: string
   action: string
   details?: {} | undefined
+  id?: ((number | null) | Array<number | null>) | undefined
   performed_by?: /**
    * @default "system"
    */
   string | undefined
+  policy_id: string
   timestamp?: string | undefined
 }
 type PaginationMetadata = {
-  page: number
-  page_size: number
-  total: number
-  pages: number
   has_next: boolean
   has_prev: boolean
+  page: number
+  page_size: number
+  pages: number
+  total: number
 }
 type PaginatedResponse_UserRecipe_ = {
   items: Array<UserRecipe>
   pagination: PaginationMetadata
 }
 type UserRecipe = {
-  id: number
+  created_at?: string | undefined
+  details?: {} | undefined
+  details_data: RecipeDetails_Output
   /**
    * The goal that this recipe is helping an agent achieve.
    */
   goal: string
-  details?: {} | undefined
+  id: number
   /**
    * The organization ID that owns this recipe
    */
@@ -353,8 +355,6 @@ type UserRecipe = {
    * The profile ID within the organization that owns this recipe
    */
   profile_id: string
-  created_at?: string | undefined
-  details_data: RecipeDetails_Output
 }
 type RecipeDetails_Output = Partial<{
   /**
@@ -365,25 +365,25 @@ type RecipeDetails_Output = Partial<{
   tools: Array<RecipeTool>
 }>
 type PolicyBase = {
-  event_name: string
-  description?: ((string | null) | Array<string | null>) | undefined
   access_policy: AccessPolicyType
-  organization_id?: ((string | null) | Array<string | null>) | undefined
   canonical_resource_name: string
+  description?: ((string | null) | Array<string | null>) | undefined
+  event_name: string
+  organization_id?: ((string | null) | Array<string | null>) | undefined
 }
 type Recipe = {
   created_at?: ((string | null) | Array<string | null>) | undefined
-  updated_at?: ((string | null) | Array<string | null>) | undefined
   /**
    * The goal that this recipe is helping an agent achieve.
    */
   goal: string
+  id?: string | undefined
   /**
    * The instructions for this recipe.
    */
   instructions: (string | null) | Array<string | null>
-  id?: string | undefined
   tools: Array<Tool>
+  updated_at?: ((string | null) | Array<string | null>) | undefined
 }
 type ScoredItem_Recipe_ = {
   item: Recipe
@@ -414,6 +414,7 @@ type SearchResponse_ScoredItem_Tool__ = {
   results: Array<ScoredItem_Tool_>
 }
 type Server = {
+  apiVersion: string
   kind?: /**
    * @default "Server"
    */
@@ -421,40 +422,38 @@ type Server = {
   metadata: KindMetadata
   spec: ServerSpec
   status?: (({} | null) | Array<{} | null>) | undefined
-  apiVersion: string
 } & {
   [key: string]: any
 }
 type KindMetadata = {}
 type ServerSpec = {
-  orgID: string
+  displayName?: ((string | null) | Array<string | null>) | undefined
+  envFromSources?: ((Array<{}> | null) | Array<Array<{}> | null>) | undefined
   image: string
-  pullPolicy?: /**
-   * @default "IfNotPresent"
-   */
-  string | undefined
+  ingressConfig?:
+    | ((IngressConfig | null) | Array<IngressConfig | null>)
+    | undefined
+  launcherConfig?:
+    | ((LauncherConfig | null) | Array<LauncherConfig | null>)
+    | undefined
+  orgID: string
   port?: /**
    * @default 8000
    */
   number | undefined
-  displayName?: ((string | null) | Array<string | null>) | undefined
-  envFromSources?: ((Array<{}> | null) | Array<Array<{}> | null>) | undefined
-  volumes?: ((Array<{}> | null) | Array<Array<{}> | null>) | undefined
+  pullPolicy?: /**
+   * @default "IfNotPresent"
+   */
+  string | undefined
   volumeMounts?: ((Array<{}> | null) | Array<Array<{}> | null>) | undefined
-  launcherConfig?:
-    | ((LauncherConfig | null) | Array<LauncherConfig | null>)
-    | undefined
-  ingressConfig?:
-    | ((IngressConfig | null) | Array<IngressConfig | null>)
-    | undefined
-}
-type LauncherConfig = {
-  configMapName: string
-  mountPath: string
+  volumes?: ((Array<{}> | null) | Array<Array<{}> | null>) | undefined
 }
 type IngressConfig = {
   entryPoints?: Array<string> | undefined
-  proxyDomain: string
+  gatewayScheme?: /**
+   * @default "http"
+   */
+  string | undefined
   orgID: string
   orgRouteStrategy?:
     | /**
@@ -463,7 +462,14 @@ type IngressConfig = {
      */
     ('PathPrefix' | 'Header')
     | undefined
+  proxyDomain: string
   serverID: string
+  serverIsDefault?:
+    | /**
+     * @default false
+     */
+    ((boolean | null) | Array<boolean | null>)
+    | undefined
   serverRouteStrategy?:
     | /**
      * @default "Header"
@@ -471,55 +477,50 @@ type IngressConfig = {
      */
     ('PathPrefix' | 'Header')
     | undefined
-  serverIsDefault?:
-    | /**
-     * @default false
-     */
-    ((boolean | null) | Array<boolean | null>)
-    | undefined
-  gatewayScheme?: /**
-   * @default "http"
-   */
-  string | undefined
+}
+type LauncherConfig = {
+  configMapName: string
+  mountPath: string
 }
 type Strategy = {
-  /**
-   * The ID of the recipe that was used to generate the strategy.
-   */
-  recipe_id: string
   /**
    * Instructions to follow the strategy.
    */
   instructions: string
+  /**
+   * The ID of the recipe that was used to generate the strategy.
+   */
+  recipe_id: string
   /**
    * List of one or more fully-hydrated tool resources that should be used in the strategy to achieve the goal.
    */
   tools: Array<ToolResource>
 }
 type ToolResource = {
-  integration_name: string
-  tool_name: string
+  canonical_resource: CanonicalResource
   description?: ((string | null) | Array<string | null>) | undefined
   id: string
+  integration_name: string
+  org_id: string
+  policy: PolicyBase
+  profile_id: string
+  properties: ToolProperties
+  provider: ToolServerProvider
+  server: ToolServer
   tool: Tool
+  tool_name: string
+}
+type CanonicalResource = {
+  event_name: string
   org_id: string
   profile_id: string
-  policy: PolicyBase
-  properties: ToolProperties
-  server: ToolServer
-  provider: ToolServerProvider
-  canonical_resource: CanonicalResource
+  server_name: string
 }
 type ToolProperties = {
   tags: {}
 }
-type CanonicalResource = {
-  org_id: string
-  profile_id: string
-  server_name: string
-  event_name: string
-}
 type TraefikIngressRoute = {
+  apiVersion: string
   kind?: /**
    * @default "IngressRoute"
    */
@@ -527,64 +528,53 @@ type TraefikIngressRoute = {
   metadata: KindMetadata
   spec: IngressConfig
   status: {}
-  apiVersion: string
 } & {
   [key: string]: any
 }
 
-const AuthenticationMethod = z.enum(['propelauth', 'api_key'])
-const AuthenticationStatus: z.ZodType<AuthenticationStatus> = z
-  .object({
-    credentials_provided: z.boolean(),
-    method: z.union([AuthenticationMethod, z.null()]).optional(),
-    user_id: z.union([z.string(), z.null()]).optional(),
-    is_authenticated: z.boolean()
-  })
-  .strict()
-  .passthrough()
 const UserAccount: z.ZodType<UserAccount> = z
   .object({
-    created_at: z.union([z.string(), z.null()]).optional(),
-    updated_at: z.union([z.string(), z.null()]).optional(),
-    id: z.string(),
-    belongs_to_organization_id: z.union([z.string(), z.null()]).optional(),
     api_key: z.string(),
-    doppler_service_token_id: z.union([z.string(), z.null()]).optional()
+    belongs_to_organization_id: z.union([z.string(), z.null()]).optional(),
+    created_at: z.union([z.string(), z.null()]).optional(),
+    doppler_service_token_id: z.union([z.string(), z.null()]).optional(),
+    id: z.string(),
+    updated_at: z.union([z.string(), z.null()]).optional()
   })
-  .strict()
-  .passthrough()
-const ServiceTokenResponse = z
-  .object({
-    doppler_service_token: z.union([z.string(), z.null()]),
-    doppler_env: z.union([z.string(), z.null()]),
-    doppler_project: z.union([z.string(), z.null()]),
-    doppler_config: z.union([z.string(), z.null()])
-  })
-  .partial()
   .strict()
   .passthrough()
 const Organization: z.ZodType<Organization> = z
   .object({
     created_at: z.union([z.string(), z.null()]).optional(),
-    updated_at: z.union([z.string(), z.null()]).optional(),
+    created_by_user_id: z.union([z.string(), z.null()]).optional(),
     id: z.string(),
     owner_id: z.union([z.string(), z.null()]).optional(),
-    created_by_user_id: z.union([z.string(), z.null()]).optional()
+    updated_at: z.union([z.string(), z.null()]).optional()
   })
   .strict()
   .passthrough()
 const AccountInformation: z.ZodType<AccountInformation> = z
   .object({
-    user_id: z.string(),
     account: UserAccount.describe(
       'Model for storing user information including their API key'
     ),
-    organization: Organization
+    organization: Organization,
+    user_id: z.string()
+  })
+  .strict()
+  .passthrough()
+const AuthenticationMethod = z.enum(['propelauth', 'api_key'])
+const AuthenticationStatus: z.ZodType<AuthenticationStatus> = z
+  .object({
+    credentials_provided: z.boolean(),
+    is_authenticated: z.boolean(),
+    method: z.union([AuthenticationMethod, z.null()]).optional(),
+    user_id: z.union([z.string(), z.null()]).optional()
   })
   .strict()
   .passthrough()
 const AccountCreateRequest = z
-  .object({ invitation_code: z.string(), email: z.string() })
+  .object({ email: z.string(), invitation_code: z.string() })
   .strict()
   .passthrough()
 const ValidationError: z.ZodType<ValidationError> = z
@@ -600,30 +590,65 @@ const HTTPValidationError: z.ZodType<HTTPValidationError> = z
   .partial()
   .strict()
   .passthrough()
-const X_ONEGREP_PROFILE_ID = z.union([z.string(), z.null()]).optional()
-const UpsertSecretRequest: z.ZodType<UpsertSecretRequest> = z
+const ServiceTokenResponse = z
   .object({
-    value_type: z.enum(['string', 'object']),
-    value: z.union([z.string(), z.object({}).partial().strict().passthrough()])
+    doppler_config: z.union([z.string(), z.null()]),
+    doppler_env: z.union([z.string(), z.null()]),
+    doppler_project: z.union([z.string(), z.null()]),
+    doppler_service_token: z.union([z.string(), z.null()])
+  })
+  .partial()
+  .strict()
+  .passthrough()
+const policy_id = z
+  .union([z.string(), z.null()])
+  .describe('Filter by policy ID')
+  .optional()
+const action = z
+  .union([z.string(), z.null()])
+  .describe('Filter by action type')
+  .optional()
+const start_date = z
+  .union([z.string(), z.null()])
+  .describe('Filter logs after this date (ISO format)')
+  .optional()
+const end_date = z
+  .union([z.string(), z.null()])
+  .describe('Filter logs before this date (ISO format)')
+  .optional()
+const AuditLog: z.ZodType<AuditLog> = z
+  .object({
+    action: z.string(),
+    details: z.object({}).partial().strict().passthrough().optional(),
+    id: z.union([z.number(), z.null()]).optional(),
+    performed_by: z.string().optional().default('system'),
+    policy_id: z.string().uuid(),
+    timestamp: z.string().datetime({ offset: true }).optional()
   })
   .strict()
   .passthrough()
-const Body_upsert_secret_api_v1_secrets__secret_name__put: z.ZodType<Body_upsert_secret_api_v1_secrets__secret_name__put> =
-  z.object({ request: UpsertSecretRequest }).strict().passthrough()
-const UpsertSecretResponse = z
-  .object({ success: z.boolean(), secret_name: z.string() })
-  .strict()
-  .passthrough()
-const ToolServerProvider: z.ZodType<ToolServerProvider> = z
-  .object({ id: z.string().uuid(), name: z.string() })
-  .strict()
-  .passthrough()
-const ToolServer: z.ZodType<ToolServer> = z
+const PaginationMetadata: z.ZodType<PaginationMetadata> = z
   .object({
-    provider_id: z.string().uuid(),
-    name: z.string(),
-    properties: z.object({}).partial().strict().passthrough().optional(),
-    id: z.string().uuid()
+    has_next: z.boolean(),
+    has_prev: z.boolean(),
+    page: z.number().int(),
+    page_size: z.number().int(),
+    pages: z.number().int(),
+    total: z.number().int()
+  })
+  .strict()
+  .passthrough()
+const PaginatedResponse_AuditLog_: z.ZodType<PaginatedResponse_AuditLog_> = z
+  .object({
+    items: z.array(AuditLog),
+    pagination: PaginationMetadata.describe('Metadata for paginated results')
+  })
+  .strict()
+  .passthrough()
+const GetAllFlagsResponse = z
+  .object({
+    flags: z.record(z.union([z.boolean(), z.string()])),
+    user_id: z.string()
   })
   .strict()
   .passthrough()
@@ -632,30 +657,21 @@ const IntegrationConfigurationState = z.enum([
   'cloud_hosted_available',
   'cloud_hosted_configured'
 ])
-const IntegrationAuthScheme = z.enum(['token', 'oauth_1_0', 'oauth_2_0'])
-const IntegrationOAuthAuthorizer = z.enum(['google', 'meta'])
 const MCPIntegrationArgs: z.ZodType<MCPIntegrationArgs> = z
   .object({
-    type: z.string(),
+    args: z.union([z.array(z.string()), z.null()]).optional(),
     command: z.string(),
-    args: z.union([z.array(z.string()), z.null()]).optional()
+    type: z.string()
   })
   .strict()
   .passthrough()
-const IntegrationSecret: z.ZodType<IntegrationSecret> = z
-  .object({
-    name: z.string(),
-    generation_link: z.union([z.string(), z.null()]).optional(),
-    value: z.union([z.string(), z.null()]).optional()
-  })
-  .strict()
-  .passthrough()
+const IntegrationAuthScheme = z.enum(['token', 'oauth_1_0', 'oauth_2_0'])
 const AccessPolicyType = z.enum(['ALWAYS', 'NEVER', 'REQUIRES_PERMISSION'])
 const PolicyAccessRule: z.ZodType<PolicyAccessRule> = z
   .object({
-    event_name: z.string(),
+    access_policy: AccessPolicyType.describe('Enum for access policy types'),
     description: z.union([z.string(), z.null()]).optional(),
-    access_policy: AccessPolicyType.describe('Enum for access policy types')
+    event_name: z.string()
   })
   .strict()
   .passthrough()
@@ -667,43 +683,84 @@ const IntegrationDefaultPolicies: z.ZodType<IntegrationDefaultPolicies> = z
   })
   .strict()
   .passthrough()
+const IntegrationOAuthAuthorizer = z.enum(['google', 'meta'])
+const IntegrationSecret: z.ZodType<IntegrationSecret> = z
+  .object({
+    generation_link: z.union([z.string(), z.null()]).optional(),
+    name: z.string(),
+    value: z.union([z.string(), z.null()]).optional()
+  })
+  .strict()
+  .passthrough()
 const IntegrationTemplate: z.ZodType<IntegrationTemplate> = z
   .object({
-    version: z.string().describe('The version of the integration template.'),
-    name: z.string(),
-    repository: z.string(),
-    sha: z.string(),
+    args: MCPIntegrationArgs,
     auth_scheme: z.union([IntegrationAuthScheme, z.null()]).optional(),
+    default_policies: IntegrationDefaultPolicies.describe(
+      'Default policies for an integration.'
+    ),
+    name: z.string(),
     oauth_authorizer: z
       .union([IntegrationOAuthAuthorizer, z.null()])
       .optional(),
-    args: MCPIntegrationArgs,
+    repository: z.string(),
     secrets: z.union([z.array(IntegrationSecret), z.null()]).optional(),
-    default_policies: IntegrationDefaultPolicies.describe(
-      'Default policies for an integration.'
-    )
+    sha: z.string(),
+    version: z.string().describe('The version of the integration template.')
   })
   .strict()
   .passthrough()
 const IntegrationConfigDetails: z.ZodType<IntegrationConfigDetails> = z
   .object({
-    name: z.string(),
     configuration_state:
       IntegrationConfigurationState.describe(`The state of an integration from an account perspective (not runtime).
 To determine the runtime state, we will have to check the server configuration for
 the integration separately depending on our infrastucture selection.`),
+    name: z.string(),
     template:
       IntegrationTemplate.describe(`Class representation of the server templates that we support. This matches the structure
 of server templates under resources/integrations/templates/*`)
   })
   .strict()
   .passthrough()
+const CanonicalResource: z.ZodType<CanonicalResource> = z
+  .object({
+    event_name: z.string(),
+    org_id: z.string(),
+    profile_id: z.string(),
+    server_name: z.string()
+  })
+  .strict()
+  .passthrough()
+const PolicyBase: z.ZodType<PolicyBase> = z
+  .object({
+    access_policy: AccessPolicyType.describe('Enum for access policy types'),
+    canonical_resource_name: z.string(),
+    description: z.union([z.string(), z.null()]).optional(),
+    event_name: z.string(),
+    organization_id: z.union([z.string(), z.null()]).optional()
+  })
+  .strict()
+  .passthrough()
+const ToolProperties: z.ZodType<ToolProperties> = z
+  .object({ tags: z.object({}).partial().strict().passthrough() })
+  .strict()
+  .passthrough()
+const ToolServerProvider: z.ZodType<ToolServerProvider> = z
+  .object({ id: z.string().uuid(), name: z.string() })
+  .strict()
+  .passthrough()
+const ToolServer: z.ZodType<ToolServer> = z
+  .object({
+    id: z.string().uuid(),
+    name: z.string(),
+    properties: z.object({}).partial().strict().passthrough().optional(),
+    provider_id: z.string().uuid()
+  })
+  .strict()
+  .passthrough()
 const Tool: z.ZodType<Tool> = z
   .object({
-    server_id: z.string().uuid(),
-    name: z
-      .string()
-      .describe('The name of the tool (should be unique within a server).'),
     description: z
       .union([z.string(), z.null()])
       .describe('A description of the tool.')
@@ -712,6 +769,7 @@ const Tool: z.ZodType<Tool> = z
       .union([z.string(), z.null()])
       .describe('A URL to an icon for the tool.')
       .optional(),
+    id: z.string().uuid(),
     input_schema: z
       .union([z.object({}).partial().strict().passthrough(), z.boolean()])
       .describe(
@@ -719,167 +777,118 @@ const Tool: z.ZodType<Tool> = z
       )
       .optional()
       .default(true),
-    id: z.string().uuid()
-  })
-  .strict()
-  .passthrough()
-const PolicyBase: z.ZodType<PolicyBase> = z
-  .object({
-    event_name: z.string(),
-    description: z.union([z.string(), z.null()]).optional(),
-    access_policy: AccessPolicyType.describe('Enum for access policy types'),
-    organization_id: z.union([z.string(), z.null()]).optional(),
-    canonical_resource_name: z.string()
-  })
-  .strict()
-  .passthrough()
-const ToolProperties: z.ZodType<ToolProperties> = z
-  .object({ tags: z.object({}).partial().strict().passthrough() })
-  .strict()
-  .passthrough()
-const CanonicalResource: z.ZodType<CanonicalResource> = z
-  .object({
-    org_id: z.string(),
-    profile_id: z.string(),
-    server_name: z.string(),
-    event_name: z.string()
+    name: z
+      .string()
+      .describe('The name of the tool (should be unique within a server).'),
+    server_id: z.string().uuid()
   })
   .strict()
   .passthrough()
 const ToolResource: z.ZodType<ToolResource> = z
   .object({
-    integration_name: z.string(),
-    tool_name: z.string(),
-    description: z.union([z.string(), z.null()]).optional(),
-    id: z.string(),
-    tool: Tool.describe('A tool.'),
-    org_id: z.string(),
-    profile_id: z.string(),
-    policy: PolicyBase.describe('Base model with shared policy fields'),
-    properties: ToolProperties.describe('Properties for a tool.'),
-    server: ToolServer,
-    provider: ToolServerProvider,
     canonical_resource: CanonicalResource.describe(
       'Represents a canonical resource name in object form.'
-    )
-  })
-  .strict()
-  .passthrough()
-const ToolCustomTagsParamsRequest = z
-  .object({
-    integration_name: z.string(),
-    tool_name: z.string(),
+    ),
     description: z.union([z.string(), z.null()]).optional(),
-    tags: z.object({}).partial().strict().passthrough()
-  })
-  .strict()
-  .passthrough()
-const ToolCustomTagSelectionParamsRequest = z
-  .object({
+    id: z.string(),
     integration_name: z.string(),
-    tool_name: z.string(),
-    description: z.union([z.string(), z.null()]).optional(),
-    tags: z.array(z.string())
+    org_id: z.string(),
+    policy: PolicyBase.describe('Base model with shared policy fields'),
+    profile_id: z.string(),
+    properties: ToolProperties.describe('Properties for a tool.'),
+    provider: ToolServerProvider,
+    server: ToolServer,
+    tool: Tool.describe('A tool.'),
+    tool_name: z.string()
   })
   .strict()
   .passthrough()
 const MultipleToolCustomTagsParamsRequest = z
   .object({
-    tool_names: z.array(z.string()),
-    tags: z.object({}).partial().strict().passthrough()
+    tags: z.object({}).partial().strict().passthrough(),
+    tool_names: z.array(z.string())
   })
   .strict()
   .passthrough()
-const SearchRequest = z
+const ToolCustomTagSelectionParamsRequest = z
   .object({
-    query: z.string().describe('The query used against the search index.'),
-    k: z
-      .number()
-      .int()
-      .describe('The number of results to return from index.')
-      .optional()
-      .default(10),
-    min_score: z
-      .number()
-      .describe('The minimum score to return from index.')
-      .optional()
-      .default(0),
-    page_size: z
-      .number()
-      .int()
-      .describe('The number of results per page.')
-      .optional()
-      .default(10),
-    page: z
-      .number()
-      .int()
-      .describe('The page number to return.')
-      .optional()
-      .default(0)
+    description: z.union([z.string(), z.null()]).optional(),
+    integration_name: z.string(),
+    tags: z.array(z.string()),
+    tool_name: z.string()
   })
   .strict()
   .passthrough()
-const PaginationMetadata: z.ZodType<PaginationMetadata> = z
+const ToolCustomTagsParamsRequest = z
   .object({
-    page: z.number().int(),
-    page_size: z.number().int(),
-    total: z.number().int(),
-    pages: z.number().int(),
-    has_next: z.boolean(),
-    has_prev: z.boolean()
+    description: z.union([z.string(), z.null()]).optional(),
+    integration_name: z.string(),
+    tags: z.object({}).partial().strict().passthrough(),
+    tool_name: z.string()
   })
   .strict()
   .passthrough()
-const ScoredItem_Tool_: z.ZodType<ScoredItem_Tool_> = z
+const Policy: z.ZodType<Policy> = z
   .object({
-    item: Tool.describe('A tool.'),
-    score: z.number().gte(0).lte(1).describe('The score of the item [0, 1].')
-  })
-  .strict()
-  .passthrough()
-const SearchResponse_ScoredItem_Tool__: z.ZodType<SearchResponse_ScoredItem_Tool__> =
-  z
-    .object({
-      pagination: PaginationMetadata.describe('Metadata for paginated results'),
-      results: z.array(ScoredItem_Tool_)
-    })
-    .strict()
-    .passthrough()
-const Recipe: z.ZodType<Recipe> = z
-  .object({
+    access_policy: AccessPolicyType.describe('Enum for access policy types'),
+    canonical_resource_name: z.string(),
     created_at: z.union([z.string(), z.null()]).optional(),
-    updated_at: z.union([z.string(), z.null()]).optional(),
-    goal: z
-      .string()
-      .describe('The goal that this recipe is helping an agent achieve.'),
-    instructions: z
-      .union([z.string(), z.null()])
-      .describe('The instructions for this recipe.'),
+    description: z.union([z.string(), z.null()]).optional(),
+    event_name: z.string(),
     id: z.string().uuid().optional(),
-    tools: z.array(Tool)
+    organization_id: z.union([z.string(), z.null()]).optional(),
+    updated_at: z.union([z.string(), z.null()]).optional()
   })
   .strict()
   .passthrough()
-const ScoredItem_Recipe_: z.ZodType<ScoredItem_Recipe_> = z
+const NewPolicyRequest: z.ZodType<NewPolicyRequest> = z
   .object({
-    item: Recipe.describe('A recipe.'),
-    score: z.number().gte(0).lte(1).describe('The score of the item [0, 1].')
+    access_policy: AccessPolicyType.describe('Enum for access policy types'),
+    event_name: z.string(),
+    integration_name: z.string()
   })
   .strict()
   .passthrough()
-const SearchResponse_ScoredItem_Recipe__: z.ZodType<SearchResponse_ScoredItem_Recipe__> =
-  z
-    .object({
-      pagination: PaginationMetadata.describe('Metadata for paginated results'),
-      results: z.array(ScoredItem_Recipe_)
-    })
-    .strict()
-    .passthrough()
+const ActionApprovalState = z.enum(['pending', 'approved', 'rejected'])
+const ActionApprovalRequest: z.ZodType<ActionApprovalRequest> = z
+  .object({
+    created_at: z.string().datetime({ offset: true }).optional(),
+    id: z.union([z.number(), z.null()]),
+    last_updated_at: z.string().datetime({ offset: true }).optional(),
+    payload: z
+      .union([z.object({}).partial().strict().passthrough(), z.null()])
+      .optional(),
+    policy_id: z.string().uuid(),
+    state: ActionApprovalState.describe(
+      'Enum for policy approval states'
+    ).optional(),
+    updated_by_user_id: z.string()
+  })
+  .strict()
+  .passthrough()
+const ApprovalAndPolicy: z.ZodType<ApprovalAndPolicy> = z
+  .object({
+    approval:
+      ActionApprovalRequest.describe(`Model that holds the state of a request for an action to be taken with respect to a policy.
+Ex. if the policy is set to require approval, then we will have a request for approval.`),
+    canonical_resource_name: z.string(),
+    integration_name: z.string(),
+    policy: Policy.describe(
+      'Policy model that works with both SQL and in-memory storage'
+    ),
+    tool_name: z.string()
+  })
+  .strict()
+  .passthrough()
+const PolicyCheckResult = z
+  .object({ approved: z.boolean() })
+  .strict()
+  .passthrough()
 const ToolResourceBase: z.ZodType<ToolResourceBase> = z
   .object({
+    description: z.union([z.string(), z.null()]).optional(),
     integration_name: z.string(),
-    tool_name: z.string(),
-    description: z.union([z.string(), z.null()]).optional()
+    tool_name: z.string()
   })
   .strict()
   .passthrough()
@@ -909,19 +918,19 @@ const RecipeDetails_Output: z.ZodType<RecipeDetails_Output> = z
   .passthrough()
 const UserRecipe: z.ZodType<UserRecipe> = z
   .object({
-    id: z.number().int(),
+    created_at: z.string().datetime({ offset: true }).optional(),
+    details: z.object({}).partial().strict().passthrough().optional(),
+    details_data: RecipeDetails_Output.describe(
+      'Details about a recipe. This is an unordered list of tools that are used in the recipe.'
+    ),
     goal: z
       .string()
       .describe('The goal that this recipe is helping an agent achieve.'),
-    details: z.object({}).partial().strict().passthrough().optional(),
+    id: z.number().int(),
     org_id: z.string().describe('The organization ID that owns this recipe'),
     profile_id: z
       .string()
-      .describe('The profile ID within the organization that owns this recipe'),
-    created_at: z.string().datetime({ offset: true }).optional(),
-    details_data: RecipeDetails_Output.describe(
-      'Details about a recipe. This is an unordered list of tools that are used in the recipe.'
-    )
+      .describe('The profile ID within the organization that owns this recipe')
   })
   .strict()
   .passthrough()
@@ -945,38 +954,34 @@ const RecipeDetails_Input: z.ZodType<RecipeDetails_Input> = z
   .passthrough()
 const NewUserRecipeRequest: z.ZodType<NewUserRecipeRequest> = z
   .object({
+    details: RecipeDetails_Input.describe(
+      'Details about a recipe. This is an unordered list of tools that are used in the recipe.'
+    ),
+    goal: z
+      .string()
+      .describe('The goal that this recipe is helping an agent achieve.')
+  })
+  .strict()
+  .passthrough()
+const Recipe: z.ZodType<Recipe> = z
+  .object({
+    created_at: z.union([z.string(), z.null()]).optional(),
     goal: z
       .string()
       .describe('The goal that this recipe is helping an agent achieve.'),
-    details: RecipeDetails_Input.describe(
-      'Details about a recipe. This is an unordered list of tools that are used in the recipe.'
-    )
+    id: z.string().uuid().optional(),
+    instructions: z
+      .union([z.string(), z.null()])
+      .describe('The instructions for this recipe.'),
+    tools: z.array(Tool),
+    updated_at: z.union([z.string(), z.null()]).optional()
   })
-  .strict()
-  .passthrough()
-const Strategy: z.ZodType<Strategy> = z
-  .object({
-    recipe_id: z
-      .string()
-      .uuid()
-      .describe('The ID of the recipe that was used to generate the strategy.'),
-    instructions: z.string().describe('Instructions to follow the strategy.'),
-    tools: z
-      .array(ToolResource)
-      .describe(
-        'List of one or more fully-hydrated tool resources that should be used in the strategy to achieve the goal.'
-      )
-  })
-  .strict()
-  .passthrough()
-const ToolServerProperties = z
-  .object({ properties: z.object({}).partial().strict().passthrough() })
   .strict()
   .passthrough()
 const MCPToolServerClient: z.ZodType<MCPToolServerClient> = z
   .object({
-    server_id: z.string().uuid(),
     client_type: z.string(),
+    server_id: z.string().uuid(),
     transport_type: z.enum(['sse', 'websocket']),
     url: z.string().min(1).url()
   })
@@ -984,124 +989,34 @@ const MCPToolServerClient: z.ZodType<MCPToolServerClient> = z
   .passthrough()
 const BlaxelToolServerClient: z.ZodType<BlaxelToolServerClient> = z
   .object({
-    server_id: z.string().uuid(),
-    client_type: z.string(),
+    blaxel_function: z.string(),
     blaxel_workspace: z.string(),
-    blaxel_function: z.string()
+    client_type: z.string(),
+    server_id: z.string().uuid()
   })
   .strict()
   .passthrough()
 const SmitheryConnectionInfo: z.ZodType<SmitheryConnectionInfo> = z
   .object({
-    type: z.enum(['ws', 'http']),
-    deployment_url: z.string().min(1).url().optional(),
     config_schema: z
       .union([z.object({}).partial().strict().passthrough(), z.boolean()])
       .optional()
-      .default(true)
+      .default(true),
+    deployment_url: z.string().min(1).url().optional(),
+    type: z.enum(['ws', 'http'])
   })
   .strict()
   .passthrough()
 const ToolServerLaunchConfig: z.ZodType<ToolServerLaunchConfig> = z
-  .object({ source: z.string(), secret_name: z.string() })
+  .object({ secret_name: z.string(), source: z.string() })
   .strict()
   .passthrough()
 const SmitheryToolServerClient: z.ZodType<SmitheryToolServerClient> = z
   .object({
-    server_id: z.string().uuid(),
     client_type: z.string(),
     connections: z.array(SmitheryConnectionInfo),
-    launch_config: z.union([ToolServerLaunchConfig, z.null()]).optional()
-  })
-  .strict()
-  .passthrough()
-const Policy: z.ZodType<Policy> = z
-  .object({
-    created_at: z.union([z.string(), z.null()]).optional(),
-    updated_at: z.union([z.string(), z.null()]).optional(),
-    event_name: z.string(),
-    description: z.union([z.string(), z.null()]).optional(),
-    access_policy: AccessPolicyType.describe('Enum for access policy types'),
-    organization_id: z.union([z.string(), z.null()]).optional(),
-    canonical_resource_name: z.string(),
-    id: z.string().uuid().optional()
-  })
-  .strict()
-  .passthrough()
-const NewPolicyRequest: z.ZodType<NewPolicyRequest> = z
-  .object({
-    integration_name: z.string(),
-    event_name: z.string(),
-    access_policy: AccessPolicyType.describe('Enum for access policy types')
-  })
-  .strict()
-  .passthrough()
-const ActionApprovalState = z.enum(['pending', 'approved', 'rejected'])
-const ActionApprovalRequest: z.ZodType<ActionApprovalRequest> = z
-  .object({
-    id: z.union([z.number(), z.null()]),
-    policy_id: z.string().uuid(),
-    state: ActionApprovalState.describe(
-      'Enum for policy approval states'
-    ).optional(),
-    created_at: z.string().datetime({ offset: true }).optional(),
-    last_updated_at: z.string().datetime({ offset: true }).optional(),
-    updated_by_user_id: z.string(),
-    payload: z
-      .union([z.object({}).partial().strict().passthrough(), z.null()])
-      .optional()
-  })
-  .strict()
-  .passthrough()
-const ApprovalAndPolicy: z.ZodType<ApprovalAndPolicy> = z
-  .object({
-    approval:
-      ActionApprovalRequest.describe(`Model that holds the state of a request for an action to be taken with respect to a policy.
-Ex. if the policy is set to require approval, then we will have a request for approval.`),
-    policy: Policy.describe(
-      'Policy model that works with both SQL and in-memory storage'
-    ),
-    canonical_resource_name: z.string(),
-    integration_name: z.string(),
-    tool_name: z.string()
-  })
-  .strict()
-  .passthrough()
-const PolicyCheckResult = z
-  .object({ approved: z.boolean() })
-  .strict()
-  .passthrough()
-const policy_id = z
-  .union([z.string(), z.null()])
-  .describe('Filter by policy ID')
-  .optional()
-const action = z
-  .union([z.string(), z.null()])
-  .describe('Filter by action type')
-  .optional()
-const start_date = z
-  .union([z.string(), z.null()])
-  .describe('Filter logs after this date (ISO format)')
-  .optional()
-const end_date = z
-  .union([z.string(), z.null()])
-  .describe('Filter logs before this date (ISO format)')
-  .optional()
-const AuditLog: z.ZodType<AuditLog> = z
-  .object({
-    id: z.union([z.number(), z.null()]).optional(),
-    policy_id: z.string().uuid(),
-    action: z.string(),
-    details: z.object({}).partial().strict().passthrough().optional(),
-    performed_by: z.string().optional().default('system'),
-    timestamp: z.string().datetime({ offset: true }).optional()
-  })
-  .strict()
-  .passthrough()
-const PaginatedResponse_AuditLog_: z.ZodType<PaginatedResponse_AuditLog_> = z
-  .object({
-    items: z.array(AuditLog),
-    pagination: PaginationMetadata.describe('Metadata for paginated results')
+    launch_config: z.union([ToolServerLaunchConfig, z.null()]).optional(),
+    server_id: z.string().uuid()
   })
   .strict()
   .passthrough()
@@ -1114,54 +1029,150 @@ const InitializeResponse: z.ZodType<InitializeResponse> = z
         SmitheryToolServerClient
       ])
     ),
+    doppler_config: z.union([z.string(), z.null()]).optional(),
+    doppler_env: z.union([z.string(), z.null()]).optional(),
+    doppler_project: z.union([z.string(), z.null()]).optional(),
+    doppler_service_token: z.union([z.string(), z.null()]).optional(),
+    org_id: z.string(),
     providers: z.array(ToolServerProvider),
     servers: z.array(ToolServer),
     tools: z.array(Tool),
-    doppler_service_token: z.union([z.string(), z.null()]).optional(),
-    doppler_env: z.union([z.string(), z.null()]).optional(),
-    doppler_project: z.union([z.string(), z.null()]).optional(),
-    doppler_config: z.union([z.string(), z.null()]).optional(),
-    user_id: z.string(),
-    org_id: z.string()
+    user_id: z.string()
+  })
+  .strict()
+  .passthrough()
+const SearchRequest = z
+  .object({
+    k: z
+      .number()
+      .int()
+      .describe('The number of results to return from index.')
+      .optional()
+      .default(10),
+    min_score: z
+      .number()
+      .describe('The minimum score to return from index.')
+      .optional()
+      .default(0),
+    page: z
+      .number()
+      .int()
+      .describe('The page number to return.')
+      .optional()
+      .default(0),
+    page_size: z
+      .number()
+      .int()
+      .describe('The number of results per page.')
+      .optional()
+      .default(10),
+    query: z.string().describe('The query used against the search index.')
+  })
+  .strict()
+  .passthrough()
+const ScoredItem_Recipe_: z.ZodType<ScoredItem_Recipe_> = z
+  .object({
+    item: Recipe.describe('A recipe.'),
+    score: z.number().gte(0).lte(1).describe('The score of the item [0, 1].')
+  })
+  .strict()
+  .passthrough()
+const SearchResponse_ScoredItem_Recipe__: z.ZodType<SearchResponse_ScoredItem_Recipe__> =
+  z
+    .object({
+      pagination: PaginationMetadata.describe('Metadata for paginated results'),
+      results: z.array(ScoredItem_Recipe_)
+    })
+    .strict()
+    .passthrough()
+const ScoredItem_Tool_: z.ZodType<ScoredItem_Tool_> = z
+  .object({
+    item: Tool.describe('A tool.'),
+    score: z.number().gte(0).lte(1).describe('The score of the item [0, 1].')
+  })
+  .strict()
+  .passthrough()
+const SearchResponse_ScoredItem_Tool__: z.ZodType<SearchResponse_ScoredItem_Tool__> =
+  z
+    .object({
+      pagination: PaginationMetadata.describe('Metadata for paginated results'),
+      results: z.array(ScoredItem_Tool_)
+    })
+    .strict()
+    .passthrough()
+const UpsertSecretRequest: z.ZodType<UpsertSecretRequest> = z
+  .object({
+    value: z.union([z.string(), z.object({}).partial().strict().passthrough()]),
+    value_type: z.enum(['string', 'object'])
+  })
+  .strict()
+  .passthrough()
+const Body_upsert_secret_api_v1_secrets__secret_name__put: z.ZodType<Body_upsert_secret_api_v1_secrets__secret_name__put> =
+  z.object({ request: UpsertSecretRequest }).strict().passthrough()
+const X_ONEGREP_PROFILE_ID = z.union([z.string(), z.null()]).optional()
+const UpsertSecretResponse = z
+  .object({ secret_name: z.string(), success: z.boolean() })
+  .strict()
+  .passthrough()
+const ToolServerProperties = z
+  .object({ properties: z.object({}).partial().strict().passthrough() })
+  .strict()
+  .passthrough()
+const Strategy: z.ZodType<Strategy> = z
+  .object({
+    instructions: z.string().describe('Instructions to follow the strategy.'),
+    recipe_id: z
+      .string()
+      .uuid()
+      .describe('The ID of the recipe that was used to generate the strategy.'),
+    tools: z
+      .array(ToolResource)
+      .describe(
+        'List of one or more fully-hydrated tool resources that should be used in the strategy to achieve the goal.'
+      )
   })
   .strict()
   .passthrough()
 const CreateInvitationRequest = z
   .object({
     email: z.string().email(),
-    org_id: z.union([z.string(), z.null()]).optional(),
-    expires_in_days: z.number().int().optional().default(7)
+    expires_in_days: z.number().int().optional().default(7),
+    org_id: z.union([z.string(), z.null()]).optional()
   })
+  .strict()
+  .passthrough()
+const CreateUserRequest = z
+  .object({ org_id: z.string() })
   .strict()
   .passthrough()
 const IngressConfig: z.ZodType<IngressConfig> = z
   .object({
     entryPoints: z.array(z.string()).optional(),
-    proxyDomain: z.string(),
+    gatewayScheme: z.string().optional().default('http'),
     orgID: z.string(),
     orgRouteStrategy: z
       .enum(['PathPrefix', 'Header'])
       .optional()
       .default('PathPrefix'),
+    proxyDomain: z.string(),
     serverID: z.string(),
+    serverIsDefault: z.union([z.boolean(), z.null()]).optional().default(false),
     serverRouteStrategy: z
       .enum(['PathPrefix', 'Header'])
       .optional()
-      .default('Header'),
-    serverIsDefault: z.union([z.boolean(), z.null()]).optional().default(false),
-    gatewayScheme: z.string().optional().default('http')
+      .default('Header')
   })
   .strict()
   .passthrough()
 const Invitation = z
   .object({
-    code: z.string().optional(),
-    org_id: z.string(),
-    email: z.string().email(),
-    created_at: z.string().datetime({ offset: true }).optional(),
-    expires_at: z.string().datetime({ offset: true }).optional(),
     accepted: z.boolean().optional().default(false),
-    accepted_at: z.union([z.string(), z.null()]).optional()
+    accepted_at: z.union([z.string(), z.null()]).optional(),
+    code: z.string().optional(),
+    created_at: z.string().datetime({ offset: true }).optional(),
+    email: z.string().email(),
+    expires_at: z.string().datetime({ offset: true }).optional(),
+    org_id: z.string()
   })
   .strict()
   .passthrough()
@@ -1176,116 +1187,107 @@ const LauncherConfig: z.ZodType<LauncherConfig> = z
   .passthrough()
 const MCPServerConfig = z
   .object({
-    name: z.string(),
+    args: z.array(z.string()),
+    command: z.string(),
+    env_vars: z.record(z.string()),
+    git_branch: z.union([z.string(), z.null()]).optional().default('main'),
+    git_repo_url: z.union([z.string(), z.null()]).optional(),
     image: z
       .string()
       .optional()
       .default('registry.onegrep.dev/onegrep/mcp-host:latest'),
-    git_repo_url: z.union([z.string(), z.null()]).optional(),
-    git_branch: z.union([z.string(), z.null()]).optional().default('main'),
-    command: z.string(),
-    args: z.array(z.string()),
-    env_vars: z.record(z.string())
-  })
-  .strict()
-  .passthrough()
-const RemoteClientConfig = z
-  .object({
-    org_id: z.string(),
-    name: z.string(),
-    display_name: z.string(),
-    description: z.union([z.string(), z.null()]).optional(),
-    ready: z.boolean().optional().default(false),
-    endpoint: z.string().optional(),
-    required_headers: z.union([z.record(z.string()), z.null()]).optional()
+    name: z.string()
   })
   .strict()
   .passthrough()
 const ServerSpec: z.ZodType<ServerSpec> = z
   .object({
-    orgID: z.string(),
-    image: z.string(),
-    pullPolicy: z.string().optional().default('IfNotPresent'),
-    port: z.number().int().optional().default(8000),
     displayName: z.union([z.string(), z.null()]).optional(),
     envFromSources: z
       .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
       .optional(),
-    volumes: z
-      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
-      .optional(),
+    image: z.string(),
+    ingressConfig: z.union([IngressConfig, z.null()]).optional(),
+    launcherConfig: z.union([LauncherConfig, z.null()]).optional(),
+    orgID: z.string(),
+    port: z.number().int().optional().default(8000),
+    pullPolicy: z.string().optional().default('IfNotPresent'),
     volumeMounts: z
       .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
       .optional(),
-    launcherConfig: z.union([LauncherConfig, z.null()]).optional(),
-    ingressConfig: z.union([IngressConfig, z.null()]).optional()
+    volumes: z
+      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
+      .optional()
   })
   .strict()
   .passthrough()
 const Server: z.ZodType<Server> = z
   .object({
+    apiVersion: z.string(),
     kind: z.string().optional().default('Server'),
     metadata: KindMetadata,
     spec: ServerSpec,
     status: z
       .union([z.object({}).partial().strict().passthrough(), z.null()])
-      .optional(),
-    apiVersion: z.string()
+      .optional()
   })
   .strict()
   .passthrough()
 const TraefikIngressRoute: z.ZodType<TraefikIngressRoute> = z
   .object({
+    apiVersion: z.string(),
     kind: z.string().optional().default('IngressRoute'),
     metadata: KindMetadata,
     spec: IngressConfig,
-    status: z.object({}).partial().strict().passthrough(),
-    apiVersion: z.string()
+    status: z.object({}).partial().strict().passthrough()
   })
   .strict()
   .passthrough()
 
 export const schemas = {
-  AuthenticationMethod,
-  AuthenticationStatus,
   UserAccount,
-  ServiceTokenResponse,
   Organization,
   AccountInformation,
+  AuthenticationMethod,
+  AuthenticationStatus,
   AccountCreateRequest,
   ValidationError,
   HTTPValidationError,
-  X_ONEGREP_PROFILE_ID,
-  UpsertSecretRequest,
-  Body_upsert_secret_api_v1_secrets__secret_name__put,
-  UpsertSecretResponse,
-  ToolServerProvider,
-  ToolServer,
+  ServiceTokenResponse,
+  policy_id,
+  action,
+  start_date,
+  end_date,
+  AuditLog,
+  PaginationMetadata,
+  PaginatedResponse_AuditLog_,
+  GetAllFlagsResponse,
   IntegrationConfigurationState,
-  IntegrationAuthScheme,
-  IntegrationOAuthAuthorizer,
   MCPIntegrationArgs,
-  IntegrationSecret,
+  IntegrationAuthScheme,
   AccessPolicyType,
   PolicyAccessRule,
   IntegrationDefaultPolicies,
+  IntegrationOAuthAuthorizer,
+  IntegrationSecret,
   IntegrationTemplate,
   IntegrationConfigDetails,
-  Tool,
+  CanonicalResource,
   PolicyBase,
   ToolProperties,
-  CanonicalResource,
+  ToolServerProvider,
+  ToolServer,
+  Tool,
   ToolResource,
-  ToolCustomTagsParamsRequest,
-  ToolCustomTagSelectionParamsRequest,
   MultipleToolCustomTagsParamsRequest,
-  SearchRequest,
-  PaginationMetadata,
-  ScoredItem_Tool_,
-  SearchResponse_ScoredItem_Tool__,
-  Recipe,
-  ScoredItem_Recipe_,
-  SearchResponse_ScoredItem_Recipe__,
+  ToolCustomTagSelectionParamsRequest,
+  ToolCustomTagsParamsRequest,
+  Policy,
+  NewPolicyRequest,
+  ActionApprovalState,
+  ActionApprovalRequest,
+  ApprovalAndPolicy,
+  PolicyCheckResult,
   ToolResourceBase,
   RecipeTool,
   RecipeDetails_Output,
@@ -1293,33 +1295,31 @@ export const schemas = {
   PaginatedResponse_UserRecipe_,
   RecipeDetails_Input,
   NewUserRecipeRequest,
-  Strategy,
-  ToolServerProperties,
+  Recipe,
   MCPToolServerClient,
   BlaxelToolServerClient,
   SmitheryConnectionInfo,
   ToolServerLaunchConfig,
   SmitheryToolServerClient,
-  Policy,
-  NewPolicyRequest,
-  ActionApprovalState,
-  ActionApprovalRequest,
-  ApprovalAndPolicy,
-  PolicyCheckResult,
-  policy_id,
-  action,
-  start_date,
-  end_date,
-  AuditLog,
-  PaginatedResponse_AuditLog_,
   InitializeResponse,
+  SearchRequest,
+  ScoredItem_Recipe_,
+  SearchResponse_ScoredItem_Recipe__,
+  ScoredItem_Tool_,
+  SearchResponse_ScoredItem_Tool__,
+  UpsertSecretRequest,
+  Body_upsert_secret_api_v1_secrets__secret_name__put,
+  X_ONEGREP_PROFILE_ID,
+  UpsertSecretResponse,
+  ToolServerProperties,
+  Strategy,
   CreateInvitationRequest,
+  CreateUserRequest,
   IngressConfig,
   Invitation,
   KindMetadata,
   LauncherConfig,
   MCPServerConfig,
-  RemoteClientConfig,
   ServerSpec,
   Server,
   TraefikIngressRoute
@@ -1327,26 +1327,18 @@ export const schemas = {
 
 const endpoints = makeApi([
   {
-    method: 'get',
-    path: '/api/v1/account/',
-    alias: 'get_account_information_api_v1_account__get',
-    requestFormat: 'json',
-    response: AccountInformation
-  },
-  {
-    method: 'post',
-    path: '/api/v1/account/',
-    alias: 'create_account_api_v1_account__post',
-    description: `Creates a new account for the authenticated user with an API key and organization.`,
-    requestFormat: 'json',
-    response: AccountInformation
-  },
-  {
     method: 'delete',
     path: '/api/v1/account/',
     alias: 'delete_account_api_v1_account__delete',
     requestFormat: 'json',
     response: z.boolean()
+  },
+  {
+    method: 'get',
+    path: '/api/v1/account/',
+    alias: 'get_account_information_api_v1_account__get',
+    requestFormat: 'json',
+    response: AccountInformation
   },
   {
     method: 'get',
@@ -1470,6 +1462,13 @@ if a OneGrep account exists. If yes, then it will be considered authenticated.
   },
   {
     method: 'get',
+    path: '/api/v1/flags/',
+    alias: 'get_all_flags_api_v1_flags__get',
+    requestFormat: 'json',
+    response: GetAllFlagsResponse
+  },
+  {
+    method: 'get',
     path: '/api/v1/integrations/',
     alias: 'list_integrations_api_v1_integrations__get',
     description: `Lists all available integrations for a user&#x27;s organization.
@@ -1480,11 +1479,6 @@ If active is true, only returns integrations that have an active tool server.`,
         name: 'active',
         type: 'Query',
         schema: z.boolean().optional().default(false)
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: z.array(IntegrationConfigDetails),
@@ -1508,11 +1502,6 @@ If active is true, only returns integrations that have an active tool server.`,
         name: 'integration_name',
         type: 'Path',
         schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: z.array(ToolResource),
@@ -1541,11 +1530,39 @@ If active is true, only returns integrations that have an active tool server.`,
         name: 'tool_name',
         type: 'Path',
         schema: z.string()
+      }
+    ],
+    response: ToolResource,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'delete',
+    path: '/api/v1/integrations/:integration_name/tools/:tool_name/custom/tags',
+    alias:
+      'delete_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_delete',
+    description: `Deletes custom tags for a tool in an integration.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: ToolCustomTagSelectionParamsRequest
       },
       {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
+        name: 'integration_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'tool_name',
+        type: 'Path',
+        schema: z.string()
       }
     ],
     response: ToolResource,
@@ -1580,49 +1597,6 @@ overlapping tags that are already set.`,
         name: 'tool_name',
         type: 'Path',
         schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
-      }
-    ],
-    response: ToolResource,
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'delete',
-    path: '/api/v1/integrations/:integration_name/tools/:tool_name/custom/tags',
-    alias:
-      'delete_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_delete',
-    description: `Deletes custom tags for a tool in an integration.`,
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'body',
-        type: 'Body',
-        schema: ToolCustomTagSelectionParamsRequest
-      },
-      {
-        name: 'integration_name',
-        type: 'Path',
-        schema: z.string()
-      },
-      {
-        name: 'tool_name',
-        type: 'Path',
-        schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: ToolResource,
@@ -1651,11 +1625,6 @@ overlapping tags that are already set.`,
         name: 'integration_name',
         type: 'Path',
         schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: z.array(ToolResource),
@@ -1703,11 +1672,6 @@ overlapping tags that are already set.`,
         name: 'body',
         type: 'Body',
         schema: NewPolicyRequest
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: Policy,
@@ -1858,21 +1822,7 @@ response and HTTP CODE. 200 &#x3D; approved or didn&#x27;t require approval, 403
     alias: 'check_resource_access_api_v1_policies_resources_check_post',
     description: `Generic endpoint to check resource access.`,
     requestFormat: 'json',
-    parameters: [
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
-      }
-    ],
-    response: z.object({ approved: z.boolean() }).strict().passthrough(),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
+    response: z.object({ approved: z.boolean() }).strict().passthrough()
   },
   {
     method: 'get',
@@ -1978,11 +1928,6 @@ response and HTTP CODE. 200 &#x3D; approved or didn&#x27;t require approval, 403
           .describe('Items per page')
           .optional()
           .default(20)
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: PaginatedResponse_UserRecipe_,
@@ -2008,11 +1953,6 @@ response and HTTP CODE. 200 &#x3D; approved or didn&#x27;t require approval, 403
         name: 'body',
         type: 'Body',
         schema: NewUserRecipeRequest
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: Recipe,
@@ -2053,21 +1993,7 @@ The recipe must belong to the user&#x27;s organization.`,
     path: '/api/v1/sdk/initialize',
     alias: 'initialize_api_v1_sdk_initialize_get',
     requestFormat: 'json',
-    parameters: [
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
-      }
-    ],
-    response: InitializeResponse,
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
+    response: InitializeResponse
   },
   {
     method: 'get',
@@ -2089,11 +2015,6 @@ along with a similarity score for each recipe.`,
         name: 'body',
         type: 'Body',
         schema: SearchRequest
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: SearchResponse_ScoredItem_Recipe__,
@@ -2117,7 +2038,6 @@ along with a similarity score for each recipe.`,
     method: 'post',
     path: '/api/v1/search/reindex/recipes',
     alias: 'reindex_recipes_api_v1_search_reindex_recipes_post',
-    description: `Reindexes all recipes for an organization.`,
     requestFormat: 'json',
     response: z.unknown()
   },
@@ -2125,7 +2045,6 @@ along with a similarity score for each recipe.`,
     method: 'post',
     path: '/api/v1/search/reindex/tools',
     alias: 'reindex_tools_api_v1_search_reindex_tools_post',
-    description: `Reindexes all tools for an organization.`,
     requestFormat: 'json',
     response: z.unknown()
   },
@@ -2141,11 +2060,6 @@ along with a similarity score for each tool.`,
         name: 'body',
         type: 'Body',
         schema: SearchRequest
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: SearchResponse_ScoredItem_Tool__,
@@ -2162,21 +2076,7 @@ along with a similarity score for each tool.`,
     path: '/api/v1/secrets/',
     alias: 'get_secrets_api_v1_secrets__get',
     requestFormat: 'json',
-    parameters: [
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
-      }
-    ],
-    response: z.unknown(),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
+    response: z.unknown()
   },
   {
     method: 'get',
@@ -2188,11 +2088,6 @@ along with a similarity score for each tool.`,
         name: 'secret_name',
         type: 'Path',
         schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: z.object({}).partial().strict().passthrough(),
@@ -2358,11 +2253,6 @@ along with a similarity score for each tool.`,
         name: 'body',
         type: 'Body',
         schema: SearchRequest
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: z.array(Strategy),
@@ -2421,11 +2311,6 @@ along with a similarity score for each tool.`,
         name: 'tool_id',
         type: 'Path',
         schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: z
@@ -2451,11 +2336,6 @@ along with a similarity score for each tool.`,
         name: 'tool_id',
         type: 'Path',
         schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: ToolResource,

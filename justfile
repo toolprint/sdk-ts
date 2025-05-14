@@ -18,6 +18,15 @@ reinstall:
     just clean
     just install
 
+# update the api client spec
+[group('openapi')]
+update-openapi-spec base-url="https://www.test-sandbox.onegrep.dev":
+    curl {{base-url}}/openapi/sdk-client.yaml --output ./packages/onegrep-api-client/openapi/onegrep-api.yaml
+
+[group('openapi')]
+update-openapi-spec-local:
+    just update-openapi-spec "http://localhost:8080"
+
 # generate code for all packages
 [group('generate')]
 generate:
