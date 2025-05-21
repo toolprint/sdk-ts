@@ -12,10 +12,11 @@ import {
   ConnectionManager,
   ToolCallInput,
   ToolCallResponse,
-  ToolCallError
+  ToolCallError,
+  Recommendation
 } from './types.js'
 
-import { OneGrepApiClient } from '~/core/index.js'
+import { OneGrepApiClient, Prompt } from '~/core/index.js'
 import { OneGrepApiHighLevelClient } from '~/core/index.js'
 import {
   ToolProperties,
@@ -373,6 +374,48 @@ export class UniversalToolCache implements ToolCache {
   @handleErrors()
   async get(toolId: ToolId): Promise<ToolDetails> {
     return await this.getToolDetails(toolId)
+  }
+
+  /**
+   * Finds the best toolprint for a given goal (if one exists), and returns a
+   * simplified Recommendation object. If no toolprint is found for the goal,
+   * it will perform a traditional search and return a list of tools but no
+   * prompts in the recommendation.
+   *
+   * @param goal - The goal to get a recommendation for
+   * @returns A recommendation for the goal
+   */
+  @handleErrors()
+  async recommend(goal: string): Promise<Recommendation> {
+    try {
+      const recommendedToolprint =
+        await this.highLevelClient.recommendToolprint(goal)
+      const tools: Tool[] = recommendedToolprint.toolprint.tools
+      const toolDetails: ToolDetails[] = await Promise.all(
+        tools.map(async (tool) => {
+          return await this.getToolDetails(tool.id)
+        })
+      )
+      const messages: Prompt[] = recommendedToolprint.prompts
+
+      return {
+        goal,
+        tools: toolDetails,
+        messages
+      }
+    } catch (_) {
+      log.debug(
+        `No toolprint found for goal: ${goal}, performing traditional search`
+      )
+      // If no toolprint is found, perform a traditional search
+      const searchResult = await this.search(goal)
+      const tools = searchResult.map((result) => result.result)
+      return {
+        goal,
+        tools,
+        messages: []
+      }
+    }
   }
 
   @handleErrors()

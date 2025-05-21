@@ -20,6 +20,9 @@ import {
 import { z, ZodTypeAny } from 'zod'
 
 import { log } from '~/core/log.js'
+import { StructuredToolsRecommendation } from './types.js'
+import { SystemMessage } from '@langchain/core/messages'
+import { Prompt } from '~/core/api/types.js'
 
 /**
  * Convert an EquippedTool to a DynamicStructuredTool that's compatible with LangChain agents
@@ -62,6 +65,13 @@ const convertToLangChainTool = (equippedTool: EquippedTool): StructuredTool => {
   return new DynamicStructuredTool(dynamicToolInput)
 }
 
+/** Converts a list of prompts to a list of LangChain SystemMessages */
+const convertToLangChainMessages = (prompts: Prompt[]): SystemMessage[] => {
+  return prompts.map((message) => {
+    return new SystemMessage(message.message)
+  })
+}
+
 /**
  * A Langchain Toolbox that provides tools compatible with LangChain agents
  *
@@ -70,7 +80,9 @@ const convertToLangChainTool = (equippedTool: EquippedTool): StructuredTool => {
  * interface that break Blaxel.  We will need to find better ways to manage
  * Toolbox interfaces to let us extend the Toolbox for various agent frameworks.
  */
-export class LangchainToolbox implements BaseToolbox<StructuredTool> {
+export class LangchainToolbox
+  implements BaseToolbox<StructuredTool, StructuredToolsRecommendation>
+{
   toolbox: Toolbox
 
   constructor(toolbox: Toolbox) {
@@ -95,6 +107,24 @@ export class LangchainToolbox implements BaseToolbox<StructuredTool> {
     const toolDetails = await this.toolbox.get(toolId)
     const tool = await toolDetails.equip()
     return convertToLangChainTool(tool)
+  }
+
+  async recommend(goal: string): Promise<StructuredToolsRecommendation> {
+    const recommendation = await this.toolbox.recommend(goal)
+    const structuredTools: StructuredTool[] = await Promise.all(
+      recommendation.tools.map(async (t) => {
+        const et = await t.equip()
+        return convertToLangChainTool(et)
+      })
+    )
+    const messages: SystemMessage[] = convertToLangChainMessages(
+      recommendation.messages
+    )
+    return {
+      goal,
+      tools: structuredTools,
+      messages
+    }
   }
 
   async search(query: string): Promise<Array<ScoredResult<StructuredTool>>> {

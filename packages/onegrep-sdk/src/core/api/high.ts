@@ -12,7 +12,10 @@ import {
   UpsertSecretRequest,
   UpsertSecretResponse,
   FlagsResponse,
-  AuthenticationStatus
+  AuthenticationStatus,
+  ToolprintRecommendation,
+  Toolprint,
+  RegisteredToolprint
 } from './types.js'
 
 import { makeApiCallWithResult } from './utils.js'
@@ -244,5 +247,47 @@ export class OneGrepApiHighLevelClient {
       throw result.error
     }
     return result.data!
+  }
+
+  async recommendToolprint(goal: string): Promise<ToolprintRecommendation> {
+    const result = await makeApiCallWithResult<ToolprintRecommendation>(
+      async () => {
+        return await this.apiClient.get_toolprint_recommendation_api_v1_search_toolprints_recommendation_post(
+          {
+            query: goal
+          }
+        )
+      }
+    )
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  async newToolprint(toolprint: Toolprint): Promise<Toolprint> {
+    const result = await makeApiCallWithResult<Toolprint>(async () => {
+      const registeredToolprint: RegisteredToolprint =
+        await this.apiClient.create_toolprint_api_v1_toolprints__post(toolprint)
+      return registeredToolprint.toolprint
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  async validateToolprint(toolprint: Toolprint): Promise<boolean> {
+    const result = await makeApiCallWithResult<unknown>(async () => {
+      return await this.apiClient.validate_toolprint_api_v1_toolprints_validate_post(
+        toolprint
+      )
+    })
+    if (result.error) {
+      throw result.error
+    } else if (!result.success) {
+      return false
+    }
+    return true
   }
 }

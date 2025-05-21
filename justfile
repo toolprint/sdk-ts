@@ -124,6 +124,8 @@ test name=".*":
     pnpm turbo run test -- --testNamePattern={{name}}
 
 # test the sdk package (use `test-sdk ".*"` to filter by test name regex)
+# * Note that "name" isn't the file name but the name of the test class within a file.
+# Example to filter to langchain tests: `just test-sdk name=".*Langchain.*"`
 [group('test')]
 test-sdk name=".*":
     pnpm turbo run test --filter=@onegrep/sdk -- --testNamePattern={{name}}

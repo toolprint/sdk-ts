@@ -10,7 +10,8 @@ import {
   ToolId,
   ScoredResult,
   ToolDetails,
-  BasicToolDetails
+  BasicToolDetails,
+  Recommendation
 } from '~/types.js'
 import { getDopplerSecretManager } from './secrets/doppler.js'
 
@@ -26,7 +27,7 @@ import { SecretManager } from './secrets/index.js'
 
 import { log } from '~/core/log.js'
 
-export class Toolbox implements BaseToolbox<ToolDetails> {
+export class Toolbox implements BaseToolbox<ToolDetails, Recommendation> {
   apiClient: OneGrepApiClient
   toolCache: ToolCache
 
@@ -51,6 +52,10 @@ export class Toolbox implements BaseToolbox<ToolDetails> {
 
   async get(toolId: ToolId): Promise<ToolDetails> {
     return this.toolCache.get(toolId)
+  }
+
+  async recommend(goal: string): Promise<Recommendation> {
+    return this.toolCache.recommend(goal)
   }
 
   async search(query: string): Promise<Array<ScoredResult<ToolDetails>>> {

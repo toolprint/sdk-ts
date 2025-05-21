@@ -21,7 +21,8 @@ describe('Langchain Toolbox Tests', () => {
   // }
 
   // ! Tool args that work with the test-sandbox.onegrep.dev `meta` server which is a running mock_mcp server (reference impl in onegrep-api repo)
-  const integrationName = 'blaxel-search'
+  // const integrationName = 'blaxel-search'
+  const integrationName = 'exa'
   const toolName = 'web_search'
   const toolArgs = {
     query: 'What is Langchain?'

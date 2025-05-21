@@ -282,35 +282,6 @@ type NewPolicyRequest = {
   event_name: string
   integration_name: string
 }
-type NewUserRecipeRequest = {
-  details: RecipeDetails_Input
-  /**
-   * The goal that this recipe is helping an agent achieve.
-   */
-  goal: string
-}
-type RecipeDetails_Input = Partial<{
-  /**
-   * An unsorted list of tools that would be used in this recipe.
-   *
-   * @default []
-   */
-  tools: Array<RecipeTool>
-}>
-type RecipeTool = {
-  tool_resource: ToolResourceBase
-  usage_instructions?:
-    | /**
-     * A more in-depth description of this tool and what it should be used for in the context of this recipe.
-     */
-    ((string | null) | Array<string | null>)
-    | undefined
-}
-type ToolResourceBase = {
-  description?: ((string | null) | Array<string | null>) | undefined
-  integration_name: string
-  tool_name: string
-}
 type PaginatedResponse_AuditLog_ = {
   items: Array<AuditLog>
   pagination: PaginationMetadata
@@ -334,36 +305,6 @@ type PaginationMetadata = {
   pages: number
   total: number
 }
-type PaginatedResponse_UserRecipe_ = {
-  items: Array<UserRecipe>
-  pagination: PaginationMetadata
-}
-type UserRecipe = {
-  created_at?: string | undefined
-  details?: {} | undefined
-  details_data: RecipeDetails_Output
-  /**
-   * The goal that this recipe is helping an agent achieve.
-   */
-  goal: string
-  id: number
-  /**
-   * The organization ID that owns this recipe
-   */
-  org_id: string
-  /**
-   * The profile ID within the organization that owns this recipe
-   */
-  profile_id: string
-}
-type RecipeDetails_Output = Partial<{
-  /**
-   * An unsorted list of tools that would be used in this recipe.
-   *
-   * @default []
-   */
-  tools: Array<RecipeTool>
-}>
 type PolicyBase = {
   access_policy: AccessPolicyType
   canonical_resource_name: string
@@ -385,8 +326,103 @@ type Recipe = {
   tools: Array<Tool>
   updated_at?: ((string | null) | Array<string | null>) | undefined
 }
-type ScoredItem_Recipe_ = {
-  item: Recipe
+type RegisteredToolprint = {
+  created_at?: ((string | null) | Array<string | null>) | undefined
+  created_by?: string | undefined
+  id?: string | undefined
+  owner_id?: ((string | null) | Array<string | null>) | undefined
+  source?: {} | undefined
+  /**
+   * The checksum of the source toolprint. This helps us track changes from the original vending server/integration.
+   */
+  source_checksum: string
+  toolprint: Toolprint_Output
+  tools: Array<Tool>
+  updated_at?: ((string | null) | Array<string | null>) | undefined
+  updated_by?: ((string | null) | Array<string | null>) | undefined
+}
+type Toolprint_Output = {
+  /**
+   * The goal that this recipe is helping an agent achieve.
+   */
+  goal: string
+  /**
+   * The instructions on how this recipe should be used.
+   */
+  instructions: (string | null) | Array<string | null>
+  meta: ToolprintMeta
+  /**
+   * Definitions for how each tool should be used in this toolprint.
+   */
+  tools: Array<ToolprintTool>
+}
+type ToolprintMeta = {
+  language?: /**
+   * The language of the toolprint.
+   *
+   * @default "en-US"
+   */
+  string | undefined
+  /**
+   * The name of the toolprint.
+   */
+  name: string
+  resource_id?:
+    | /**
+     * The unique identifier for the toolprint.
+     */
+    ((string | null) | Array<string | null>)
+    | undefined
+  version?: /**
+   * The version of the toolprint definition.
+   *
+   * @default "0.0.1"
+   */
+  string | undefined
+}
+type ToolprintTool = {
+  ref: ToolprintToolReference
+  /**
+   * A more in-depth description of this tool and what it should be used for in the context of this recipe.
+   */
+  usage_hints: (string | null) | Array<string | null>
+}
+type ToolprintToolReference = {
+  id?:
+    | /**
+     * An optional reference id
+     */
+    ((string | null) | Array<string | null>)
+    | undefined
+  /**
+   * The name of the tool. If the tool exists within this server or integration, this value will be used to link to it.
+   */
+  name: string
+  ref_type?:
+    | /**
+     * The type of reference to the tool. If the tool exists within this server or integration, this value will be used to link to it.
+     *
+     * @default "local"
+     */
+    (| (
+            | /**
+             * @enum local, id
+             */
+            ('local' | 'id')
+            | null
+          )
+        | Array<
+            | /**
+             * @enum local, id
+             */
+            ('local' | 'id')
+            | null
+          >
+      )
+    | undefined
+}
+type ScoredItem_RegisteredToolprint_ = {
+  item: RegisteredToolprint
   /**
    * The score of the item [0, 1].
    *
@@ -405,9 +441,9 @@ type ScoredItem_Tool_ = {
    */
   score: number
 }
-type SearchResponse_ScoredItem_Recipe__ = {
+type SearchResponse_ScoredItem_RegisteredToolprint__ = {
   pagination: PaginationMetadata
-  results: Array<ScoredItem_Recipe_>
+  results: Array<ScoredItem_RegisteredToolprint_>
 }
 type SearchResponse_ScoredItem_Tool__ = {
   pagination: PaginationMetadata
@@ -519,6 +555,42 @@ type CanonicalResource = {
 type ToolProperties = {
   tags: {}
 }
+type Toolprint_Input = {
+  /**
+   * The goal that this recipe is helping an agent achieve.
+   */
+  goal: string
+  /**
+   * The instructions on how this recipe should be used.
+   */
+  instructions: (string | null) | Array<string | null>
+  meta: ToolprintMeta
+  /**
+   * Definitions for how each tool should be used in this toolprint.
+   */
+  tools: Array<ToolprintTool>
+}
+type ToolprintRecommendation = {
+  meta: SearchResultMeta
+  /**
+   * The prompts that should be injected into the message stack to prime the agent's LLM.
+   */
+  prompts: Array<Prompt>
+  toolprint: RegisteredToolprint
+}
+type SearchResultMeta = {
+  /**
+   * The score of the search result.
+   */
+  score: number
+}
+type Prompt = {
+  message: string
+  /**
+   * @enum system, user
+   */
+  type: 'system' | 'user'
+}
 type TraefikIngressRoute = {
   apiVersion: string
   kind?: /**
@@ -598,6 +670,10 @@ const ServiceTokenResponse = z
     doppler_service_token: z.union([z.string(), z.null()])
   })
   .partial()
+  .strict()
+  .passthrough()
+const CreateUserRequest = z
+  .object({ org_id: z.string() })
   .strict()
   .passthrough()
 const policy_id = z
@@ -828,6 +904,34 @@ const ToolCustomTagsParamsRequest = z
   })
   .strict()
   .passthrough()
+const org_id = z
+  .union([z.string(), z.null()])
+  .describe('Filter by organization ID')
+  .optional()
+const email = z
+  .union([z.string(), z.null()])
+  .describe('Filter by email')
+  .optional()
+const Invitation = z
+  .object({
+    accepted: z.boolean().optional().default(false),
+    accepted_at: z.union([z.string(), z.null()]).optional(),
+    code: z.string().optional(),
+    created_at: z.string().datetime({ offset: true }).optional(),
+    email: z.string().email(),
+    expires_at: z.string().datetime({ offset: true }).optional(),
+    org_id: z.string()
+  })
+  .strict()
+  .passthrough()
+const CreateInvitationRequest = z
+  .object({
+    email: z.string().email(),
+    expires_in_days: z.number().int().optional().default(7),
+    org_id: z.union([z.string(), z.null()]).optional()
+  })
+  .strict()
+  .passthrough()
 const Policy: z.ZodType<Policy> = z
   .object({
     access_policy: AccessPolicyType.describe('Enum for access policy types'),
@@ -884,97 +988,90 @@ const PolicyCheckResult = z
   .object({ approved: z.boolean() })
   .strict()
   .passthrough()
-const ToolResourceBase: z.ZodType<ToolResourceBase> = z
+const X_ONEGREP_PROFILE_ID = z.union([z.string(), z.null()]).optional()
+const KindMetadata: z.ZodType<KindMetadata> = z
+  .object({})
+  .partial()
+  .strict()
+  .passthrough()
+const IngressConfig: z.ZodType<IngressConfig> = z
   .object({
-    description: z.union([z.string(), z.null()]).optional(),
-    integration_name: z.string(),
-    tool_name: z.string()
+    entryPoints: z.array(z.string()).optional(),
+    gatewayScheme: z.string().optional().default('http'),
+    orgID: z.string(),
+    orgRouteStrategy: z
+      .enum(['PathPrefix', 'Header'])
+      .optional()
+      .default('PathPrefix'),
+    proxyDomain: z.string(),
+    serverID: z.string(),
+    serverIsDefault: z.union([z.boolean(), z.null()]).optional().default(false),
+    serverRouteStrategy: z
+      .enum(['PathPrefix', 'Header'])
+      .optional()
+      .default('Header')
   })
   .strict()
   .passthrough()
-const RecipeTool: z.ZodType<RecipeTool> = z
+const LauncherConfig: z.ZodType<LauncherConfig> = z
+  .object({ configMapName: z.string(), mountPath: z.string() })
+  .strict()
+  .passthrough()
+const ServerSpec: z.ZodType<ServerSpec> = z
   .object({
-    tool_resource: ToolResourceBase.describe(
-      'Identification details about a tool in an integration.'
-    ),
-    usage_instructions: z
-      .union([z.string(), z.null()])
-      .describe(
-        'A more in-depth description of this tool and what it should be used for in the context of this recipe.'
-      )
+    displayName: z.union([z.string(), z.null()]).optional(),
+    envFromSources: z
+      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
+      .optional(),
+    image: z.string(),
+    ingressConfig: z.union([IngressConfig, z.null()]).optional(),
+    launcherConfig: z.union([LauncherConfig, z.null()]).optional(),
+    orgID: z.string(),
+    port: z.number().int().optional().default(8000),
+    pullPolicy: z.string().optional().default('IfNotPresent'),
+    volumeMounts: z
+      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
+      .optional(),
+    volumes: z
+      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
       .optional()
   })
   .strict()
   .passthrough()
-const RecipeDetails_Output: z.ZodType<RecipeDetails_Output> = z
+const Server: z.ZodType<Server> = z
   .object({
-    tools: z
-      .array(RecipeTool)
-      .describe('An unsorted list of tools that would be used in this recipe.')
-      .default([])
-  })
-  .partial()
-  .strict()
-  .passthrough()
-const UserRecipe: z.ZodType<UserRecipe> = z
-  .object({
-    created_at: z.string().datetime({ offset: true }).optional(),
-    details: z.object({}).partial().strict().passthrough().optional(),
-    details_data: RecipeDetails_Output.describe(
-      'Details about a recipe. This is an unordered list of tools that are used in the recipe.'
-    ),
-    goal: z
-      .string()
-      .describe('The goal that this recipe is helping an agent achieve.'),
-    id: z.number().int(),
-    org_id: z.string().describe('The organization ID that owns this recipe'),
-    profile_id: z
-      .string()
-      .describe('The profile ID within the organization that owns this recipe')
+    apiVersion: z.string(),
+    kind: z.string().optional().default('Server'),
+    metadata: KindMetadata,
+    spec: ServerSpec,
+    status: z
+      .union([z.object({}).partial().strict().passthrough(), z.null()])
+      .optional()
   })
   .strict()
   .passthrough()
-const PaginatedResponse_UserRecipe_: z.ZodType<PaginatedResponse_UserRecipe_> =
-  z
-    .object({
-      items: z.array(UserRecipe),
-      pagination: PaginationMetadata.describe('Metadata for paginated results')
-    })
-    .strict()
-    .passthrough()
-const RecipeDetails_Input: z.ZodType<RecipeDetails_Input> = z
+const MCPServerConfig = z
   .object({
-    tools: z
-      .array(RecipeTool)
-      .describe('An unsorted list of tools that would be used in this recipe.')
-      .default([])
-  })
-  .partial()
-  .strict()
-  .passthrough()
-const NewUserRecipeRequest: z.ZodType<NewUserRecipeRequest> = z
-  .object({
-    details: RecipeDetails_Input.describe(
-      'Details about a recipe. This is an unordered list of tools that are used in the recipe.'
-    ),
-    goal: z
+    args: z.array(z.string()),
+    command: z.string(),
+    env_vars: z.record(z.string()),
+    git_branch: z.union([z.string(), z.null()]).optional().default('main'),
+    git_repo_url: z.union([z.string(), z.null()]).optional(),
+    image: z
       .string()
-      .describe('The goal that this recipe is helping an agent achieve.')
+      .optional()
+      .default('registry.onegrep.dev/onegrep/mcp-host:latest'),
+    name: z.string()
   })
   .strict()
   .passthrough()
-const Recipe: z.ZodType<Recipe> = z
+const TraefikIngressRoute: z.ZodType<TraefikIngressRoute> = z
   .object({
-    created_at: z.union([z.string(), z.null()]).optional(),
-    goal: z
-      .string()
-      .describe('The goal that this recipe is helping an agent achieve.'),
-    id: z.string().uuid().optional(),
-    instructions: z
-      .union([z.string(), z.null()])
-      .describe('The instructions for this recipe.'),
-    tools: z.array(Tool),
-    updated_at: z.union([z.string(), z.null()]).optional()
+    apiVersion: z.string(),
+    kind: z.string().optional().default('IngressRoute'),
+    metadata: KindMetadata,
+    spec: IngressConfig,
+    status: z.object({}).partial().strict().passthrough()
   })
   .strict()
   .passthrough()
@@ -1070,21 +1167,139 @@ const SearchRequest = z
   })
   .strict()
   .passthrough()
-const ScoredItem_Recipe_: z.ZodType<ScoredItem_Recipe_> = z
+const ToolprintMeta: z.ZodType<ToolprintMeta> = z
   .object({
-    item: Recipe.describe('A recipe.'),
-    score: z.number().gte(0).lte(1).describe('The score of the item [0, 1].')
+    language: z
+      .string()
+      .describe('The language of the toolprint.')
+      .optional()
+      .default('en-US'),
+    name: z.string().describe('The name of the toolprint.'),
+    resource_id: z
+      .union([z.string(), z.null()])
+      .describe('The unique identifier for the toolprint.')
+      .optional(),
+    version: z
+      .string()
+      .describe('The version of the toolprint definition.')
+      .optional()
+      .default('0.0.1')
   })
   .strict()
   .passthrough()
-const SearchResponse_ScoredItem_Recipe__: z.ZodType<SearchResponse_ScoredItem_Recipe__> =
+const ToolprintToolReference: z.ZodType<ToolprintToolReference> = z
+  .object({
+    id: z
+      .union([z.string(), z.null()])
+      .describe('An optional reference id')
+      .optional(),
+    name: z
+      .string()
+      .describe(
+        'The name of the tool. If the tool exists within this server or integration, this value will be used to link to it.'
+      ),
+    ref_type: z
+      .union([z.enum(['local', 'id']), z.null()])
+      .describe(
+        'The type of reference to the tool. If the tool exists within this server or integration, this value will be used to link to it.'
+      )
+      .optional()
+      .default('local')
+  })
+  .strict()
+  .passthrough()
+const ToolprintTool: z.ZodType<ToolprintTool> = z
+  .object({
+    ref: ToolprintToolReference.describe(`A reference to a tool that is used in a toolprint. This reference can link to a tool directly by a unique identifier or indirectly through
+a link to the tool server as well as the name of the tool. The latter reference is experimental and relies on the implementor
+to ensure that the reference is correctly followed.`),
+    usage_hints: z
+      .union([z.string(), z.null()])
+      .describe(
+        'A more in-depth description of this tool and what it should be used for in the context of this recipe.'
+      )
+  })
+  .strict()
+  .passthrough()
+const Toolprint_Output: z.ZodType<Toolprint_Output> = z
+  .object({
+    goal: z
+      .string()
+      .describe('The goal that this recipe is helping an agent achieve.'),
+    instructions: z
+      .union([z.string(), z.null()])
+      .describe('The instructions on how this recipe should be used.'),
+    meta: ToolprintMeta.describe(
+      'A set of meta fields that are common to all toolprints.'
+    ),
+    tools: z
+      .array(ToolprintTool)
+      .describe(
+        'Definitions for how each tool should be used in this toolprint.'
+      )
+  })
+  .strict()
+  .passthrough()
+const RegisteredToolprint: z.ZodType<RegisteredToolprint> = z
+  .object({
+    created_at: z.union([z.string(), z.null()]).optional(),
+    created_by: z.string().optional(),
+    id: z.string().uuid().optional(),
+    owner_id: z.union([z.string(), z.null()]).optional(),
+    source: z.object({}).partial().strict().passthrough().optional(),
+    source_checksum: z
+      .string()
+      .describe(
+        'The checksum of the source toolprint. This helps us track changes from the original vending server/integration.'
+      ),
+    toolprint:
+      Toolprint_Output.describe(`A declarative definition of a toolprint that describes how tools should be used together
+to achieve a goal. This is a simplified model that focuses on the conceptual structure and specifically
+avoids referential fields to any persisted entities.`),
+    tools: z.array(Tool),
+    updated_at: z.union([z.string(), z.null()]).optional(),
+    updated_by: z.union([z.string(), z.null()]).optional()
+  })
+  .strict()
+  .passthrough()
+const ScoredItem_RegisteredToolprint_: z.ZodType<ScoredItem_RegisteredToolprint_> =
   z
     .object({
-      pagination: PaginationMetadata.describe('Metadata for paginated results'),
-      results: z.array(ScoredItem_Recipe_)
+      item: RegisteredToolprint.describe('A toolprint.'),
+      score: z.number().gte(0).lte(1).describe('The score of the item [0, 1].')
     })
     .strict()
     .passthrough()
+const SearchResponse_ScoredItem_RegisteredToolprint__: z.ZodType<SearchResponse_ScoredItem_RegisteredToolprint__> =
+  z
+    .object({
+      pagination: PaginationMetadata.describe('Metadata for paginated results'),
+      results: z.array(ScoredItem_RegisteredToolprint_)
+    })
+    .strict()
+    .passthrough()
+const SearchResultMeta: z.ZodType<SearchResultMeta> = z
+  .object({ score: z.number().describe('The score of the search result.') })
+  .strict()
+  .passthrough()
+const Prompt: z.ZodType<Prompt> = z
+  .object({ message: z.string(), type: z.enum(['system', 'user']) })
+  .strict()
+  .passthrough()
+const ToolprintRecommendation: z.ZodType<ToolprintRecommendation> = z
+  .object({
+    meta: SearchResultMeta.describe(
+      'Metadata about a search result. All search result types should inherit from this model.'
+    ),
+    prompts: z
+      .array(Prompt)
+      .describe(
+        "The prompts that should be injected into the message stack to prime the agent's LLM."
+      ),
+    toolprint: RegisteredToolprint.describe('A toolprint.')
+  })
+  .strict()
+  .passthrough()
 const ScoredItem_Tool_: z.ZodType<ScoredItem_Tool_> = z
   .object({
     item: Tool.describe('A tool.'),
@@ -1109,7 +1324,6 @@ const UpsertSecretRequest: z.ZodType<UpsertSecretRequest> = z
   .passthrough()
 const Body_upsert_secret_api_v1_secrets__secret_name__put: z.ZodType<Body_upsert_secret_api_v1_secrets__secret_name__put> =
   z.object({ request: UpsertSecretRequest }).strict().passthrough()
-const X_ONEGREP_PROFILE_ID = z.union([z.string(), z.null()]).optional()
 const UpsertSecretResponse = z
   .object({ secret_name: z.string(), success: z.boolean() })
   .strict()
@@ -1133,113 +1347,37 @@ const Strategy: z.ZodType<Strategy> = z
   })
   .strict()
   .passthrough()
-const CreateInvitationRequest = z
+const Recipe: z.ZodType<Recipe> = z
   .object({
-    email: z.string().email(),
-    expires_in_days: z.number().int().optional().default(7),
-    org_id: z.union([z.string(), z.null()]).optional()
-  })
-  .strict()
-  .passthrough()
-const CreateUserRequest = z
-  .object({ org_id: z.string() })
-  .strict()
-  .passthrough()
-const IngressConfig: z.ZodType<IngressConfig> = z
-  .object({
-    entryPoints: z.array(z.string()).optional(),
-    gatewayScheme: z.string().optional().default('http'),
-    orgID: z.string(),
-    orgRouteStrategy: z
-      .enum(['PathPrefix', 'Header'])
-      .optional()
-      .default('PathPrefix'),
-    proxyDomain: z.string(),
-    serverID: z.string(),
-    serverIsDefault: z.union([z.boolean(), z.null()]).optional().default(false),
-    serverRouteStrategy: z
-      .enum(['PathPrefix', 'Header'])
-      .optional()
-      .default('Header')
-  })
-  .strict()
-  .passthrough()
-const Invitation = z
-  .object({
-    accepted: z.boolean().optional().default(false),
-    accepted_at: z.union([z.string(), z.null()]).optional(),
-    code: z.string().optional(),
-    created_at: z.string().datetime({ offset: true }).optional(),
-    email: z.string().email(),
-    expires_at: z.string().datetime({ offset: true }).optional(),
-    org_id: z.string()
-  })
-  .strict()
-  .passthrough()
-const KindMetadata: z.ZodType<KindMetadata> = z
-  .object({})
-  .partial()
-  .strict()
-  .passthrough()
-const LauncherConfig: z.ZodType<LauncherConfig> = z
-  .object({ configMapName: z.string(), mountPath: z.string() })
-  .strict()
-  .passthrough()
-const MCPServerConfig = z
-  .object({
-    args: z.array(z.string()),
-    command: z.string(),
-    env_vars: z.record(z.string()),
-    git_branch: z.union([z.string(), z.null()]).optional().default('main'),
-    git_repo_url: z.union([z.string(), z.null()]).optional(),
-    image: z
+    created_at: z.union([z.string(), z.null()]).optional(),
+    goal: z
       .string()
-      .optional()
-      .default('registry.onegrep.dev/onegrep/mcp-host:latest'),
-    name: z.string()
+      .describe('The goal that this recipe is helping an agent achieve.'),
+    id: z.string().uuid().optional(),
+    instructions: z
+      .union([z.string(), z.null()])
+      .describe('The instructions for this recipe.'),
+    tools: z.array(Tool),
+    updated_at: z.union([z.string(), z.null()]).optional()
   })
   .strict()
   .passthrough()
-const ServerSpec: z.ZodType<ServerSpec> = z
+const Toolprint_Input: z.ZodType<Toolprint_Input> = z
   .object({
-    displayName: z.union([z.string(), z.null()]).optional(),
-    envFromSources: z
-      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
-      .optional(),
-    image: z.string(),
-    ingressConfig: z.union([IngressConfig, z.null()]).optional(),
-    launcherConfig: z.union([LauncherConfig, z.null()]).optional(),
-    orgID: z.string(),
-    port: z.number().int().optional().default(8000),
-    pullPolicy: z.string().optional().default('IfNotPresent'),
-    volumeMounts: z
-      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
-      .optional(),
-    volumes: z
-      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
-      .optional()
-  })
-  .strict()
-  .passthrough()
-const Server: z.ZodType<Server> = z
-  .object({
-    apiVersion: z.string(),
-    kind: z.string().optional().default('Server'),
-    metadata: KindMetadata,
-    spec: ServerSpec,
-    status: z
-      .union([z.object({}).partial().strict().passthrough(), z.null()])
-      .optional()
-  })
-  .strict()
-  .passthrough()
-const TraefikIngressRoute: z.ZodType<TraefikIngressRoute> = z
-  .object({
-    apiVersion: z.string(),
-    kind: z.string().optional().default('IngressRoute'),
-    metadata: KindMetadata,
-    spec: IngressConfig,
-    status: z.object({}).partial().strict().passthrough()
+    goal: z
+      .string()
+      .describe('The goal that this recipe is helping an agent achieve.'),
+    instructions: z
+      .union([z.string(), z.null()])
+      .describe('The instructions on how this recipe should be used.'),
+    meta: ToolprintMeta.describe(
+      'A set of meta fields that are common to all toolprints.'
+    ),
+    tools: z
+      .array(ToolprintTool)
+      .describe(
+        'Definitions for how each tool should be used in this toolprint.'
+      )
   })
   .strict()
   .passthrough()
@@ -1254,6 +1392,7 @@ export const schemas = {
   ValidationError,
   HTTPValidationError,
   ServiceTokenResponse,
+  CreateUserRequest,
   policy_id,
   action,
   start_date,
@@ -1282,20 +1421,24 @@ export const schemas = {
   MultipleToolCustomTagsParamsRequest,
   ToolCustomTagSelectionParamsRequest,
   ToolCustomTagsParamsRequest,
+  org_id,
+  email,
+  Invitation,
+  CreateInvitationRequest,
   Policy,
   NewPolicyRequest,
   ActionApprovalState,
   ActionApprovalRequest,
   ApprovalAndPolicy,
   PolicyCheckResult,
-  ToolResourceBase,
-  RecipeTool,
-  RecipeDetails_Output,
-  UserRecipe,
-  PaginatedResponse_UserRecipe_,
-  RecipeDetails_Input,
-  NewUserRecipeRequest,
-  Recipe,
+  X_ONEGREP_PROFILE_ID,
+  KindMetadata,
+  IngressConfig,
+  LauncherConfig,
+  ServerSpec,
+  Server,
+  MCPServerConfig,
+  TraefikIngressRoute,
   MCPToolServerClient,
   BlaxelToolServerClient,
   SmitheryConnectionInfo,
@@ -1303,26 +1446,25 @@ export const schemas = {
   SmitheryToolServerClient,
   InitializeResponse,
   SearchRequest,
-  ScoredItem_Recipe_,
-  SearchResponse_ScoredItem_Recipe__,
+  ToolprintMeta,
+  ToolprintToolReference,
+  ToolprintTool,
+  Toolprint_Output,
+  RegisteredToolprint,
+  ScoredItem_RegisteredToolprint_,
+  SearchResponse_ScoredItem_RegisteredToolprint__,
+  SearchResultMeta,
+  Prompt,
+  ToolprintRecommendation,
   ScoredItem_Tool_,
   SearchResponse_ScoredItem_Tool__,
   UpsertSecretRequest,
   Body_upsert_secret_api_v1_secrets__secret_name__put,
-  X_ONEGREP_PROFILE_ID,
   UpsertSecretResponse,
   ToolServerProperties,
   Strategy,
-  CreateInvitationRequest,
-  CreateUserRequest,
-  IngressConfig,
-  Invitation,
-  KindMetadata,
-  LauncherConfig,
-  MCPServerConfig,
-  ServerSpec,
-  Server,
-  TraefikIngressRoute
+  Recipe,
+  Toolprint_Input
 }
 
 const endpoints = makeApi([
@@ -1395,6 +1537,55 @@ if a OneGrep account exists. If yes, then it will be considered authenticated.
     alias: 'rotate_service_token_api_v1_account_service_token_post',
     requestFormat: 'json',
     response: ServiceTokenResponse
+  },
+  {
+    method: 'get',
+    path: '/api/v1/admin/user/:user_id',
+    alias: 'get_user_api_v1_admin_user__user_id__get',
+    description: `Gets a user account given an authenticated user.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'user_id',
+        type: 'Path',
+        schema: z.string()
+      }
+    ],
+    response: UserAccount,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/admin/user/:user_id',
+    alias: 'create_user_api_v1_admin_user__user_id__post',
+    description: `Creates a new account given an authenticated user and a valid invitation code.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: z.object({ org_id: z.string() }).strict().passthrough()
+      },
+      {
+        name: 'user_id',
+        type: 'Path',
+        schema: z.string()
+      }
+    ],
+    response: UserAccount,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
   },
   {
     method: 'get',
@@ -1628,6 +1819,77 @@ overlapping tags that are already set.`,
       }
     ],
     response: z.array(ToolResource),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/invitation/',
+    alias: 'list_invitations_api_v1_invitation__get',
+    description: `List all invitations with optional filtering by organization ID or email.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'org_id',
+        type: 'Query',
+        schema: org_id
+      },
+      {
+        name: 'email',
+        type: 'Query',
+        schema: email
+      }
+    ],
+    response: z.array(Invitation),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/invitation/',
+    alias: 'create_invitation_api_v1_invitation__post',
+    description: `Create a new invitation for the specified email.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: CreateInvitationRequest
+      }
+    ],
+    response: Invitation,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'delete',
+    path: '/api/v1/invitation/:code',
+    alias: 'delete_invitation_api_v1_invitation__code__delete',
+    description: `Delete an invitation by its code.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'code',
+        type: 'Path',
+        schema: z.string()
+      }
+    ],
+    response: z.object({}).partial().strict().passthrough(),
     errors: [
       {
         status: 422,
@@ -1896,41 +2158,17 @@ response and HTTP CODE. 200 &#x3D; approved or didn&#x27;t require approval, 403
   },
   {
     method: 'get',
-    path: '/api/v1/recipes/',
-    alias: 'list_recipes_api_v1_recipes__get',
-    description: `List all recipes for the current user with pagination.
-
-- Page numbers start at 1 (not 0)
-- Results are sorted by creation date (newest first)
-- Filtered by the user&#x27;s organization and optionally by profile
-- Profile can be specified via the X-ONEGREP-PROFILE-ID header`,
+    path: '/api/v1/runtimes/',
+    alias: 'get_servers_api_v1_runtimes__get',
     requestFormat: 'json',
     parameters: [
       {
-        name: 'page',
-        type: 'Query',
-        schema: z
-          .number()
-          .int()
-          .gte(1)
-          .describe('Page number (1-indexed)')
-          .optional()
-          .default(1)
-      },
-      {
-        name: 'page_size',
-        type: 'Query',
-        schema: z
-          .number()
-          .int()
-          .gte(1)
-          .lte(100)
-          .describe('Items per page')
-          .optional()
-          .default(20)
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
       }
     ],
-    response: PaginatedResponse_UserRecipe_,
+    response: z.array(Server),
     errors: [
       {
         status: 422,
@@ -1941,21 +2179,70 @@ response and HTTP CODE. 200 &#x3D; approved or didn&#x27;t require approval, 403
   },
   {
     method: 'post',
-    path: '/api/v1/recipes/',
-    alias: 'create_recipe_api_v1_recipes__post',
-    description: `Create a new recipe.
-
-- Profile ID is specified via the X-ONEGREP-PROFILE-ID header
-- If no profile ID is provided in the header, uses the organization&#x27;s default profile`,
+    path: '/api/v1/runtimes/',
+    alias: 'create_server_api_v1_runtimes__post',
     requestFormat: 'json',
     parameters: [
       {
         name: 'body',
         type: 'Body',
-        schema: NewUserRecipeRequest
+        schema: MCPServerConfig
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
       }
     ],
-    response: Recipe,
+    response: z
+      .object({
+        apiVersion: z.string(),
+        kind: z.string().optional().default('Server'),
+        metadata: KindMetadata,
+        spec: ServerSpec,
+        status: z
+          .union([z.object({}).partial().strict().passthrough(), z.null()])
+          .optional()
+      })
+      .strict()
+      .passthrough(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'delete',
+    path: '/api/v1/runtimes/:server_name',
+    alias: 'delete_server_api_v1_runtimes__server_name__delete',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'server_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: z
+      .object({
+        apiVersion: z.string(),
+        kind: z.string().optional().default('Server'),
+        metadata: KindMetadata,
+        spec: ServerSpec,
+        status: z
+          .union([z.object({}).partial().strict().passthrough(), z.null()])
+          .optional()
+      })
+      .strict()
+      .passthrough(),
     errors: [
       {
         status: 422,
@@ -1966,20 +2253,136 @@ response and HTTP CODE. 200 &#x3D; approved or didn&#x27;t require approval, 403
   },
   {
     method: 'get',
-    path: '/api/v1/recipes/:recipe_id',
-    alias: 'get_recipe_api_v1_recipes__recipe_id__get',
-    description: `Get a specific recipe by ID.
-
-The recipe must belong to the user&#x27;s organization.`,
+    path: '/api/v1/runtimes/:server_name',
+    alias: 'get_server_api_v1_runtimes__server_name__get',
     requestFormat: 'json',
     parameters: [
       {
-        name: 'recipe_id',
+        name: 'server_name',
         type: 'Path',
-        schema: z.number().int()
+        schema: z.string()
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
       }
     ],
-    response: Recipe,
+    response: z
+      .object({
+        apiVersion: z.string(),
+        kind: z.string().optional().default('Server'),
+        metadata: KindMetadata,
+        spec: ServerSpec,
+        status: z
+          .union([z.object({}).partial().strict().passthrough(), z.null()])
+          .optional()
+      })
+      .strict()
+      .passthrough(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'put',
+    path: '/api/v1/runtimes/:server_name',
+    alias: 'update_server_api_v1_runtimes__server_name__put',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: MCPServerConfig
+      },
+      {
+        name: 'server_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: z
+      .object({
+        apiVersion: z.string(),
+        kind: z.string().optional().default('Server'),
+        metadata: KindMetadata,
+        spec: ServerSpec,
+        status: z
+          .union([z.object({}).partial().strict().passthrough(), z.null()])
+          .optional()
+      })
+      .strict()
+      .passthrough(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/runtimes/:server_name/ingress',
+    alias: 'get_server_ingress_api_v1_runtimes__server_name__ingress_get',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'server_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: z
+      .object({
+        apiVersion: z.string(),
+        kind: z.string().optional().default('IngressRoute'),
+        metadata: KindMetadata,
+        spec: IngressConfig,
+        status: z.object({}).partial().strict().passthrough()
+      })
+      .strict()
+      .passthrough(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/runtimes/:server_name/verify',
+    alias: 'verify_server_connection_api_v1_runtimes__server_name__verify_get',
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'server_name',
+        type: 'Path',
+        schema: z.string()
+      },
+      {
+        name: 'X-ONEGREP-PROFILE-ID',
+        type: 'Header',
+        schema: X_ONEGREP_PROFILE_ID
+      }
+    ],
+    response: z.unknown(),
     errors: [
       {
         status: 422,
@@ -2005,10 +2408,33 @@ The recipe must belong to the user&#x27;s organization.`,
   },
   {
     method: 'post',
-    path: '/api/v1/search/recipes',
-    alias: 'search_recipes_api_v1_search_recipes_post',
-    description: `Searches for the best set of recipes that semantically match the query and returns them
-along with a similarity score for each recipe.`,
+    path: '/api/v1/search/reindex',
+    alias: 'reindex_api_v1_search_reindex_post',
+    description: `Reindexes all tools and toolprints for an organization.`,
+    requestFormat: 'json',
+    response: z.unknown()
+  },
+  {
+    method: 'post',
+    path: '/api/v1/search/reindex/toolprints',
+    alias: 'reindex_toolprints_api_v1_search_reindex_toolprints_post',
+    description: `Reindexes all toolprints for an organization.`,
+    requestFormat: 'json',
+    response: z.unknown()
+  },
+  {
+    method: 'post',
+    path: '/api/v1/search/reindex/tools',
+    alias: 'reindex_tools_api_v1_search_reindex_tools_post',
+    requestFormat: 'json',
+    response: z.unknown()
+  },
+  {
+    method: 'post',
+    path: '/api/v1/search/toolprints',
+    alias: 'search_toolprints_api_v1_search_toolprints_post',
+    description: `Searches for the best set of toolprints that semantically match the query and returns them
+along with a similarity score for each toolprint.`,
     requestFormat: 'json',
     parameters: [
       {
@@ -2017,7 +2443,7 @@ along with a similarity score for each recipe.`,
         schema: SearchRequest
       }
     ],
-    response: SearchResponse_ScoredItem_Recipe__,
+    response: SearchResponse_ScoredItem_RegisteredToolprint__,
     errors: [
       {
         status: 422,
@@ -2028,25 +2454,35 @@ along with a similarity score for each recipe.`,
   },
   {
     method: 'post',
-    path: '/api/v1/search/reindex',
-    alias: 'reindex_api_v1_search_reindex_post',
-    description: `Reindexes all tools and recipes for an organization.`,
+    path: '/api/v1/search/toolprints/recommendation',
+    alias:
+      'get_toolprint_recommendation_api_v1_search_toolprints_recommendation_post',
+    description: `Returns a single recommendation for a toolprint based on the goal that is trying to be achieved. It also
+includes the set of prompts that should be injected into the message stack to prime the agent&#x27;s LLM.
+
+Args:
+    request_context: The authenticated request context
+    toolprint_index: The toolprint index manager to search with
+    search_request: The search request containing the goal query
+
+Returns:
+    A ToolprintRecommendation containing the best matching toolprint and associated prompts`,
     requestFormat: 'json',
-    response: z.unknown()
-  },
-  {
-    method: 'post',
-    path: '/api/v1/search/reindex/recipes',
-    alias: 'reindex_recipes_api_v1_search_reindex_recipes_post',
-    requestFormat: 'json',
-    response: z.unknown()
-  },
-  {
-    method: 'post',
-    path: '/api/v1/search/reindex/tools',
-    alias: 'reindex_tools_api_v1_search_reindex_tools_post',
-    requestFormat: 'json',
-    response: z.unknown()
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: SearchRequest
+      }
+    ],
+    response: ToolprintRecommendation,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
   },
   {
     method: 'post',
@@ -2271,6 +2707,82 @@ along with a similarity score for each tool.`,
     description: `Creates fake strategies for testing purposes.`,
     requestFormat: 'json',
     response: z.array(Recipe)
+  },
+  {
+    method: 'post',
+    path: '/api/v1/toolprints/',
+    alias: 'create_toolprint_api_v1_toolprints__post',
+    description: `Creates a new toolprint and indexes it for search.
+
+The process:
+1. Validates the toolprint definition
+2. Creates and persists the toolprint
+3. Indexes the toolprint for semantic search`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: Toolprint_Input
+      }
+    ],
+    response: RegisteredToolprint,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/toolprints/:toolprint_id',
+    alias: 'get_toolprint_api_v1_toolprints__toolprint_id__get',
+    description: `Gets a specific toolprint by its ID.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'toolprint_id',
+        type: 'Path',
+        schema: z.string().uuid()
+      }
+    ],
+    response: RegisteredToolprint,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/toolprints/validate',
+    alias: 'validate_toolprint_api_v1_toolprints_validate_post',
+    description: `Validates a toolprint definition without persisting it.
+
+This endpoint checks:
+1. The basic structure and required fields of the toolprint
+2. That all referenced tools exist and are accessible to the user
+3. That the toolprint definition meets any additional business rules`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: Toolprint_Input
+      }
+    ],
+    response: z.unknown(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
   },
   {
     method: 'get',

@@ -170,6 +170,8 @@ describe('Blaxel Toolbox Tests', () => {
   let toolbox: Toolbox
 
   // ! Tool is available for Blaxel deployment
+  // const integrationName = "blaxel-search"
+  const integrationName = 'exa'
   const toolName = 'web_search'
 
   beforeAll(async () => {
@@ -187,11 +189,17 @@ describe('Blaxel Toolbox Tests', () => {
 
   it('should be able to make a tool call with invalid input', async () => {
     const toolDetailsMap = await toolbox.listTools()
+    console.log(
+      Array.from(toolDetailsMap.values()).filter(
+        (d) =>
+          d.integrationName === integrationName ||
+          d.integrationName === 'blaxel-search'
+      )
+    )
     expect(toolDetailsMap.size).toBeGreaterThan(0)
     const basicToolDetails = Array.from(toolDetailsMap.values()).find(
       (details) =>
-        details.integrationName === 'blaxel-search' &&
-        details.name === 'web_search'
+        details.integrationName === integrationName && details.name === toolName
     )
     expect(basicToolDetails).toBeDefined()
     if (!basicToolDetails) {
@@ -232,8 +240,7 @@ describe('Blaxel Toolbox Tests', () => {
     expect(toolDetailsMap.size).toBeGreaterThan(0)
     const basicToolDetails = Array.from(toolDetailsMap.values()).find(
       (details) =>
-        details.integrationName === 'blaxel-search' &&
-        details.name === 'web_search'
+        details.integrationName === integrationName && details.name === toolName
     )
     expect(basicToolDetails).toBeDefined()
     if (!basicToolDetails) {
@@ -269,6 +276,19 @@ describe('Blaxel Toolbox Tests', () => {
     log.info(`Output: ${JSON.stringify(output)}`)
 
     await new Promise((resolve) => setTimeout(resolve, 1000))
+  })
+
+  it('should be able to recommend tools', async () => {
+    const recommendation = await toolbox.recommend(
+      'What is the capital of the moon?'
+    )
+    expect(recommendation).toBeDefined()
+    if (!recommendation) {
+      throw new Error('Recommendation not found')
+    }
+
+    expect(recommendation.tools.length).toBeGreaterThan(0)
+    log.info(`Recommendation: ${JSON.stringify(recommendation)}`)
   })
 })
 
