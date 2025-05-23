@@ -1312,6 +1312,14 @@ const Toolprint_Input: z.ZodType<Toolprint_Input> = z
   })
   .strict()
   .passthrough()
+const BasicPostBody = z.object({ content: z.string() }).strict().passthrough()
+const BasicPostResponse = z
+  .object({
+    message: z.union([z.string(), z.null()]).optional(),
+    success: z.boolean()
+  })
+  .strict()
+  .passthrough()
 const CreateInvitationRequest = z
   .object({
     email: z.string().email(),
@@ -1495,6 +1503,8 @@ export const schemas = {
   Recipe,
   ToolprintMeta_Input,
   Toolprint_Input,
+  BasicPostBody,
+  BasicPostResponse,
   CreateInvitationRequest,
   CreateUserRequest,
   IngressConfig,
@@ -2471,6 +2481,33 @@ The process:
   },
   {
     method: 'post',
+    path: '/api/v1/toolprints/json',
+    alias: 'create_toolprint_json_api_v1_toolprints_json_post',
+    description: `Creates a new toolprint from JSON content and indexes it for search.
+
+The process:
+1. Validates the JSON content
+2. Creates and persists the toolprint
+3. Indexes the toolprint for semantic search`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: z.object({ content: z.string() }).strict().passthrough()
+      }
+    ],
+    response: RegisteredToolprint,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
     path: '/api/v1/toolprints/validate',
     alias: 'validate_toolprint_api_v1_toolprints_validate_post',
     description: `Validates a toolprint definition without persisting it.
@@ -2487,7 +2524,90 @@ This endpoint checks:
         schema: Toolprint_Input
       }
     ],
+    response: BasicPostResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/toolprints/validate/json',
+    alias: 'validate_toolprint_json_api_v1_toolprints_validate_json_post',
+    description: `Validates a toolprint definition in JSON format without persisting it.
+
+This endpoint accepts JSON content and:
+1. Validates the JSON can be converted to a Toolprint model
+2. Validates the basic structure and required fields
+3. Checks that all referenced tools exist and are accessible
+4. Verifies the toolprint definition meets business rules`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: z.object({ content: z.string() }).strict().passthrough()
+      }
+    ],
     response: z.unknown(),
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/toolprints/validate/yaml',
+    alias: 'validate_toolprint_yaml_api_v1_toolprints_validate_yaml_post',
+    description: `Validates a toolprint definition in YAML format without persisting it.
+
+This endpoint accepts YAML content and:
+1. Parses the YAML into a Toolprint model
+2. Validates the basic structure and required fields
+3. Checks that all referenced tools exist and are accessible
+4. Verifies the toolprint definition meets business rules`,
+    requestFormat: 'text',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: z.string()
+      }
+    ],
+    response: BasicPostResponse,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/toolprints/yaml',
+    alias: 'create_toolprint_yaml_api_v1_toolprints_yaml_post',
+    description: `Creates a new toolprint from YAML content and indexes it for search.
+
+The process:
+1. Parses and validates the YAML content
+2. Creates and persists the toolprint
+3. Indexes the toolprint for semantic search`,
+    requestFormat: 'text',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: z.string()
+      }
+    ],
+    response: RegisteredToolprint,
     errors: [
       {
         status: 422,

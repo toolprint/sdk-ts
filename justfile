@@ -102,7 +102,7 @@ tail-sdk-logs:
 [group('logs')]
 clear-logs:
     rm -f ~/.onegrep/*.log
- 
+
 # blaxel serve agent
 [group('blaxel')]
 bl-serve:

@@ -170,6 +170,31 @@ components:
         - is_authenticated
       title: AuthenticationStatus
       type: object
+    BasicPostBody:
+      description: A basic post body.
+      properties:
+        content:
+          title: Content
+          type: string
+      required:
+        - content
+      title: BasicPostBody
+      type: object
+    BasicPostResponse:
+      description: A basic post response.
+      properties:
+        message:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Message
+        success:
+          title: Success
+          type: boolean
+      required:
+        - success
+      title: BasicPostResponse
+      type: object
     BlaxelToolServerClient:
       description: A client for a tool server that is a blaxel server.
       properties:
@@ -3273,6 +3298,40 @@ paths:
       summary: Get Toolprint Template
       tags:
         - toolprints
+  /api/v1/toolprints/json:
+    post:
+      description: |-
+        Creates a new toolprint from JSON content and indexes it for search.
+
+        The process:
+        1. Validates the JSON content
+        2. Creates and persists the toolprint
+        3. Indexes the toolprint for semantic search
+      operationId: create_toolprint_json_api_v1_toolprints_json_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BasicPostBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisteredToolprint'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+        - APIKeyHeader: []
+      summary: Create Toolprint Json
+      tags:
+        - toolprints
   /api/v1/toolprints/validate:
     post:
       description: |-
@@ -3293,7 +3352,8 @@ paths:
         '200':
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/BasicPostResponse'
           description: Successful Response
         '422':
           content:
@@ -3304,6 +3364,111 @@ paths:
       security:
         - APIKeyHeader: []
       summary: Validate Toolprint
+      tags:
+        - toolprints
+  /api/v1/toolprints/validate/json:
+    post:
+      description: |-
+        Validates a toolprint definition in JSON format without persisting it.
+
+        This endpoint accepts JSON content and:
+        1. Validates the JSON can be converted to a Toolprint model
+        2. Validates the basic structure and required fields
+        3. Checks that all referenced tools exist and are accessible
+        4. Verifies the toolprint definition meets business rules
+      operationId: validate_toolprint_json_api_v1_toolprints_validate_json_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BasicPostBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+        - APIKeyHeader: []
+      summary: Validate Toolprint Json
+      tags:
+        - toolprints
+  /api/v1/toolprints/validate/yaml:
+    post:
+      description: |-
+        Validates a toolprint definition in YAML format without persisting it.
+
+        This endpoint accepts YAML content and:
+        1. Parses the YAML into a Toolprint model
+        2. Validates the basic structure and required fields
+        3. Checks that all referenced tools exist and are accessible
+        4. Verifies the toolprint definition meets business rules
+      operationId: validate_toolprint_yaml_api_v1_toolprints_validate_yaml_post
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              title: Yaml Content
+              type: string
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicPostResponse'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+        - APIKeyHeader: []
+      summary: Validate Toolprint Yaml
+      tags:
+        - toolprints
+  /api/v1/toolprints/yaml:
+    post:
+      description: |-
+        Creates a new toolprint from YAML content and indexes it for search.
+
+        The process:
+        1. Parses and validates the YAML content
+        2. Creates and persists the toolprint
+        3. Indexes the toolprint for semantic search
+      operationId: create_toolprint_yaml_api_v1_toolprints_yaml_post
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              title: Yaml Content
+              type: string
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisteredToolprint'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+        - APIKeyHeader: []
+      summary: Create Toolprint Yaml
       tags:
         - toolprints
   /api/v1/toolprints/{toolprint_id}:

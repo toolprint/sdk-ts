@@ -277,10 +277,68 @@ export class OneGrepApiHighLevelClient {
     return result.data!
   }
 
+  async newToolprintFromJson(json: string): Promise<Toolprint> {
+    const result = await makeApiCallWithResult<Toolprint>(async () => {
+      const registeredToolprint: RegisteredToolprint =
+        await this.apiClient.create_toolprint_json_api_v1_toolprints_json_post({
+          content: json
+        })
+      return registeredToolprint.toolprint
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  async newToolprintFromYaml(yaml: string): Promise<Toolprint> {
+    const result = await makeApiCallWithResult<Toolprint>(async () => {
+      const registeredToolprint: RegisteredToolprint =
+        await this.apiClient.create_toolprint_yaml_api_v1_toolprints_yaml_post(
+          yaml
+        )
+      return registeredToolprint.toolprint
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
   async validateToolprint(toolprint: Toolprint): Promise<boolean> {
     const result = await makeApiCallWithResult<unknown>(async () => {
       return await this.apiClient.validate_toolprint_api_v1_toolprints_validate_post(
         toolprint
+      )
+    })
+    if (result.error) {
+      throw result.error
+    } else if (!result.success) {
+      return false
+    }
+    return true
+  }
+
+  async validateToolprintInJson(json: string): Promise<boolean> {
+    const result = await makeApiCallWithResult<unknown>(async () => {
+      return await this.apiClient.validate_toolprint_json_api_v1_toolprints_validate_json_post(
+        {
+          content: json
+        }
+      )
+    })
+    if (result.error) {
+      throw result.error
+    } else if (!result.success) {
+      return false
+    }
+    return true
+  }
+
+  async validateToolprintInYaml(yaml: string): Promise<boolean> {
+    const result = await makeApiCallWithResult<unknown>(async () => {
+      return await this.apiClient.validate_toolprint_yaml_api_v1_toolprints_validate_yaml_post(
+        yaml
       )
     })
     if (result.error) {
