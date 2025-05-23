@@ -3,9 +3,9 @@ components:
     AccessPolicyType:
       description: Enum for access policy types
       enum:
-      - ALWAYS
-      - NEVER
-      - REQUIRES_PERMISSION
+        - ALWAYS
+        - NEVER
+        - REQUIRES_PERMISSION
       title: AccessPolicyType
       type: string
     AccountCreateRequest:
@@ -17,8 +17,8 @@ components:
           title: Invitation Code
           type: string
       required:
-      - invitation_code
-      - email
+        - invitation_code
+        - email
       title: AccountCreateRequest
       type: object
     AccountInformation:
@@ -32,17 +32,18 @@ components:
           title: User Id
           type: string
       required:
-      - user_id
-      - account
-      - organization
+        - user_id
+        - account
+        - organization
       title: AccountInformation
       type: object
     ActionApprovalRequest:
-      description: 'Model that holds the state of a request for an action to be taken
-        with respect to a policy.
+      description: >-
+        Model that holds the state of a request for an action to be taken with
+        respect to a policy.
 
-        Ex. if the policy is set to require approval, then we will have a request
-        for approval.'
+        Ex. if the policy is set to require approval, then we will have a
+        request for approval.
       properties:
         created_at:
           format: date-time
@@ -50,8 +51,8 @@ components:
           type: string
         id:
           anyOf:
-          - type: integer
-          - type: 'null'
+            - type: integer
+            - type: 'null'
           title: Id
         last_updated_at:
           format: date-time
@@ -59,8 +60,8 @@ components:
           type: string
         payload:
           anyOf:
-          - type: object
-          - type: 'null'
+            - type: object
+            - type: 'null'
           title: Payload
         policy_id:
           format: uuid
@@ -73,17 +74,17 @@ components:
           title: Updated By User Id
           type: string
       required:
-      - id
-      - policy_id
-      - updated_by_user_id
+        - id
+        - policy_id
+        - updated_by_user_id
       title: ActionApprovalRequest
       type: object
     ActionApprovalState:
       description: Enum for policy approval states
       enum:
-      - pending
-      - approved
-      - rejected
+        - pending
+        - approved
+        - rejected
       title: ActionApprovalState
       type: string
     ApprovalAndPolicy:
@@ -103,11 +104,11 @@ components:
           title: Tool Name
           type: string
       required:
-      - approval
-      - policy
-      - canonical_resource_name
-      - integration_name
-      - tool_name
+        - approval
+        - policy
+        - canonical_resource_name
+        - integration_name
+        - tool_name
       title: ApprovalAndPolicy
       type: object
     AuditLog:
@@ -121,8 +122,8 @@ components:
           type: object
         id:
           anyOf:
-          - type: integer
-          - type: 'null'
+            - type: integer
+            - type: 'null'
           title: Id
         performed_by:
           default: system
@@ -137,14 +138,14 @@ components:
           title: Timestamp
           type: string
       required:
-      - policy_id
-      - action
+        - policy_id
+        - action
       title: AuditLog
       type: object
     AuthenticationMethod:
       enum:
-      - propelauth
-      - api_key
+        - propelauth
+        - api_key
       title: AuthenticationMethod
       type: string
     AuthenticationStatus:
@@ -157,16 +158,16 @@ components:
           type: boolean
         method:
           anyOf:
-          - $ref: '#/components/schemas/AuthenticationMethod'
-          - type: 'null'
+            - $ref: '#/components/schemas/AuthenticationMethod'
+            - type: 'null'
         user_id:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: User Id
       required:
-      - credentials_provided
-      - is_authenticated
+        - credentials_provided
+        - is_authenticated
       title: AuthenticationStatus
       type: object
     BlaxelToolServerClient:
@@ -187,10 +188,10 @@ components:
           title: Server Id
           type: string
       required:
-      - server_id
-      - client_type
-      - blaxel_workspace
-      - blaxel_function
+        - server_id
+        - client_type
+        - blaxel_workspace
+        - blaxel_function
       title: BlaxelToolServerClient
       type: object
     Body_upsert_secret_api_v1_secrets__secret_name__put:
@@ -198,7 +199,7 @@ components:
         request:
           $ref: '#/components/schemas/UpsertSecretRequest'
       required:
-      - request
+        - request
       title: Body_upsert_secret_api_v1_secrets__secret_name__put
       type: object
     CanonicalResource:
@@ -217,10 +218,10 @@ components:
           title: Server Name
           type: string
       required:
-      - org_id
-      - profile_id
-      - server_name
-      - event_name
+        - org_id
+        - profile_id
+        - server_name
+        - event_name
       title: CanonicalResource
       type: object
     CreateInvitationRequest:
@@ -236,11 +237,11 @@ components:
           type: integer
         org_id:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Org Id
       required:
-      - email
+        - email
       title: CreateInvitationRequest
       type: object
     CreateUserRequest:
@@ -249,7 +250,7 @@ components:
           title: Org Id
           type: string
       required:
-      - org_id
+        - org_id
       title: CreateUserRequest
       type: object
     GetAllFlagsResponse:
@@ -257,16 +258,16 @@ components:
         flags:
           additionalProperties:
             anyOf:
-            - type: boolean
-            - type: string
+              - type: boolean
+              - type: string
           title: Flags
           type: object
         user_id:
           title: User Id
           type: string
       required:
-      - flags
-      - user_id
+        - flags
+        - user_id
       title: GetAllFlagsResponse
       type: object
     HTTPValidationError:
@@ -295,8 +296,8 @@ components:
         orgRouteStrategy:
           default: PathPrefix
           enum:
-          - PathPrefix
-          - Header
+            - PathPrefix
+            - Header
           title: Orgroutestrategy
           type: string
         proxyDomain:
@@ -307,21 +308,21 @@ components:
           type: string
         serverIsDefault:
           anyOf:
-          - type: boolean
-          - type: 'null'
+            - type: boolean
+            - type: 'null'
           default: false
           title: Serverisdefault
         serverRouteStrategy:
           default: Header
           enum:
-          - PathPrefix
-          - Header
+            - PathPrefix
+            - Header
           title: Serverroutestrategy
           type: string
       required:
-      - proxyDomain
-      - orgID
-      - serverID
+        - proxyDomain
+        - orgID
+        - serverID
       title: IngressConfig
       type: object
     InitializeResponse:
@@ -336,30 +337,30 @@ components:
                 smithery: '#/components/schemas/SmitheryToolServerClient'
               propertyName: client_type
             oneOf:
-            - $ref: '#/components/schemas/MCPToolServerClient'
-            - $ref: '#/components/schemas/BlaxelToolServerClient'
-            - $ref: '#/components/schemas/SmitheryToolServerClient'
+              - $ref: '#/components/schemas/MCPToolServerClient'
+              - $ref: '#/components/schemas/BlaxelToolServerClient'
+              - $ref: '#/components/schemas/SmitheryToolServerClient'
           title: Clients
           type: array
         doppler_config:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Doppler Config
         doppler_env:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Doppler Env
         doppler_project:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Doppler Project
         doppler_service_token:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Doppler Service Token
         org_id:
           title: Org Id
@@ -383,25 +384,26 @@ components:
           title: User Id
           type: string
       required:
-      - clients
-      - providers
-      - servers
-      - tools
-      - user_id
-      - org_id
+        - clients
+        - providers
+        - servers
+        - tools
+        - user_id
+        - org_id
       title: InitializeResponse
       type: object
     IntegrationAuthScheme:
       description: Authentication schemes supported by server templates.
       enum:
-      - token
-      - oauth_1_0
-      - oauth_2_0
+        - token
+        - oauth_1_0
+        - oauth_2_0
       title: IntegrationAuthScheme
       type: string
     IntegrationConfigDetails:
-      description: General details about an integration. Meant to be surfaceable to
-        a client.
+      description: >-
+        General details about an integration. Meant to be surfaceable to a
+        client.
       properties:
         configuration_state:
           $ref: '#/components/schemas/IntegrationConfigurationState'
@@ -411,22 +413,23 @@ components:
         template:
           $ref: '#/components/schemas/IntegrationTemplate'
       required:
-      - name
-      - configuration_state
-      - template
+        - name
+        - configuration_state
+        - template
       title: IntegrationConfigDetails
       type: object
     IntegrationConfigurationState:
-      description: 'The state of an integration from an account perspective (not runtime).
+      description: >-
+        The state of an integration from an account perspective (not runtime).
 
-        To determine the runtime state, we will have to check the server configuration
-        for
+        To determine the runtime state, we will have to check the server
+        configuration for
 
-        the integration separately depending on our infrastucture selection.'
+        the integration separately depending on our infrastucture selection.
       enum:
-      - agent_local
-      - cloud_hosted_available
-      - cloud_hosted_configured
+        - agent_local
+        - cloud_hosted_available
+        - cloud_hosted_configured
       title: IntegrationConfigurationState
       type: string
     IntegrationDefaultPolicies:
@@ -439,13 +442,13 @@ components:
           title: Tools
           type: array
       required:
-      - tools
+        - tools
       title: IntegrationDefaultPolicies
       type: object
     IntegrationOAuthAuthorizer:
       enum:
-      - google
-      - meta
+        - google
+        - meta
       title: IntegrationOAuthAuthorizer
       type: string
     IntegrationSecret:
@@ -453,26 +456,27 @@ components:
       properties:
         generation_link:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Generation Link
         name:
           title: Name
           type: string
         value:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Value
       required:
-      - name
+        - name
       title: IntegrationSecret
       type: object
     IntegrationTemplate:
-      description: 'Class representation of the server templates that we support.
-        This matches the structure
+      description: >-
+        Class representation of the server templates that we support. This
+        matches the structure
 
-        of server templates under resources/integrations/templates/*'
+        of server templates under resources/integrations/templates/*
       properties:
         args:
           discriminator:
@@ -480,12 +484,12 @@ components:
               mcp: '#/components/schemas/MCPIntegrationArgs'
             propertyName: type
           oneOf:
-          - $ref: '#/components/schemas/MCPIntegrationArgs'
+            - $ref: '#/components/schemas/MCPIntegrationArgs'
           title: Args
         auth_scheme:
           anyOf:
-          - $ref: '#/components/schemas/IntegrationAuthScheme'
-          - type: 'null'
+            - $ref: '#/components/schemas/IntegrationAuthScheme'
+            - type: 'null'
         default_policies:
           $ref: '#/components/schemas/IntegrationDefaultPolicies'
         name:
@@ -493,17 +497,17 @@ components:
           type: string
         oauth_authorizer:
           anyOf:
-          - $ref: '#/components/schemas/IntegrationOAuthAuthorizer'
-          - type: 'null'
+            - $ref: '#/components/schemas/IntegrationOAuthAuthorizer'
+            - type: 'null'
         repository:
           title: Repository
           type: string
         secrets:
           anyOf:
-          - items:
-              $ref: '#/components/schemas/IntegrationSecret'
-            type: array
-          - type: 'null'
+            - items:
+                $ref: '#/components/schemas/IntegrationSecret'
+              type: array
+            - type: 'null'
           title: Secrets
         sha:
           title: Sha
@@ -513,12 +517,12 @@ components:
           title: Version
           type: string
       required:
-      - version
-      - name
-      - repository
-      - sha
-      - args
-      - default_policies
+        - version
+        - name
+        - repository
+        - sha
+        - args
+        - default_policies
       title: IntegrationTemplate
       type: object
     Invitation:
@@ -530,9 +534,9 @@ components:
           type: boolean
         accepted_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Accepted At
         code:
           title: Code
@@ -553,8 +557,8 @@ components:
           title: Org Id
           type: string
       required:
-      - org_id
-      - email
+        - org_id
+        - email
       title: Invitation
       type: object
     KindMetadata:
@@ -568,20 +572,21 @@ components:
           title: Mountpath
           type: string
       required:
-      - configMapName
-      - mountPath
+        - configMapName
+        - mountPath
       title: LauncherConfig
       type: object
     MCPIntegrationArgs:
-      description: Arguments specifically for an integration that is powered by an
-        MCP server.
+      description: >-
+        Arguments specifically for an integration that is powered by an MCP
+        server.
       properties:
         args:
           anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
+            - items:
+                type: string
+              type: array
+            - type: 'null'
           title: Args
         command:
           title: Command
@@ -591,8 +596,8 @@ components:
           title: Type
           type: string
       required:
-      - type
-      - command
+        - type
+        - command
       title: MCPIntegrationArgs
       type: object
     MCPServerConfig:
@@ -612,14 +617,14 @@ components:
           type: object
         git_branch:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           default: main
           title: Git Branch
         git_repo_url:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Git Repo Url
         image:
           default: registry.onegrep.dev/onegrep/mcp-host:latest
@@ -629,10 +634,10 @@ components:
           title: Name
           type: string
       required:
-      - name
-      - command
-      - args
-      - env_vars
+        - name
+        - command
+        - args
+        - env_vars
       title: MCPServerConfig
       type: object
     MCPToolServerClient:
@@ -648,8 +653,8 @@ components:
           type: string
         transport_type:
           enum:
-          - sse
-          - websocket
+            - sse
+            - websocket
           title: Transport Type
           type: string
         url:
@@ -658,10 +663,10 @@ components:
           title: Url
           type: string
       required:
-      - server_id
-      - client_type
-      - transport_type
-      - url
+        - server_id
+        - client_type
+        - transport_type
+        - url
       title: MCPToolServerClient
       type: object
     MultipleToolCustomTagsParamsRequest:
@@ -676,15 +681,16 @@ components:
           title: Tool Names
           type: array
       required:
-      - tool_names
-      - tags
+        - tool_names
+        - tags
       title: MultipleToolCustomTagsParamsRequest
       type: object
     NewPolicyRequest:
-      description: 'Model to create a new policy. Other policy fields are derived
-        from the default policy for the
+      description: >-
+        Model to create a new policy. Other policy fields are derived from the
+        default policy for the
 
-        integration/event'
+        integration/event
       properties:
         access_policy:
           $ref: '#/components/schemas/AccessPolicyType'
@@ -695,40 +701,45 @@ components:
           title: Integration Name
           type: string
       required:
-      - integration_name
-      - event_name
-      - access_policy
+        - integration_name
+        - event_name
+        - access_policy
       title: NewPolicyRequest
       type: object
     Organization:
       properties:
         created_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Created At
         created_by_user_id:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Created By User Id
         id:
           title: Id
           type: string
+        open_invitation_code:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Open Invitation Code
         owner_id:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Owner Id
         updated_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Updated At
       required:
-      - id
+        - id
       title: Organization
       type: object
     PaginatedResponse_AuditLog_:
@@ -741,8 +752,8 @@ components:
         pagination:
           $ref: '#/components/schemas/PaginationMetadata'
       required:
-      - items
-      - pagination
+        - items
+        - pagination
       title: PaginatedResponse[AuditLog]
       type: object
     PaginationMetadata:
@@ -767,12 +778,12 @@ components:
           title: Total
           type: integer
       required:
-      - page
-      - page_size
-      - total
-      - pages
-      - has_next
-      - has_prev
+        - page
+        - page_size
+        - total
+        - pages
+        - has_next
+        - has_prev
       title: PaginationMetadata
       type: object
     Policy:
@@ -785,14 +796,14 @@ components:
           type: string
         created_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Created At
         description:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Description
         event_name:
           title: Event Name
@@ -803,19 +814,19 @@ components:
           type: string
         organization_id:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Organization Id
         updated_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Updated At
       required:
-      - event_name
-      - access_policy
-      - canonical_resource_name
+        - event_name
+        - access_policy
+        - canonical_resource_name
       title: Policy
       type: object
     PolicyAccessRule:
@@ -825,15 +836,15 @@ components:
           $ref: '#/components/schemas/AccessPolicyType'
         description:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Description
         event_name:
           title: Event Name
           type: string
       required:
-      - event_name
-      - access_policy
+        - event_name
+        - access_policy
       title: PolicyAccessRule
       type: object
     PolicyBase:
@@ -846,21 +857,21 @@ components:
           type: string
         description:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Description
         event_name:
           title: Event Name
           type: string
         organization_id:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Organization Id
       required:
-      - event_name
-      - access_policy
-      - canonical_resource_name
+        - event_name
+        - access_policy
+        - canonical_resource_name
       title: PolicyBase
       type: object
     PolicyCheckResult:
@@ -870,7 +881,7 @@ components:
           title: Approved
           type: boolean
       required:
-      - approved
+        - approved
       title: PolicyCheckResult
       type: object
     Prompt:
@@ -881,13 +892,13 @@ components:
           type: string
         type:
           enum:
-          - system
-          - user
+            - system
+            - user
           title: Type
           type: string
       required:
-      - type
-      - message
+        - type
+        - message
       title: Prompt
       type: object
     Recipe:
@@ -895,9 +906,9 @@ components:
       properties:
         created_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Created At
         goal:
           description: The goal that this recipe is helping an agent achieve.
@@ -909,8 +920,8 @@ components:
           type: string
         instructions:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           description: The instructions for this recipe.
           title: Instructions
         tools:
@@ -921,14 +932,14 @@ components:
           type: array
         updated_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Updated At
       required:
-      - goal
-      - instructions
-      - tools
+        - goal
+        - instructions
+        - tools
       title: Recipe
       type: object
     RegisteredToolprint:
@@ -936,9 +947,9 @@ components:
       properties:
         created_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Created At
         created_by:
           title: Created By
@@ -949,21 +960,23 @@ components:
           type: string
         owner_id:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Owner Id
         source:
           title: Source
           type: object
         source_checksum:
-          description: The checksum of the source toolprint. This helps us track changes
+          description: >-
+            The checksum of the source toolprint. This helps us track changes
             from the original vending server/integration.
           title: Source Checksum
           type: string
         toolprint:
           $ref: '#/components/schemas/Toolprint-Output'
-          description: Useful field for converting our persisted toolprint into a
-            raw toolprint definition for dissemination.
+          description: >-
+            Useful field for converting our persisted toolprint into a raw
+            toolprint definition for dissemination.
           readOnly: true
         tools:
           items:
@@ -973,19 +986,19 @@ components:
           type: array
         updated_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Updated At
         updated_by:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Updated By
       required:
-      - source_checksum
-      - tools
-      - toolprint
+        - source_checksum
+        - tools
+        - toolprint
       title: RegisteredToolprint
       type: object
     ScoredItem_RegisteredToolprint_:
@@ -995,13 +1008,13 @@ components:
           description: The item that was scored.
         score:
           description: The score of the item [0, 1].
-          maximum: 1.0
-          minimum: 0.0
+          maximum: 1
+          minimum: 0
           title: Score
           type: number
       required:
-      - item
-      - score
+        - item
+        - score
       title: ScoredItem[RegisteredToolprint]
       type: object
     ScoredItem_Tool_:
@@ -1011,13 +1024,13 @@ components:
           description: The item that was scored.
         score:
           description: The score of the item [0, 1].
-          maximum: 1.0
-          minimum: 0.0
+          maximum: 1
+          minimum: 0
           title: Score
           type: number
       required:
-      - item
-      - score
+        - item
+        - score
       title: ScoredItem[Tool]
       type: object
     SearchRequest:
@@ -1029,7 +1042,7 @@ components:
           title: K
           type: integer
         min_score:
-          default: 0.0
+          default: 0
           description: The minimum score to return from index.
           title: Min Score
           type: number
@@ -1048,7 +1061,7 @@ components:
           title: Query
           type: string
       required:
-      - query
+        - query
       title: SearchRequest
       type: object
     SearchResponse_ScoredItem_RegisteredToolprint__:
@@ -1061,8 +1074,8 @@ components:
           title: Results
           type: array
       required:
-      - pagination
-      - results
+        - pagination
+        - results
       title: SearchResponse[ScoredItem[RegisteredToolprint]]
       type: object
     SearchResponse_ScoredItem_Tool__:
@@ -1075,20 +1088,21 @@ components:
           title: Results
           type: array
       required:
-      - pagination
-      - results
+        - pagination
+        - results
       title: SearchResponse[ScoredItem[Tool]]
       type: object
     SearchResultMeta:
-      description: Metadata about a search result. All search result types should
-        inherit from this model.
+      description: >-
+        Metadata about a search result. All search result types should inherit
+        from this model.
       properties:
         score:
           description: The score of the search result.
           title: Score
           type: number
       required:
-      - score
+        - score
       title: SearchResultMeta
       type: object
     Server:
@@ -1109,40 +1123,40 @@ components:
           $ref: '#/components/schemas/ServerSpec'
         status:
           anyOf:
-          - type: object
-          - type: 'null'
+            - type: object
+            - type: 'null'
           title: Status
       required:
-      - metadata
-      - spec
-      - apiVersion
+        - metadata
+        - spec
+        - apiVersion
       title: Server
       type: object
     ServerSpec:
       properties:
         displayName:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Displayname
         envFromSources:
           anyOf:
-          - items:
-              type: object
-            type: array
-          - type: 'null'
+            - items:
+                type: object
+              type: array
+            - type: 'null'
           title: Envfromsources
         image:
           title: Image
           type: string
         ingressConfig:
           anyOf:
-          - $ref: '#/components/schemas/IngressConfig'
-          - type: 'null'
+            - $ref: '#/components/schemas/IngressConfig'
+            - type: 'null'
         launcherConfig:
           anyOf:
-          - $ref: '#/components/schemas/LauncherConfig'
-          - type: 'null'
+            - $ref: '#/components/schemas/LauncherConfig'
+            - type: 'null'
         orgID:
           title: Orgid
           type: string
@@ -1156,21 +1170,21 @@ components:
           type: string
         volumeMounts:
           anyOf:
-          - items:
-              type: object
-            type: array
-          - type: 'null'
+            - items:
+                type: object
+              type: array
+            - type: 'null'
           title: Volumemounts
         volumes:
           anyOf:
-          - items:
-              type: object
-            type: array
-          - type: 'null'
+            - items:
+                type: object
+              type: array
+            - type: 'null'
           title: Volumes
       required:
-      - orgID
-      - image
+        - orgID
+        - image
       title: ServerSpec
       type: object
     ServiceTokenResponse:
@@ -1178,23 +1192,23 @@ components:
       properties:
         doppler_config:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Doppler Config
         doppler_env:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Doppler Env
         doppler_project:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Doppler Project
         doppler_service_token:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Doppler Service Token
       title: ServiceTokenResponse
       type: object
@@ -1202,8 +1216,8 @@ components:
       properties:
         config_schema:
           anyOf:
-          - type: object
-          - type: boolean
+            - type: object
+            - type: boolean
           default: true
           title: Config Schema
         deployment_url:
@@ -1213,12 +1227,12 @@ components:
           type: string
         type:
           enum:
-          - ws
-          - http
+            - ws
+            - http
           title: Type
           type: string
       required:
-      - type
+        - type
       title: SmitheryConnectionInfo
       type: object
     SmitheryToolServerClient:
@@ -1235,16 +1249,16 @@ components:
           type: array
         launch_config:
           anyOf:
-          - $ref: '#/components/schemas/ToolServerLaunchConfig'
-          - type: 'null'
+            - $ref: '#/components/schemas/ToolServerLaunchConfig'
+            - type: 'null'
         server_id:
           format: uuid
           title: Server Id
           type: string
       required:
-      - server_id
-      - client_type
-      - connections
+        - server_id
+        - client_type
+        - connections
       title: SmitheryToolServerClient
       type: object
     Strategy:
@@ -1260,16 +1274,17 @@ components:
           title: Recipe Id
           type: string
         tools:
-          description: List of one or more fully-hydrated tool resources that should
-            be used in the strategy to achieve the goal.
+          description: >-
+            List of one or more fully-hydrated tool resources that should be
+            used in the strategy to achieve the goal.
           items:
             $ref: '#/components/schemas/ToolResource'
           title: Tools
           type: array
       required:
-      - recipe_id
-      - instructions
-      - tools
+        - recipe_id
+        - instructions
+        - tools
       title: Strategy
       type: object
     Tool:
@@ -1277,16 +1292,16 @@ components:
       properties:
         description:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           description: A description of the tool.
           title: Description
         icon_url:
           anyOf:
-          - format: uri
-            minLength: 1
-            type: string
-          - type: 'null'
+            - format: uri
+              minLength: 1
+              type: string
+            - type: 'null'
           description: A URL to an icon for the tool.
           title: Icon Url
         id:
@@ -1295,8 +1310,8 @@ components:
           type: string
         input_schema:
           anyOf:
-          - type: object
-          - type: boolean
+            - type: object
+            - type: boolean
           default: true
           description: A JSON schema for the tool's input (defaults to 'always valid').
           title: Input Schema
@@ -1309,19 +1324,20 @@ components:
           title: Server Id
           type: string
       required:
-      - server_id
-      - name
-      - id
+        - server_id
+        - name
+        - id
       title: Tool
       type: object
     ToolCustomTagSelectionParamsRequest:
-      description: Params that generalize the selection the tags for a tool in an
+      description: >-
+        Params that generalize the selection the tags for a tool in an
         integration.
       properties:
         description:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Description
         integration_name:
           title: Integration Name
@@ -1335,21 +1351,22 @@ components:
           title: Tool Name
           type: string
       required:
-      - integration_name
-      - tool_name
-      - tags
+        - integration_name
+        - tool_name
+        - tags
       title: ToolCustomTagSelectionParamsRequest
       type: object
     ToolCustomTagsParamsRequest:
-      description: 'Params to change the tags for a tool in an integration. Will upsert
-        any tags that already
+      description: >-
+        Params to change the tags for a tool in an integration. Will upsert any
+        tags that already
 
-        exist. Will not delete any other tags. This is only net additive.'
+        exist. Will not delete any other tags. This is only net additive.
       properties:
         description:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Description
         integration_name:
           title: Integration Name
@@ -1361,9 +1378,9 @@ components:
           title: Tool Name
           type: string
       required:
-      - integration_name
-      - tool_name
-      - tags
+        - integration_name
+        - tool_name
+        - tags
       title: ToolCustomTagsParamsRequest
       type: object
     ToolProperties:
@@ -1373,7 +1390,7 @@ components:
           title: Tags
           type: object
       required:
-      - tags
+        - tags
       title: ToolProperties
       type: object
     ToolResource:
@@ -1384,8 +1401,8 @@ components:
           readOnly: true
         description:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Description
         id:
           title: Id
@@ -1415,17 +1432,17 @@ components:
           title: Tool Name
           type: string
       required:
-      - integration_name
-      - tool_name
-      - id
-      - tool
-      - org_id
-      - profile_id
-      - policy
-      - properties
-      - server
-      - provider
-      - canonical_resource
+        - integration_name
+        - tool_name
+        - id
+        - tool
+        - org_id
+        - profile_id
+        - policy
+        - properties
+        - server
+        - provider
+        - canonical_resource
       title: ToolResource
       type: object
     ToolServer:
@@ -1445,9 +1462,9 @@ components:
           title: Provider Id
           type: string
       required:
-      - provider_id
-      - name
-      - id
+        - provider_id
+        - name
+        - id
       title: ToolServer
       type: object
     ToolServerLaunchConfig:
@@ -1461,8 +1478,8 @@ components:
           title: Source
           type: string
       required:
-      - source
-      - secret_name
+        - source
+        - secret_name
       title: ToolServerLaunchConfig
       type: object
     ToolServerProperties:
@@ -1472,7 +1489,7 @@ components:
           title: Properties
           type: object
       required:
-      - properties
+        - properties
       title: ToolServerProperties
       type: object
     ToolServerProvider:
@@ -1485,18 +1502,19 @@ components:
           title: Name
           type: string
       required:
-      - id
-      - name
+        - id
+        - name
       title: ToolServerProvider
       type: object
     Toolprint-Input:
-      description: 'A declarative definition of a toolprint that describes how tools
-        should be used together
+      description: >-
+        A declarative definition of a toolprint that describes how tools should
+        be used together
 
-        to achieve a goal. This is a simplified model that focuses on the conceptual
-        structure and specifically
+        to achieve a goal. This is a simplified model that focuses on the
+        conceptual structure and specifically
 
-        avoids referential fields to any persisted entities.'
+        avoids referential fields to any persisted entities.
       properties:
         goal:
           description: The goal that this recipe is helping an agent achieve.
@@ -1504,12 +1522,12 @@ components:
           type: string
         instructions:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           description: The instructions on how this recipe should be used.
           title: Instructions
         meta:
-          $ref: '#/components/schemas/ToolprintMeta'
+          $ref: '#/components/schemas/ToolprintMeta-Input'
           description: Meta fields for the toolprint.
         tools:
           description: Definitions for how each tool should be used in this toolprint.
@@ -1518,20 +1536,21 @@ components:
           title: Tools
           type: array
       required:
-      - meta
-      - goal
-      - instructions
-      - tools
+        - meta
+        - goal
+        - instructions
+        - tools
       title: Toolprint
       type: object
     Toolprint-Output:
-      description: 'A declarative definition of a toolprint that describes how tools
-        should be used together
+      description: >-
+        A declarative definition of a toolprint that describes how tools should
+        be used together
 
-        to achieve a goal. This is a simplified model that focuses on the conceptual
-        structure and specifically
+        to achieve a goal. This is a simplified model that focuses on the
+        conceptual structure and specifically
 
-        avoids referential fields to any persisted entities.'
+        avoids referential fields to any persisted entities.
       properties:
         goal:
           description: The goal that this recipe is helping an agent achieve.
@@ -1539,12 +1558,12 @@ components:
           type: string
         instructions:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           description: The instructions on how this recipe should be used.
           title: Instructions
         meta:
-          $ref: '#/components/schemas/ToolprintMeta'
+          $ref: '#/components/schemas/ToolprintMeta-Output'
           description: Meta fields for the toolprint.
         tools:
           description: Definitions for how each tool should be used in this toolprint.
@@ -1553,13 +1572,13 @@ components:
           title: Tools
           type: array
       required:
-      - meta
-      - goal
-      - instructions
-      - tools
+        - meta
+        - goal
+        - instructions
+        - tools
       title: Toolprint
       type: object
-    ToolprintMeta:
+    ToolprintMeta-Input:
       description: A set of meta fields that are common to all toolprints.
       properties:
         language:
@@ -1574,9 +1593,9 @@ components:
           type: string
         resource_id:
           anyOf:
-          - format: uuid
-            type: string
-          - type: 'null'
+            - format: uuid
+              type: string
+            - type: 'null'
           description: The unique identifier for the toolprint.
           title: Resource Id
         version:
@@ -1585,7 +1604,35 @@ components:
           title: Version
           type: string
       required:
-      - name
+        - name
+      title: ToolprintMeta
+      type: object
+    ToolprintMeta-Output:
+      description: A set of meta fields that are common to all toolprints.
+      properties:
+        language:
+          const: en-US
+          default: en-US
+          description: The language of the toolprint.
+          title: Language
+          type: string
+        name:
+          description: The name of the toolprint.
+          title: Name
+          type: string
+        resource_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          description: The unique identifier for the toolprint.
+          title: Resource Id
+        version:
+          default: 0.0.1
+          description: The version of the toolprint definition.
+          title: Version
+          type: string
+      required:
+        - name
       title: ToolprintMeta
       type: object
     ToolprintRecommendation:
@@ -1595,8 +1642,9 @@ components:
           $ref: '#/components/schemas/SearchResultMeta'
           description: Meta fields for the toolprint recommendation.
         prompts:
-          description: The prompts that should be injected into the message stack
-            to prime the agent's LLM.
+          description: >-
+            The prompts that should be injected into the message stack to prime
+            the agent's LLM.
           items:
             $ref: '#/components/schemas/Prompt'
           title: Prompts
@@ -1605,75 +1653,81 @@ components:
           $ref: '#/components/schemas/RegisteredToolprint'
           description: The toolprint that is recommended.
       required:
-      - meta
-      - toolprint
-      - prompts
+        - meta
+        - toolprint
+        - prompts
       title: ToolprintRecommendation
       type: object
     ToolprintTool:
-      description: 'A definition of how a specific tool should be used within a toolprint.
+      description: >-
+        A definition of how a specific tool should be used within a toolprint.
 
-        This is a simplified model that focuses on the conceptual structure and specifically
+        This is a simplified model that focuses on the conceptual structure and
+        specifically
 
         avoids referential fields to any persisted entities.
 
 
-        This tool reference is limited to the server or integration in which the toolprint
-        was defined.'
+        This tool reference is limited to the server or integration in which the
+        toolprint was defined.
       properties:
         ref:
           $ref: '#/components/schemas/ToolprintToolReference'
-          description: A reference to a tool that is used in this toolprint. This
-            reference can link to a tool directly by a unique identifier or indirectly
-            througha link to the tool server as well as the name of the tool. The
-            latter reference is experimental and relies on the implementorto ensure
-            that the reference is correctly followed.
+          description: >-
+            A reference to a tool that is used in this toolprint. This reference
+            can link to a tool directly by a unique identifier or indirectly
+            througha link to the tool server as well as the name of the tool.
+            The latter reference is experimental and relies on the implementorto
+            ensure that the reference is correctly followed.
         usage_hints:
           anyOf:
-          - type: string
-          - type: 'null'
-          description: A more in-depth description of this tool and what it should
-            be used for in the context of this recipe.
+            - type: string
+            - type: 'null'
+          description: >-
+            A more in-depth description of this tool and what it should be used
+            for in the context of this recipe.
           title: Usage Hints
       required:
-      - ref
-      - usage_hints
+        - ref
       title: ToolprintTool
       type: object
     ToolprintToolReference:
-      description: 'A reference to a tool that is used in a toolprint. This reference
-        can link to a tool directly by a unique identifier or indirectly through
+      description: >-
+        A reference to a tool that is used in a toolprint. This reference can
+        link to a tool directly by a unique identifier or indirectly through
 
-        a link to the tool server as well as the name of the tool. The latter reference
-        is experimental and relies on the implementor
+        a link to the tool server as well as the name of the tool. The latter
+        reference is experimental and relies on the implementor
 
-        to ensure that the reference is correctly followed.'
+        to ensure that the reference is correctly followed.
       properties:
         id:
           anyOf:
-          - format: uuid
-            type: string
-          - type: 'null'
+            - format: uuid
+              type: string
+            - type: 'null'
           description: An optional reference id
           title: Id
         name:
-          description: The name of the tool. If the tool exists within this server
-            or integration, this value will be used to link to it.
+          description: >-
+            The name of the tool. If the tool exists within this server or
+            integration, this value will be used to link to it.
           title: Name
           type: string
         ref_type:
           anyOf:
-          - enum:
-            - local
-            - id
-            type: string
-          - type: 'null'
+            - enum:
+                - local
+                - id
+              type: string
+            - type: 'null'
           default: local
-          description: The type of reference to the tool. If the tool exists within
-            this server or integration, this value will be used to link to it.
+          description: >-
+            The type of reference to the tool. If the tool exists within this
+            server or integration, this value will be used to link to it.
           title: Ref Type
       required:
-      - name
+        - name
       title: ToolprintToolReference
       type: object
     TraefikIngressRoute:
@@ -1696,28 +1750,28 @@ components:
           title: Status
           type: object
       required:
-      - metadata
-      - spec
-      - status
-      - apiVersion
+        - metadata
+        - spec
+        - status
+        - apiVersion
       title: TraefikIngressRoute
       type: object
     UpsertSecretRequest:
       properties:
         value:
           anyOf:
-          - type: string
-          - type: object
+            - type: string
+            - type: object
           title: Value
         value_type:
           enum:
-          - string
-          - object
+            - string
+            - object
           title: Value Type
           type: string
       required:
-      - value_type
-      - value
+        - value_type
+        - value
       title: UpsertSecretRequest
       type: object
     UpsertSecretResponse:
@@ -1729,8 +1783,8 @@ components:
           title: Success
           type: boolean
       required:
-      - success
-      - secret_name
+        - success
+        - secret_name
       title: UpsertSecretResponse
       type: object
     UserAccount:
@@ -1741,33 +1795,33 @@ components:
           type: string
         belongs_to_organization_id:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Belongs To Organization Id
         created_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Created At
         doppler_service_token_id:
           anyOf:
-          - format: uuid
-            type: string
-          - type: 'null'
+            - format: uuid
+              type: string
+            - type: 'null'
           title: Doppler Service Token Id
         id:
           title: Id
           type: string
         updated_at:
           anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
+            - format: date-time
+              type: string
+            - type: 'null'
           title: Updated At
       required:
-      - id
-      - api_key
+        - id
+        - api_key
       title: UserAccount
       type: object
     ValidationError:
@@ -1775,8 +1829,8 @@ components:
         loc:
           items:
             anyOf:
-            - type: string
-            - type: integer
+              - type: string
+              - type: integer
           title: Location
           type: array
         msg:
@@ -1786,9 +1840,9 @@ components:
           title: Error Type
           type: string
       required:
-      - loc
-      - msg
-      - type
+        - loc
+        - msg
+        - type
       title: ValidationError
       type: object
   securitySchemes:
@@ -1817,10 +1871,10 @@ paths:
                 type: boolean
           description: Successful Response
       security:
-      - HTTPBearer: []
+        - HTTPBearer: []
       summary: Delete Account
       tags:
-      - account
+        - account
     get:
       operationId: get_account_information_api_v1_account__get
       responses:
@@ -1831,10 +1885,32 @@ paths:
                 $ref: '#/components/schemas/AccountInformation'
           description: Successful Response
       security:
-      - HTTPBearer: []
+        - HTTPBearer: []
       summary: Get Account Information
       tags:
-      - account
+        - account
+    post:
+      description: >-
+        Creates a new account given an authenticated user if they recently
+        signed up via PropelAuth.
+
+
+        NOTE: This only creates the account, not assign the user to an
+        organization.
+              Use invitation codes to assign to an organization.
+      operationId: create_account_api_v1_account__post
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAccount'
+          description: Successful Response
+      security:
+        - HTTPBearer: []
+      summary: Create Account
+      tags:
+        - account
   /api/v1/account/api-key:
     get:
       description: Returns the API key information for the authenticated user.
@@ -1847,20 +1923,22 @@ paths:
                 $ref: '#/components/schemas/UserAccount'
           description: Successful Response
       security:
-      - HTTPBearer: []
+        - HTTPBearer: []
       summary: Get Api Key
       tags:
-      - account
+        - account
   /api/v1/account/auth/status:
     get:
-      description: 'Returns the authentications state of the caller. Will read their
-        API Key or JWT and then determine
+      description: >-
+        Returns the authentications state of the caller. Will read their API Key
+        or JWT and then determine
 
-        if a OneGrep account exists. If yes, then it will be considered authenticated.
+        if a OneGrep account exists. If yes, then it will be considered
+        authenticated.
 
 
-        # ! NOTE: The User may have a valid JWT but if they do not have a OneGrep
-        account, they will not be considered authenticated.'
+        # ! NOTE: The User may have a valid JWT but if they do not have a
+        OneGrep account, they will not be considered authenticated.
       operationId: get_auth_status_api_v1_account_auth_status_get
       responses:
         '200':
@@ -1870,14 +1948,15 @@ paths:
                 $ref: '#/components/schemas/AuthenticationStatus'
           description: Successful Response
       security:
-      - HTTPBearer: []
-      - APIKeyHeader: []
+        - HTTPBearer: []
+        - APIKeyHeader: []
       summary: Get Auth Status
       tags:
-      - account
+        - account
   /api/v1/account/invitation-code:
     post:
-      description: Creates a new account given an authenticated user and a valid invitation
+      description: >-
+        Creates a new account given an authenticated user and a valid invitation
         code.
       operationId: create_account_by_invitation_api_v1_account_invitation_code_post
       requestBody:
@@ -1900,10 +1979,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - HTTPBearer: []
+        - HTTPBearer: []
       summary: Create Account By Invitation
       tags:
-      - account
+        - account
   /api/v1/account/service-token:
     get:
       description: Returns the service token information for the authenticated user.
@@ -1916,10 +1995,10 @@ paths:
                 $ref: '#/components/schemas/ServiceTokenResponse'
           description: Successful Response
       security:
-      - HTTPBearer: []
+        - HTTPBearer: []
       summary: Get Service Token
       tags:
-      - account
+        - account
     post:
       operationId: rotate_service_token_api_v1_account_service_token_post
       responses:
@@ -1930,145 +2009,83 @@ paths:
                 $ref: '#/components/schemas/ServiceTokenResponse'
           description: Successful Response
       security:
-      - HTTPBearer: []
+        - HTTPBearer: []
       summary: Rotate Service Token
       tags:
-      - account
-  /api/v1/admin/user/{user_id}:
-    get:
-      description: Gets a user account given an authenticated user.
-      operationId: get_user_api_v1_admin_user__user_id__get
-      parameters:
-      - in: path
-        name: user_id
-        required: true
-        schema:
-          title: User Id
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAccount'
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Get User
-      tags:
-      - admin
-    post:
-      description: Creates a new account given an authenticated user and a valid invitation
-        code.
-      operationId: create_user_api_v1_admin_user__user_id__post
-      parameters:
-      - in: path
-        name: user_id
-        required: true
-        schema:
-          title: User Id
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUserRequest'
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAccount'
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      summary: Create User
-      tags:
-      - admin
+        - account
   /api/v1/audit/:
     get:
-      description: 'Gets audit logs visible to the user with pagination and filtering.
-
+      description: |-
+        Gets audit logs visible to the user with pagination and filtering.
 
         - Page numbers start at 1 (not 0)
-
         - Results are sorted by timestamp (newest first)
-
-        - Optional filters can be applied for policy_id, action, and date range'
+        - Optional filters can be applied for policy_id, action, and date range
       operationId: get_audit_logs_api_v1_audit__get
       parameters:
-      - description: Page number (1-indexed)
-        in: query
-        name: page
-        required: false
-        schema:
-          default: 1
-          description: Page number (1-indexed)
-          minimum: 1
-          title: Page
-          type: integer
-      - description: Items per page
-        in: query
-        name: page_size
-        required: false
-        schema:
-          default: 100
-          description: Items per page
-          maximum: 500
-          minimum: 1
-          title: Page Size
-          type: integer
-      - description: Filter by policy ID
-        in: query
-        name: policy_id
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          description: Filter by policy ID
-          title: Policy Id
-      - description: Filter by action type
-        in: query
-        name: action
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          description: Filter by action type
-          title: Action
-      - description: Filter logs after this date (ISO format)
-        in: query
-        name: start_date
-        required: false
-        schema:
-          anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
-          description: Filter logs after this date (ISO format)
-          title: Start Date
-      - description: Filter logs before this date (ISO format)
-        in: query
-        name: end_date
-        required: false
-        schema:
-          anyOf:
-          - format: date-time
-            type: string
-          - type: 'null'
-          description: Filter logs before this date (ISO format)
-          title: End Date
+        - description: Page number (1-indexed)
+          in: query
+          name: page
+          required: false
+          schema:
+            default: 1
+            description: Page number (1-indexed)
+            minimum: 1
+            title: Page
+            type: integer
+        - description: Items per page
+          in: query
+          name: page_size
+          required: false
+          schema:
+            default: 100
+            description: Items per page
+            maximum: 500
+            minimum: 1
+            title: Page Size
+            type: integer
+        - description: Filter by policy ID
+          in: query
+          name: policy_id
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by policy ID
+            title: Policy Id
+        - description: Filter by action type
+          in: query
+          name: action
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            description: Filter by action type
+            title: Action
+        - description: Filter logs after this date (ISO format)
+          in: query
+          name: start_date
+          required: false
+          schema:
+            anyOf:
+              - format: date-time
+                type: string
+              - type: 'null'
+            description: Filter logs after this date (ISO format)
+            title: Start Date
+        - description: Filter logs before this date (ISO format)
+          in: query
+          name: end_date
+          required: false
+          schema:
+            anyOf:
+              - format: date-time
+                type: string
+              - type: 'null'
+            description: Filter logs before this date (ISO format)
+            title: End Date
       responses:
         '200':
           content:
@@ -2083,10 +2100,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Audit Logs
       tags:
-      - audit
+        - audit
   /api/v1/flags/:
     get:
       operationId: get_all_flags_api_v1_flags__get
@@ -2098,24 +2115,26 @@ paths:
                 $ref: '#/components/schemas/GetAllFlagsResponse'
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get All Flags
       tags:
-      - flags
+        - flags
   /api/v1/integrations/:
     get:
-      description: 'Lists all available integrations for a user''s organization.
+      description: >-
+        Lists all available integrations for a user's organization.
 
-        If active is true, only returns integrations that have an active tool server.'
+        If active is true, only returns integrations that have an active tool
+        server.
       operationId: list_integrations_api_v1_integrations__get
       parameters:
-      - in: query
-        name: active
-        required: false
-        schema:
-          default: false
-          title: Active
-          type: boolean
+        - in: query
+          name: active
+          required: false
+          schema:
+            default: false
+            title: Active
+            type: boolean
       responses:
         '200':
           content:
@@ -2133,21 +2152,21 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: List Integrations
       tags:
-      - integrations
+        - integrations
   /api/v1/integrations/{integration_name}/tools:
     get:
       description: Returns details for a tool in an integration available to a user.
       operationId: get_integration_tools_api_v1_integrations__integration_name__tools_get
       parameters:
-      - in: path
-        name: integration_name
-        required: true
-        schema:
-          title: Integration Name
-          type: string
+        - in: path
+          name: integration_name
+          required: true
+          schema:
+            title: Integration Name
+            type: string
       responses:
         '200':
           content:
@@ -2155,8 +2174,9 @@ paths:
               schema:
                 items:
                   $ref: '#/components/schemas/ToolResource'
-                title: Response Get Integration Tools Api V1 Integrations  Integration
-                  Name  Tools Get
+                title: >-
+                  Response Get Integration Tools Api V1 Integrations 
+                  Integration Name  Tools Get
                 type: array
           description: Successful Response
         '422':
@@ -2166,21 +2186,22 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Integration Tools
       tags:
-      - integrations
+        - integrations
   /api/v1/integrations/{integration_name}/tools/custom/tags:
     post:
       description: Upserts custom tags for multiple tools in an integration.
-      operationId: upsert_multiple_tool_custom_tags_api_v1_integrations__integration_name__tools_custom_tags_post
+      operationId: >-
+        upsert_multiple_tool_custom_tags_api_v1_integrations__integration_name__tools_custom_tags_post
       parameters:
-      - in: path
-        name: integration_name
-        required: true
-        schema:
-          title: Integration Name
-          type: string
+        - in: path
+          name: integration_name
+          required: true
+          schema:
+            title: Integration Name
+            type: string
       requestBody:
         content:
           application/json:
@@ -2194,8 +2215,9 @@ paths:
               schema:
                 items:
                   $ref: '#/components/schemas/ToolResource'
-                title: Response Upsert Multiple Tool Custom Tags Api V1 Integrations  Integration
-                  Name  Tools Custom Tags Post
+                title: >-
+                  Response Upsert Multiple Tool Custom Tags Api V1 Integrations 
+                  Integration Name  Tools Custom Tags Post
                 type: array
           description: Successful Response
         '422':
@@ -2205,27 +2227,28 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Upsert Multiple Tool Custom Tags
       tags:
-      - integrations
+        - integrations
   /api/v1/integrations/{integration_name}/tools/{tool_name}:
     get:
       description: Returns the details for a tool in an integration.
-      operationId: get_tool_details_api_v1_integrations__integration_name__tools__tool_name__get
+      operationId: >-
+        get_tool_details_api_v1_integrations__integration_name__tools__tool_name__get
       parameters:
-      - in: path
-        name: integration_name
-        required: true
-        schema:
-          title: Integration Name
-          type: string
-      - in: path
-        name: tool_name
-        required: true
-        schema:
-          title: Tool Name
-          type: string
+        - in: path
+          name: integration_name
+          required: true
+          schema:
+            title: Integration Name
+            type: string
+        - in: path
+          name: tool_name
+          required: true
+          schema:
+            title: Tool Name
+            type: string
       responses:
         '200':
           content:
@@ -2240,27 +2263,28 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Tool Details
       tags:
-      - integrations
+        - integrations
   /api/v1/integrations/{integration_name}/tools/{tool_name}/custom/tags:
     delete:
       description: Deletes custom tags for a tool in an integration.
-      operationId: delete_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_delete
+      operationId: >-
+        delete_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_delete
       parameters:
-      - in: path
-        name: integration_name
-        required: true
-        schema:
-          title: Integration Name
-          type: string
-      - in: path
-        name: tool_name
-        required: true
-        schema:
-          title: Tool Name
-          type: string
+        - in: path
+          name: integration_name
+          required: true
+          schema:
+            title: Integration Name
+            type: string
+        - in: path
+          name: tool_name
+          required: true
+          schema:
+            title: Tool Name
+            type: string
       requestBody:
         content:
           application/json:
@@ -2281,29 +2305,31 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Delete Tool Custom Tags
       tags:
-      - integrations
+        - integrations
     post:
-      description: 'Upserts custom tags for a tool in an integration. Will not delete
-        any existing tags but will update any
+      description: >-
+        Upserts custom tags for a tool in an integration. Will not delete any
+        existing tags but will update any
 
-        overlapping tags that are already set.'
-      operationId: upsert_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_post
+        overlapping tags that are already set.
+      operationId: >-
+        upsert_tool_custom_tags_api_v1_integrations__integration_name__tools__tool_name__custom_tags_post
       parameters:
-      - in: path
-        name: integration_name
-        required: true
-        schema:
-          title: Integration Name
-          type: string
-      - in: path
-        name: tool_name
-        required: true
-        schema:
-          title: Tool Name
-          type: string
+        - in: path
+          name: integration_name
+          required: true
+          schema:
+            title: Integration Name
+            type: string
+        - in: path
+          name: tool_name
+          required: true
+          schema:
+            title: Tool Name
+            type: string
       requestBody:
         content:
           application/json:
@@ -2324,132 +2350,28 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Upsert Tool Custom Tags
       tags:
-      - integrations
-  /api/v1/invitation/:
-    get:
-      description: List all invitations with optional filtering by organization ID
-        or email.
-      operationId: list_invitations_api_v1_invitation__get
-      parameters:
-      - description: Filter by organization ID
-        in: query
-        name: org_id
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          description: Filter by organization ID
-          title: Org Id
-      - description: Filter by email
-        in: query
-        name: email
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          description: Filter by email
-          title: Email
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Invitation'
-                title: Response List Invitations Api V1 Invitation  Get
-                type: array
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - HTTPBearer: []
-      summary: List Invitations
-      tags:
-      - invitation
-    post:
-      description: Create a new invitation for the specified email.
-      operationId: create_invitation_api_v1_invitation__post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateInvitationRequest'
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Invitation'
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - HTTPBearer: []
-      summary: Create Invitation
-      tags:
-      - invitation
-  /api/v1/invitation/{code}:
-    delete:
-      description: Delete an invitation by its code.
-      operationId: delete_invitation_api_v1_invitation__code__delete
-      parameters:
-      - in: path
-        name: code
-        required: true
-        schema:
-          title: Code
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                title: Response Delete Invitation Api V1 Invitation  Code  Delete
-                type: object
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - HTTPBearer: []
-      summary: Delete Invitation
-      tags:
-      - invitation
+        - integrations
   /api/v1/policies/:
     get:
       operationId: get_all_policies_api_v1_policies__get
       parameters:
-      - in: query
-        name: skip
-        required: false
-        schema:
-          default: 0
-          title: Skip
-          type: integer
-      - in: query
-        name: limit
-        required: false
-        schema:
-          default: 100
-          title: Limit
-          type: integer
+        - in: query
+          name: skip
+          required: false
+          schema:
+            default: 0
+            title: Skip
+            type: integer
+        - in: query
+          name: limit
+          required: false
+          schema:
+            default: 100
+            title: Limit
+            type: integer
       responses:
         '200':
           content:
@@ -2467,10 +2389,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get All Policies
       tags:
-      - policies
+        - policies
     post:
       operationId: create_policy_api_v1_policies__post
       requestBody:
@@ -2493,30 +2415,31 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Create Policy
       tags:
-      - policies
+        - policies
   /api/v1/policies/approvals:
     get:
-      description: Get all approval requests visible to the user with their associated
+      description: >-
+        Get all approval requests visible to the user with their associated
         policies and resource details.
       operationId: get_approval_requests_api_v1_policies_approvals_get
       parameters:
-      - in: query
-        name: page
-        required: false
-        schema:
-          default: 0
-          title: Page
-          type: integer
-      - in: query
-        name: page_size
-        required: false
-        schema:
-          default: 100
-          title: Page Size
-          type: integer
+        - in: query
+          name: page
+          required: false
+          schema:
+            default: 0
+            title: Page
+            type: integer
+        - in: query
+          name: page_size
+          required: false
+          schema:
+            default: 100
+            title: Page Size
+            type: integer
       responses:
         '200':
           content:
@@ -2534,10 +2457,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Approval Requests
       tags:
-      - policies
+        - policies
   /api/v1/policies/resources/check:
     get:
       operationId: check_resource_access_get_api_v1_policies_resources_check_get
@@ -2550,7 +2473,7 @@ paths:
           description: Successful Response
       summary: Check Resource Access Get
       tags:
-      - policies
+        - policies
     post:
       description: Generic endpoint to check resource access.
       operationId: check_resource_access_api_v1_policies_resources_check_post
@@ -2562,29 +2485,31 @@ paths:
                 $ref: '#/components/schemas/PolicyCheckResult'
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Check Resource Access
       tags:
-      - policies
+        - policies
   /api/v1/policies/resources/{resource_name}/approval:
     get:
-      description: 'Checks the policy that is associated with a resource if it requires
-        approval, if yes, this will create an approval request. If the policy indicates
-        that
+      description: >-
+        Checks the policy that is associated with a resource if it requires
+        approval, if yes, this will create an approval request. If the policy
+        indicates that
 
-        it does require approval, this will wait for the user to approve or reject
-        the request before returning back the final
+        it does require approval, this will wait for the user to approve or
+        reject the request before returning back the final
 
-        response and HTTP CODE. 200 = approved or didn''t require approval, 403 =
-        rejected by the user.'
-      operationId: check_resource_for_approval_api_v1_policies_resources__resource_name__approval_get
+        response and HTTP CODE. 200 = approved or didn't require approval, 403 =
+        rejected by the user.
+      operationId: >-
+        check_resource_for_approval_api_v1_policies_resources__resource_name__approval_get
       parameters:
-      - in: path
-        name: resource_name
-        required: true
-        schema:
-          title: Resource Name
-          type: string
+        - in: path
+          name: resource_name
+          required: true
+          schema:
+            title: Resource Name
+            type: string
       responses:
         '200':
           content:
@@ -2598,20 +2523,20 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Check Resource For Approval
       tags:
-      - policies
+        - policies
   /api/v1/policies/{policy_id}:
     get:
       operationId: get_policy_api_v1_policies__policy_id__get
       parameters:
-      - in: path
-        name: policy_id
-        required: true
-        schema:
-          title: Policy Id
-          type: string
+        - in: path
+          name: policy_id
+          required: true
+          schema:
+            title: Policy Id
+            type: string
       responses:
         '200':
           content:
@@ -2626,19 +2551,19 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Policy
       tags:
-      - policies
+        - policies
     put:
       operationId: update_policy_api_v1_policies__policy_id__put
       parameters:
-      - in: path
-        name: policy_id
-        required: true
-        schema:
-          title: Policy Id
-          type: string
+        - in: path
+          name: policy_id
+          required: true
+          schema:
+            title: Policy Id
+            type: string
       requestBody:
         content:
           application/json:
@@ -2660,27 +2585,27 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Update Policy
       tags:
-      - policies
+        - policies
   /api/v1/policies/{policy_id}/{audit_id}/status:
     post:
       operationId: check_policy_status_api_v1_policies__policy_id___audit_id__status_post
       parameters:
-      - in: path
-        name: policy_id
-        required: true
-        schema:
-          format: uuid
-          title: Policy Id
-          type: string
-      - in: path
-        name: audit_id
-        required: true
-        schema:
-          title: Audit Id
-          type: integer
+        - in: path
+          name: policy_id
+          required: true
+          schema:
+            format: uuid
+            title: Policy Id
+            type: string
+        - in: path
+          name: audit_id
+          required: true
+          schema:
+            title: Audit Id
+            type: integer
       responses:
         '200':
           content:
@@ -2694,10 +2619,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Check Policy Status
       tags:
-      - policies
+        - policies
   /api/v1/providers/:
     get:
       operationId: list_providers_api_v1_providers__get
@@ -2712,20 +2637,20 @@ paths:
                 type: array
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: List Providers
       tags:
-      - providers
+        - providers
   /api/v1/providers/{provider_id}:
     get:
       operationId: get_provider_api_v1_providers__provider_id__get
       parameters:
-      - in: path
-        name: provider_id
-        required: true
-        schema:
-          title: Provider Id
-          type: string
+        - in: path
+          name: provider_id
+          required: true
+          schema:
+            title: Provider Id
+            type: string
       responses:
         '200':
           content:
@@ -2740,20 +2665,20 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Provider
       tags:
-      - providers
+        - providers
   /api/v1/providers/{provider_id}/servers:
     get:
       operationId: get_servers_api_v1_providers__provider_id__servers_get
       parameters:
-      - in: path
-        name: provider_id
-        required: true
-        schema:
-          title: Provider Id
-          type: string
+        - in: path
+          name: provider_id
+          required: true
+          schema:
+            title: Provider Id
+            type: string
       responses:
         '200':
           content:
@@ -2761,7 +2686,8 @@ paths:
               schema:
                 items:
                   $ref: '#/components/schemas/ToolServer'
-                title: Response Get Servers Api V1 Providers  Provider Id  Servers
+                title: >-
+                  Response Get Servers Api V1 Providers  Provider Id  Servers
                   Get
                 type: array
           description: Successful Response
@@ -2772,20 +2698,20 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Servers
       tags:
-      - providers
+        - providers
   /api/v1/providers/{provider_id}/sync:
     post:
       operationId: sync_provider_api_v1_providers__provider_id__sync_post
       parameters:
-      - in: path
-        name: provider_id
-        required: true
-        schema:
-          title: Provider Id
-          type: string
+        - in: path
+          name: provider_id
+          required: true
+          schema:
+            title: Provider Id
+            type: string
       responses:
         '200':
           content:
@@ -2799,268 +2725,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Sync Provider
       tags:
-      - providers
-  /api/v1/runtimes/:
-    get:
-      operationId: get_servers_api_v1_runtimes__get
-      parameters:
-      - in: header
-        name: X-ONEGREP-PROFILE-ID
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: X-Onegrep-Profile-Id
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/Server'
-                title: Response Get Servers Api V1 Runtimes  Get
-                type: array
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - APIKeyHeader: []
-      - HTTPBearer: []
-      summary: Get Servers
-      tags:
-      - runtimes
-    post:
-      operationId: create_server_api_v1_runtimes__post
-      parameters:
-      - in: header
-        name: X-ONEGREP-PROFILE-ID
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: X-Onegrep-Profile-Id
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MCPServerConfig'
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Server'
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - APIKeyHeader: []
-      - HTTPBearer: []
-      summary: Create Server
-      tags:
-      - runtimes
-  /api/v1/runtimes/{server_name}:
-    delete:
-      operationId: delete_server_api_v1_runtimes__server_name__delete
-      parameters:
-      - in: path
-        name: server_name
-        required: true
-        schema:
-          title: Server Name
-          type: string
-      - in: header
-        name: X-ONEGREP-PROFILE-ID
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: X-Onegrep-Profile-Id
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Server'
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - APIKeyHeader: []
-      - HTTPBearer: []
-      summary: Delete Server
-      tags:
-      - runtimes
-    get:
-      operationId: get_server_api_v1_runtimes__server_name__get
-      parameters:
-      - in: path
-        name: server_name
-        required: true
-        schema:
-          title: Server Name
-          type: string
-      - in: header
-        name: X-ONEGREP-PROFILE-ID
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: X-Onegrep-Profile-Id
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Server'
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - APIKeyHeader: []
-      - HTTPBearer: []
-      summary: Get Server
-      tags:
-      - runtimes
-    put:
-      operationId: update_server_api_v1_runtimes__server_name__put
-      parameters:
-      - in: path
-        name: server_name
-        required: true
-        schema:
-          title: Server Name
-          type: string
-      - in: header
-        name: X-ONEGREP-PROFILE-ID
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: X-Onegrep-Profile-Id
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MCPServerConfig'
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Server'
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - APIKeyHeader: []
-      - HTTPBearer: []
-      summary: Update Server
-      tags:
-      - runtimes
-  /api/v1/runtimes/{server_name}/ingress:
-    get:
-      operationId: get_server_ingress_api_v1_runtimes__server_name__ingress_get
-      parameters:
-      - in: path
-        name: server_name
-        required: true
-        schema:
-          title: Server Name
-          type: string
-      - in: header
-        name: X-ONEGREP-PROFILE-ID
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: X-Onegrep-Profile-Id
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TraefikIngressRoute'
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - APIKeyHeader: []
-      - HTTPBearer: []
-      summary: Get Server Ingress
-      tags:
-      - runtimes
-  /api/v1/runtimes/{server_name}/verify:
-    get:
-      operationId: verify_server_connection_api_v1_runtimes__server_name__verify_get
-      parameters:
-      - in: path
-        name: server_name
-        required: true
-        schema:
-          title: Server Name
-          type: string
-      - in: header
-        name: X-ONEGREP-PROFILE-ID
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: X-Onegrep-Profile-Id
-      responses:
-        '200':
-          content:
-            application/json:
-              schema: {}
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - APIKeyHeader: []
-      - HTTPBearer: []
-      summary: Verify Server Connection
-      tags:
-      - runtimes
+        - providers
   /api/v1/sdk/initialize:
     get:
       operationId: initialize_api_v1_sdk_initialize_get
@@ -3072,10 +2740,10 @@ paths:
                 $ref: '#/components/schemas/InitializeResponse'
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Initialize
       tags:
-      - sdk
+        - sdk
   /api/v1/sdk/service-token:
     get:
       description: Returns the service token information for the authenticated user.
@@ -3088,10 +2756,10 @@ paths:
                 $ref: '#/components/schemas/ServiceTokenResponse'
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Service Token
       tags:
-      - sdk
+        - sdk
   /api/v1/search/reindex:
     post:
       description: Reindexes all tools and toolprints for an organization.
@@ -3103,10 +2771,10 @@ paths:
               schema: {}
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Reindex
       tags:
-      - search
+        - search
   /api/v1/search/reindex/toolprints:
     post:
       description: Reindexes all toolprints for an organization.
@@ -3118,10 +2786,10 @@ paths:
               schema: {}
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Reindex Toolprints
       tags:
-      - search
+        - search
   /api/v1/search/reindex/tools:
     post:
       operationId: reindex_tools_api_v1_search_reindex_tools_post
@@ -3132,16 +2800,17 @@ paths:
               schema: {}
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Reindex Tools
       tags:
-      - search
+        - search
   /api/v1/search/toolprints:
     post:
-      description: 'Searches for the best set of toolprints that semantically match
-        the query and returns them
+      description: >-
+        Searches for the best set of toolprints that semantically match the
+        query and returns them
 
-        along with a similarity score for each toolprint.'
+        along with a similarity score for each toolprint.
       operationId: search_toolprints_api_v1_search_toolprints_post
       requestBody:
         content:
@@ -3154,7 +2823,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SearchResponse_ScoredItem_RegisteredToolprint__'
+                $ref: >-
+                  #/components/schemas/SearchResponse_ScoredItem_RegisteredToolprint__
           description: Successful Response
         '422':
           content:
@@ -3163,20 +2833,29 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Search Toolprints
       tags:
-      - search
+        - search
   /api/v1/search/toolprints/recommendation:
     post:
-      description: "Returns a single recommendation for a toolprint based on the goal\
-        \ that is trying to be achieved. It also\nincludes the set of prompts that\
-        \ should be injected into the message stack to prime the agent's LLM.\n\n\
-        Args:\n    request_context: The authenticated request context\n    toolprint_index:\
-        \ The toolprint index manager to search with\n    search_request: The search\
-        \ request containing the goal query\n\nReturns:\n    A ToolprintRecommendation\
-        \ containing the best matching toolprint and associated prompts"
-      operationId: get_toolprint_recommendation_api_v1_search_toolprints_recommendation_post
+      description: >-
+        Returns a single recommendation for a toolprint based on the goal that
+        is trying to be achieved. It also
+
+        includes the set of prompts that should be injected into the message
+        stack to prime the agent's LLM.
+
+
+        Args:
+            request_context: The authenticated request context
+            toolprint_index: The toolprint index manager to search with
+            search_request: The search request containing the goal query
+
+        Returns:
+            A ToolprintRecommendation containing the best matching toolprint and associated prompts
+      operationId: >-
+        get_toolprint_recommendation_api_v1_search_toolprints_recommendation_post
       requestBody:
         content:
           application/json:
@@ -3197,16 +2876,17 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Toolprint Recommendation
       tags:
-      - search
+        - search
   /api/v1/search/tools:
     post:
-      description: 'Searches for the best set of tools that semantically match the
-        query and returns them
+      description: >-
+        Searches for the best set of tools that semantically match the query and
+        returns them
 
-        along with a similarity score for each tool.'
+        along with a similarity score for each tool.
       operationId: search_tools_api_v1_search_tools_post
       requestBody:
         content:
@@ -3228,10 +2908,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Search Tools
       tags:
-      - search
+        - search
   /api/v1/secrets/:
     get:
       operationId: get_secrets_api_v1_secrets__get
@@ -3242,20 +2922,20 @@ paths:
               schema: {}
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Secrets
       tags:
-      - secrets
+        - secrets
   /api/v1/secrets/{secret_name}:
     get:
       operationId: get_secret_api_v1_secrets__secret_name__get
       parameters:
-      - in: path
-        name: secret_name
-        required: true
-        schema:
-          title: Secret Name
-          type: string
+        - in: path
+          name: secret_name
+          required: true
+          schema:
+            title: Secret Name
+            type: string
       responses:
         '200':
           content:
@@ -3271,32 +2951,33 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Secret
       tags:
-      - secrets
+        - secrets
     put:
       operationId: upsert_secret_api_v1_secrets__secret_name__put
       parameters:
-      - in: path
-        name: secret_name
-        required: true
-        schema:
-          title: Secret Name
-          type: string
-      - in: header
-        name: X-ONEGREP-PROFILE-ID
-        required: false
-        schema:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: X-Onegrep-Profile-Id
+        - in: path
+          name: secret_name
+          required: true
+          schema:
+            title: Secret Name
+            type: string
+        - in: header
+          name: X-ONEGREP-PROFILE-ID
+          required: false
+          schema:
+            anyOf:
+              - type: string
+              - type: 'null'
+            title: X-Onegrep-Profile-Id
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Body_upsert_secret_api_v1_secrets__secret_name__put'
+              $ref: >-
+                #/components/schemas/Body_upsert_secret_api_v1_secrets__secret_name__put
         required: true
       responses:
         '200':
@@ -3312,11 +2993,11 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
-      - HTTPBearer: []
+        - APIKeyHeader: []
+        - HTTPBearer: []
       summary: Upsert Secret
       tags:
-      - secrets
+        - secrets
   /api/v1/servers/:
     get:
       operationId: list_servers_api_v1_servers__get
@@ -3331,20 +3012,20 @@ paths:
                 type: array
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: List Servers
       tags:
-      - servers
+        - servers
   /api/v1/servers/{server_id}:
     get:
       operationId: get_server_api_v1_servers__server_id__get
       parameters:
-      - in: path
-        name: server_id
-        required: true
-        schema:
-          title: Server Id
-          type: string
+        - in: path
+          name: server_id
+          required: true
+          schema:
+            title: Server Id
+            type: string
       responses:
         '200':
           content:
@@ -3359,20 +3040,20 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Server
       tags:
-      - servers
+        - servers
   /api/v1/servers/{server_id}/client:
     get:
       operationId: get_server_client_api_v1_servers__server_id__client_get
       parameters:
-      - in: path
-        name: server_id
-        required: true
-        schema:
-          title: Server Id
-          type: string
+        - in: path
+          name: server_id
+          required: true
+          schema:
+            title: Server Id
+            type: string
       responses:
         '200':
           content:
@@ -3385,10 +3066,11 @@ paths:
                     smithery: '#/components/schemas/SmitheryToolServerClient'
                   propertyName: client_type
                 oneOf:
-                - $ref: '#/components/schemas/MCPToolServerClient'
-                - $ref: '#/components/schemas/BlaxelToolServerClient'
-                - $ref: '#/components/schemas/SmitheryToolServerClient'
-                title: Response Get Server Client Api V1 Servers  Server Id  Client
+                  - $ref: '#/components/schemas/MCPToolServerClient'
+                  - $ref: '#/components/schemas/BlaxelToolServerClient'
+                  - $ref: '#/components/schemas/SmitheryToolServerClient'
+                title: >-
+                  Response Get Server Client Api V1 Servers  Server Id  Client
                   Get
           description: Successful Response
         '422':
@@ -3398,20 +3080,20 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Server Client
       tags:
-      - servers
+        - servers
   /api/v1/servers/{server_id}/properties:
     get:
       operationId: get_server_properties_api_v1_servers__server_id__properties_get
       parameters:
-      - in: path
-        name: server_id
-        required: true
-        schema:
-          title: Server Id
-          type: string
+        - in: path
+          name: server_id
+          required: true
+          schema:
+            title: Server Id
+            type: string
       responses:
         '200':
           content:
@@ -3426,26 +3108,27 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Server Properties
       tags:
-      - servers
+        - servers
   /api/v1/servers/{server_id}/properties/{key}:
     patch:
-      operationId: patch_server_properties_api_v1_servers__server_id__properties__key__patch
+      operationId: >-
+        patch_server_properties_api_v1_servers__server_id__properties__key__patch
       parameters:
-      - in: path
-        name: server_id
-        required: true
-        schema:
-          title: Server Id
-          type: string
-      - in: path
-        name: key
-        required: true
-        schema:
-          title: Key
-          type: string
+        - in: path
+          name: server_id
+          required: true
+          schema:
+            title: Server Id
+            type: string
+        - in: path
+          name: key
+          required: true
+          schema:
+            title: Key
+            type: string
       requestBody:
         content:
           application/json:
@@ -3467,10 +3150,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Patch Server Properties
       tags:
-      - servers
+        - servers
   /api/v1/strategy/:
     post:
       description: Gets a strategy for a given goal.
@@ -3498,10 +3181,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Strategy
       tags:
-      - strategy
+        - strategy
   /api/v1/strategy/fake:
     post:
       description: Creates fake strategies for testing purposes.
@@ -3517,22 +3200,19 @@ paths:
                 type: array
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Create Fake Recipes
       tags:
-      - strategy
+        - strategy
   /api/v1/toolprints/:
     post:
-      description: 'Creates a new toolprint and indexes it for search.
-
+      description: |-
+        Creates a new toolprint and indexes it for search.
 
         The process:
-
         1. Validates the toolprint definition
-
         2. Creates and persists the toolprint
-
-        3. Indexes the toolprint for semantic search'
+        3. Indexes the toolprint for semantic search
       operationId: create_toolprint_api_v1_toolprints__post
       requestBody:
         content:
@@ -3554,22 +3234,54 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Create Toolprint
       tags:
-      - toolprints
+        - toolprints
+  /api/v1/toolprints/.well-known/schema:
+    get:
+      description: Returns the schema for toolprint definitions.
+      operationId: get_toolprint_schema_api_v1_toolprints__well_known_schema_get
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                title: >-
+                  Response Get Toolprint Schema Api V1 Toolprints  Well Known
+                  Schema Get
+                type: object
+          description: Successful Response
+      security:
+        - APIKeyHeader: []
+      summary: Get Toolprint Schema
+      tags:
+        - toolprints
+  /api/v1/toolprints/.well-known/template:
+    get:
+      description: Returns a template for toolprint definitions in YAML format.
+      operationId: get_toolprint_template_api_v1_toolprints__well_known_template_get
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+          description: Successful Response
+      security:
+        - APIKeyHeader: []
+      summary: Get Toolprint Template
+      tags:
+        - toolprints
   /api/v1/toolprints/validate:
     post:
-      description: 'Validates a toolprint definition without persisting it.
-
+      description: |-
+        Validates a toolprint definition without persisting it.
 
         This endpoint checks:
-
         1. The basic structure and required fields of the toolprint
-
         2. That all referenced tools exist and are accessible to the user
-
-        3. That the toolprint definition meets any additional business rules'
+        3. That the toolprint definition meets any additional business rules
       operationId: validate_toolprint_api_v1_toolprints_validate_post
       requestBody:
         content:
@@ -3590,22 +3302,22 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Validate Toolprint
       tags:
-      - toolprints
+        - toolprints
   /api/v1/toolprints/{toolprint_id}:
     get:
       description: Gets a specific toolprint by its ID.
       operationId: get_toolprint_api_v1_toolprints__toolprint_id__get
       parameters:
-      - in: path
-        name: toolprint_id
-        required: true
-        schema:
-          format: uuid
-          title: Toolprint Id
-          type: string
+        - in: path
+          name: toolprint_id
+          required: true
+          schema:
+            format: uuid
+            title: Toolprint Id
+            type: string
       responses:
         '200':
           content:
@@ -3620,10 +3332,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Toolprint
       tags:
-      - toolprints
+        - toolprints
   /api/v1/tools/:
     get:
       description: List all tools for the current user.
@@ -3639,20 +3351,20 @@ paths:
                 type: array
           description: Successful Response
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: List Tools
       tags:
-      - tools
+        - tools
   /api/v1/tools/{tool_id}:
     get:
       operationId: get_tool_api_v1_tools__tool_id__get
       parameters:
-      - in: path
-        name: tool_id
-        required: true
-        schema:
-          title: Tool Id
-          type: string
+        - in: path
+          name: tool_id
+          required: true
+          schema:
+            title: Tool Id
+            type: string
       responses:
         '200':
           content:
@@ -3667,20 +3379,20 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Tool
       tags:
-      - tools
+        - tools
   /api/v1/tools/{tool_id}/properties:
     get:
       operationId: get_tool_properties_api_v1_tools__tool_id__properties_get
       parameters:
-      - in: path
-        name: tool_id
-        required: true
-        schema:
-          title: Tool Id
-          type: string
+        - in: path
+          name: tool_id
+          required: true
+          schema:
+            title: Tool Id
+            type: string
       responses:
         '200':
           content:
@@ -3695,22 +3407,23 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Tool Properties
       tags:
-      - tools
+        - tools
   /api/v1/tools/{tool_id}/resource:
     get:
-      description: Returns the hydrated details for a tool given the current user
-        and profile.
+      description: >-
+        Returns the hydrated details for a tool given the current user and
+        profile.
       operationId: get_tool_resource_api_v1_tools__tool_id__resource_get
       parameters:
-      - in: path
-        name: tool_id
-        required: true
-        schema:
-          title: Tool Id
-          type: string
+        - in: path
+          name: tool_id
+          required: true
+          schema:
+            title: Tool Id
+            type: string
       responses:
         '200':
           content:
@@ -3725,10 +3438,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
           description: Validation Error
       security:
-      - APIKeyHeader: []
+        - APIKeyHeader: []
       summary: Get Tool Resource
       tags:
-      - tools
+        - tools
   /health:
     get:
       description: Generic healthcheck endpoint to ensure the service is running.
@@ -3741,11 +3454,11 @@ paths:
           description: Successful Response
       summary: Health
 servers:
-- description: Local
-  url: http://localhost:8080
-- description: Docker
-  url: http://localhost:8080
-- description: test-sandbox
-  url: https://test-sandbox.onegrep.dev
-- description: Production
-  url: https://api.onegrep.dev
+  - description: Local
+    url: http://localhost:8080
+  - description: Docker
+    url: http://localhost:8080
+  - description: test-sandbox
+    url: https://test-sandbox.onegrep.dev
+  - description: Production
+    url: https://api.onegrep.dev

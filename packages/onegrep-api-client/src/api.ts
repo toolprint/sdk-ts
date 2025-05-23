@@ -22,6 +22,7 @@ type Organization = {
   created_at?: ((string | null) | Array<string | null>) | undefined
   created_by_user_id?: ((string | null) | Array<string | null>) | undefined
   id: string
+  open_invitation_code?: ((string | null) | Array<string | null>) | undefined
   owner_id?: ((string | null) | Array<string | null>) | undefined
   updated_at?: ((string | null) | Array<string | null>) | undefined
 }
@@ -350,13 +351,13 @@ type Toolprint_Output = {
    * The instructions on how this recipe should be used.
    */
   instructions: (string | null) | Array<string | null>
-  meta: ToolprintMeta
+  meta: ToolprintMeta_Output
   /**
    * Definitions for how each tool should be used in this toolprint.
    */
   tools: Array<ToolprintTool>
 }
-type ToolprintMeta = {
+type ToolprintMeta_Output = {
   language?: /**
    * The language of the toolprint.
    *
@@ -382,10 +383,12 @@ type ToolprintMeta = {
 }
 type ToolprintTool = {
   ref: ToolprintToolReference
-  /**
-   * A more in-depth description of this tool and what it should be used for in the context of this recipe.
-   */
-  usage_hints: (string | null) | Array<string | null>
+  usage_hints?:
+    | /**
+     * A more in-depth description of this tool and what it should be used for in the context of this recipe.
+     */
+    ((string | null) | Array<string | null>)
+    | undefined
 }
 type ToolprintToolReference = {
   id?:
@@ -564,11 +567,35 @@ type Toolprint_Input = {
    * The instructions on how this recipe should be used.
    */
   instructions: (string | null) | Array<string | null>
-  meta: ToolprintMeta
+  meta: ToolprintMeta_Input
   /**
    * Definitions for how each tool should be used in this toolprint.
    */
   tools: Array<ToolprintTool>
+}
+type ToolprintMeta_Input = {
+  language?: /**
+   * The language of the toolprint.
+   *
+   * @default "en-US"
+   */
+  string | undefined
+  /**
+   * The name of the toolprint.
+   */
+  name: string
+  resource_id?:
+    | /**
+     * The unique identifier for the toolprint.
+     */
+    ((string | null) | Array<string | null>)
+    | undefined
+  version?: /**
+   * The version of the toolprint definition.
+   *
+   * @default "0.0.1"
+   */
+  string | undefined
 }
 type ToolprintRecommendation = {
   meta: SearchResultMeta
@@ -620,6 +647,7 @@ const Organization: z.ZodType<Organization> = z
     created_at: z.union([z.string(), z.null()]).optional(),
     created_by_user_id: z.union([z.string(), z.null()]).optional(),
     id: z.string(),
+    open_invitation_code: z.union([z.string(), z.null()]).optional(),
     owner_id: z.union([z.string(), z.null()]).optional(),
     updated_at: z.union([z.string(), z.null()]).optional()
   })
@@ -670,10 +698,6 @@ const ServiceTokenResponse = z
     doppler_service_token: z.union([z.string(), z.null()])
   })
   .partial()
-  .strict()
-  .passthrough()
-const CreateUserRequest = z
-  .object({ org_id: z.string() })
   .strict()
   .passthrough()
 const policy_id = z
@@ -904,34 +928,6 @@ const ToolCustomTagsParamsRequest = z
   })
   .strict()
   .passthrough()
-const org_id = z
-  .union([z.string(), z.null()])
-  .describe('Filter by organization ID')
-  .optional()
-const email = z
-  .union([z.string(), z.null()])
-  .describe('Filter by email')
-  .optional()
-const Invitation = z
-  .object({
-    accepted: z.boolean().optional().default(false),
-    accepted_at: z.union([z.string(), z.null()]).optional(),
-    code: z.string().optional(),
-    created_at: z.string().datetime({ offset: true }).optional(),
-    email: z.string().email(),
-    expires_at: z.string().datetime({ offset: true }).optional(),
-    org_id: z.string()
-  })
-  .strict()
-  .passthrough()
-const CreateInvitationRequest = z
-  .object({
-    email: z.string().email(),
-    expires_in_days: z.number().int().optional().default(7),
-    org_id: z.union([z.string(), z.null()]).optional()
-  })
-  .strict()
-  .passthrough()
 const Policy: z.ZodType<Policy> = z
   .object({
     access_policy: AccessPolicyType.describe('Enum for access policy types'),
@@ -986,93 +982,6 @@ Ex. if the policy is set to require approval, then we will have a request for ap
   .passthrough()
 const PolicyCheckResult = z
   .object({ approved: z.boolean() })
-  .strict()
-  .passthrough()
-const X_ONEGREP_PROFILE_ID = z.union([z.string(), z.null()]).optional()
-const KindMetadata: z.ZodType<KindMetadata> = z
-  .object({})
-  .partial()
-  .strict()
-  .passthrough()
-const IngressConfig: z.ZodType<IngressConfig> = z
-  .object({
-    entryPoints: z.array(z.string()).optional(),
-    gatewayScheme: z.string().optional().default('http'),
-    orgID: z.string(),
-    orgRouteStrategy: z
-      .enum(['PathPrefix', 'Header'])
-      .optional()
-      .default('PathPrefix'),
-    proxyDomain: z.string(),
-    serverID: z.string(),
-    serverIsDefault: z.union([z.boolean(), z.null()]).optional().default(false),
-    serverRouteStrategy: z
-      .enum(['PathPrefix', 'Header'])
-      .optional()
-      .default('Header')
-  })
-  .strict()
-  .passthrough()
-const LauncherConfig: z.ZodType<LauncherConfig> = z
-  .object({ configMapName: z.string(), mountPath: z.string() })
-  .strict()
-  .passthrough()
-const ServerSpec: z.ZodType<ServerSpec> = z
-  .object({
-    displayName: z.union([z.string(), z.null()]).optional(),
-    envFromSources: z
-      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
-      .optional(),
-    image: z.string(),
-    ingressConfig: z.union([IngressConfig, z.null()]).optional(),
-    launcherConfig: z.union([LauncherConfig, z.null()]).optional(),
-    orgID: z.string(),
-    port: z.number().int().optional().default(8000),
-    pullPolicy: z.string().optional().default('IfNotPresent'),
-    volumeMounts: z
-      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
-      .optional(),
-    volumes: z
-      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
-      .optional()
-  })
-  .strict()
-  .passthrough()
-const Server: z.ZodType<Server> = z
-  .object({
-    apiVersion: z.string(),
-    kind: z.string().optional().default('Server'),
-    metadata: KindMetadata,
-    spec: ServerSpec,
-    status: z
-      .union([z.object({}).partial().strict().passthrough(), z.null()])
-      .optional()
-  })
-  .strict()
-  .passthrough()
-const MCPServerConfig = z
-  .object({
-    args: z.array(z.string()),
-    command: z.string(),
-    env_vars: z.record(z.string()),
-    git_branch: z.union([z.string(), z.null()]).optional().default('main'),
-    git_repo_url: z.union([z.string(), z.null()]).optional(),
-    image: z
-      .string()
-      .optional()
-      .default('registry.onegrep.dev/onegrep/mcp-host:latest'),
-    name: z.string()
-  })
-  .strict()
-  .passthrough()
-const TraefikIngressRoute: z.ZodType<TraefikIngressRoute> = z
-  .object({
-    apiVersion: z.string(),
-    kind: z.string().optional().default('IngressRoute'),
-    metadata: KindMetadata,
-    spec: IngressConfig,
-    status: z.object({}).partial().strict().passthrough()
-  })
   .strict()
   .passthrough()
 const MCPToolServerClient: z.ZodType<MCPToolServerClient> = z
@@ -1167,7 +1076,7 @@ const SearchRequest = z
   })
   .strict()
   .passthrough()
-const ToolprintMeta: z.ZodType<ToolprintMeta> = z
+const ToolprintMeta_Output: z.ZodType<ToolprintMeta_Output> = z
   .object({
     language: z
       .string()
@@ -1218,6 +1127,7 @@ to ensure that the reference is correctly followed.`),
       .describe(
         'A more in-depth description of this tool and what it should be used for in the context of this recipe.'
       )
+      .optional()
   })
   .strict()
   .passthrough()
@@ -1229,7 +1139,7 @@ const Toolprint_Output: z.ZodType<Toolprint_Output> = z
     instructions: z
       .union([z.string(), z.null()])
       .describe('The instructions on how this recipe should be used.'),
-    meta: ToolprintMeta.describe(
+    meta: ToolprintMeta_Output.describe(
       'A set of meta fields that are common to all toolprints.'
     ),
     tools: z
@@ -1324,6 +1234,7 @@ const UpsertSecretRequest: z.ZodType<UpsertSecretRequest> = z
   .passthrough()
 const Body_upsert_secret_api_v1_secrets__secret_name__put: z.ZodType<Body_upsert_secret_api_v1_secrets__secret_name__put> =
   z.object({ request: UpsertSecretRequest }).strict().passthrough()
+const X_ONEGREP_PROFILE_ID = z.union([z.string(), z.null()]).optional()
 const UpsertSecretResponse = z
   .object({ secret_name: z.string(), success: z.boolean() })
   .strict()
@@ -1362,6 +1273,26 @@ const Recipe: z.ZodType<Recipe> = z
   })
   .strict()
   .passthrough()
+const ToolprintMeta_Input: z.ZodType<ToolprintMeta_Input> = z
+  .object({
+    language: z
+      .string()
+      .describe('The language of the toolprint.')
+      .optional()
+      .default('en-US'),
+    name: z.string().describe('The name of the toolprint.'),
+    resource_id: z
+      .union([z.string(), z.null()])
+      .describe('The unique identifier for the toolprint.')
+      .optional(),
+    version: z
+      .string()
+      .describe('The version of the toolprint definition.')
+      .optional()
+      .default('0.0.1')
+  })
+  .strict()
+  .passthrough()
 const Toolprint_Input: z.ZodType<Toolprint_Input> = z
   .object({
     goal: z
@@ -1370,7 +1301,7 @@ const Toolprint_Input: z.ZodType<Toolprint_Input> = z
     instructions: z
       .union([z.string(), z.null()])
       .describe('The instructions on how this recipe should be used.'),
-    meta: ToolprintMeta.describe(
+    meta: ToolprintMeta_Input.describe(
       'A set of meta fields that are common to all toolprints.'
     ),
     tools: z
@@ -1378,6 +1309,116 @@ const Toolprint_Input: z.ZodType<Toolprint_Input> = z
       .describe(
         'Definitions for how each tool should be used in this toolprint.'
       )
+  })
+  .strict()
+  .passthrough()
+const CreateInvitationRequest = z
+  .object({
+    email: z.string().email(),
+    expires_in_days: z.number().int().optional().default(7),
+    org_id: z.union([z.string(), z.null()]).optional()
+  })
+  .strict()
+  .passthrough()
+const CreateUserRequest = z
+  .object({ org_id: z.string() })
+  .strict()
+  .passthrough()
+const IngressConfig: z.ZodType<IngressConfig> = z
+  .object({
+    entryPoints: z.array(z.string()).optional(),
+    gatewayScheme: z.string().optional().default('http'),
+    orgID: z.string(),
+    orgRouteStrategy: z
+      .enum(['PathPrefix', 'Header'])
+      .optional()
+      .default('PathPrefix'),
+    proxyDomain: z.string(),
+    serverID: z.string(),
+    serverIsDefault: z.union([z.boolean(), z.null()]).optional().default(false),
+    serverRouteStrategy: z
+      .enum(['PathPrefix', 'Header'])
+      .optional()
+      .default('Header')
+  })
+  .strict()
+  .passthrough()
+const Invitation = z
+  .object({
+    accepted: z.boolean().optional().default(false),
+    accepted_at: z.union([z.string(), z.null()]).optional(),
+    code: z.string().optional(),
+    created_at: z.string().datetime({ offset: true }).optional(),
+    email: z.string().email(),
+    expires_at: z.string().datetime({ offset: true }).optional(),
+    org_id: z.string()
+  })
+  .strict()
+  .passthrough()
+const KindMetadata: z.ZodType<KindMetadata> = z
+  .object({})
+  .partial()
+  .strict()
+  .passthrough()
+const LauncherConfig: z.ZodType<LauncherConfig> = z
+  .object({ configMapName: z.string(), mountPath: z.string() })
+  .strict()
+  .passthrough()
+const MCPServerConfig = z
+  .object({
+    args: z.array(z.string()),
+    command: z.string(),
+    env_vars: z.record(z.string()),
+    git_branch: z.union([z.string(), z.null()]).optional().default('main'),
+    git_repo_url: z.union([z.string(), z.null()]).optional(),
+    image: z
+      .string()
+      .optional()
+      .default('registry.onegrep.dev/onegrep/mcp-host:latest'),
+    name: z.string()
+  })
+  .strict()
+  .passthrough()
+const ServerSpec: z.ZodType<ServerSpec> = z
+  .object({
+    displayName: z.union([z.string(), z.null()]).optional(),
+    envFromSources: z
+      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
+      .optional(),
+    image: z.string(),
+    ingressConfig: z.union([IngressConfig, z.null()]).optional(),
+    launcherConfig: z.union([LauncherConfig, z.null()]).optional(),
+    orgID: z.string(),
+    port: z.number().int().optional().default(8000),
+    pullPolicy: z.string().optional().default('IfNotPresent'),
+    volumeMounts: z
+      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
+      .optional(),
+    volumes: z
+      .union([z.array(z.object({}).partial().strict().passthrough()), z.null()])
+      .optional()
+  })
+  .strict()
+  .passthrough()
+const Server: z.ZodType<Server> = z
+  .object({
+    apiVersion: z.string(),
+    kind: z.string().optional().default('Server'),
+    metadata: KindMetadata,
+    spec: ServerSpec,
+    status: z
+      .union([z.object({}).partial().strict().passthrough(), z.null()])
+      .optional()
+  })
+  .strict()
+  .passthrough()
+const TraefikIngressRoute: z.ZodType<TraefikIngressRoute> = z
+  .object({
+    apiVersion: z.string(),
+    kind: z.string().optional().default('IngressRoute'),
+    metadata: KindMetadata,
+    spec: IngressConfig,
+    status: z.object({}).partial().strict().passthrough()
   })
   .strict()
   .passthrough()
@@ -1392,7 +1433,6 @@ export const schemas = {
   ValidationError,
   HTTPValidationError,
   ServiceTokenResponse,
-  CreateUserRequest,
   policy_id,
   action,
   start_date,
@@ -1421,24 +1461,12 @@ export const schemas = {
   MultipleToolCustomTagsParamsRequest,
   ToolCustomTagSelectionParamsRequest,
   ToolCustomTagsParamsRequest,
-  org_id,
-  email,
-  Invitation,
-  CreateInvitationRequest,
   Policy,
   NewPolicyRequest,
   ActionApprovalState,
   ActionApprovalRequest,
   ApprovalAndPolicy,
   PolicyCheckResult,
-  X_ONEGREP_PROFILE_ID,
-  KindMetadata,
-  IngressConfig,
-  LauncherConfig,
-  ServerSpec,
-  Server,
-  MCPServerConfig,
-  TraefikIngressRoute,
   MCPToolServerClient,
   BlaxelToolServerClient,
   SmitheryConnectionInfo,
@@ -1446,7 +1474,7 @@ export const schemas = {
   SmitheryToolServerClient,
   InitializeResponse,
   SearchRequest,
-  ToolprintMeta,
+  ToolprintMeta_Output,
   ToolprintToolReference,
   ToolprintTool,
   Toolprint_Output,
@@ -1460,11 +1488,23 @@ export const schemas = {
   SearchResponse_ScoredItem_Tool__,
   UpsertSecretRequest,
   Body_upsert_secret_api_v1_secrets__secret_name__put,
+  X_ONEGREP_PROFILE_ID,
   UpsertSecretResponse,
   ToolServerProperties,
   Strategy,
   Recipe,
-  Toolprint_Input
+  ToolprintMeta_Input,
+  Toolprint_Input,
+  CreateInvitationRequest,
+  CreateUserRequest,
+  IngressConfig,
+  Invitation,
+  KindMetadata,
+  LauncherConfig,
+  MCPServerConfig,
+  ServerSpec,
+  Server,
+  TraefikIngressRoute
 }
 
 const endpoints = makeApi([
@@ -1481,6 +1521,17 @@ const endpoints = makeApi([
     alias: 'get_account_information_api_v1_account__get',
     requestFormat: 'json',
     response: AccountInformation
+  },
+  {
+    method: 'post',
+    path: '/api/v1/account/',
+    alias: 'create_account_api_v1_account__post',
+    description: `Creates a new account given an authenticated user if they recently signed up via PropelAuth.
+
+NOTE: This only creates the account, not assign the user to an organization.
+      Use invitation codes to assign to an organization.`,
+    requestFormat: 'json',
+    response: UserAccount
   },
   {
     method: 'get',
@@ -1537,55 +1588,6 @@ if a OneGrep account exists. If yes, then it will be considered authenticated.
     alias: 'rotate_service_token_api_v1_account_service_token_post',
     requestFormat: 'json',
     response: ServiceTokenResponse
-  },
-  {
-    method: 'get',
-    path: '/api/v1/admin/user/:user_id',
-    alias: 'get_user_api_v1_admin_user__user_id__get',
-    description: `Gets a user account given an authenticated user.`,
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'user_id',
-        type: 'Path',
-        schema: z.string()
-      }
-    ],
-    response: UserAccount,
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'post',
-    path: '/api/v1/admin/user/:user_id',
-    alias: 'create_user_api_v1_admin_user__user_id__post',
-    description: `Creates a new account given an authenticated user and a valid invitation code.`,
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'body',
-        type: 'Body',
-        schema: z.object({ org_id: z.string() }).strict().passthrough()
-      },
-      {
-        name: 'user_id',
-        type: 'Path',
-        schema: z.string()
-      }
-    ],
-    response: UserAccount,
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
   },
   {
     method: 'get',
@@ -1819,77 +1821,6 @@ overlapping tags that are already set.`,
       }
     ],
     response: z.array(ToolResource),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'get',
-    path: '/api/v1/invitation/',
-    alias: 'list_invitations_api_v1_invitation__get',
-    description: `List all invitations with optional filtering by organization ID or email.`,
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'org_id',
-        type: 'Query',
-        schema: org_id
-      },
-      {
-        name: 'email',
-        type: 'Query',
-        schema: email
-      }
-    ],
-    response: z.array(Invitation),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'post',
-    path: '/api/v1/invitation/',
-    alias: 'create_invitation_api_v1_invitation__post',
-    description: `Create a new invitation for the specified email.`,
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'body',
-        type: 'Body',
-        schema: CreateInvitationRequest
-      }
-    ],
-    response: Invitation,
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'delete',
-    path: '/api/v1/invitation/:code',
-    alias: 'delete_invitation_api_v1_invitation__code__delete',
-    description: `Delete an invitation by its code.`,
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'code',
-        type: 'Path',
-        schema: z.string()
-      }
-    ],
-    response: z.object({}).partial().strict().passthrough(),
     errors: [
       {
         status: 422,
@@ -2145,241 +2076,6 @@ response and HTTP CODE. 200 &#x3D; approved or didn&#x27;t require approval, 403
         name: 'provider_id',
         type: 'Path',
         schema: z.string()
-      }
-    ],
-    response: z.unknown(),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'get',
-    path: '/api/v1/runtimes/',
-    alias: 'get_servers_api_v1_runtimes__get',
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
-      }
-    ],
-    response: z.array(Server),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'post',
-    path: '/api/v1/runtimes/',
-    alias: 'create_server_api_v1_runtimes__post',
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'body',
-        type: 'Body',
-        schema: MCPServerConfig
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
-      }
-    ],
-    response: z
-      .object({
-        apiVersion: z.string(),
-        kind: z.string().optional().default('Server'),
-        metadata: KindMetadata,
-        spec: ServerSpec,
-        status: z
-          .union([z.object({}).partial().strict().passthrough(), z.null()])
-          .optional()
-      })
-      .strict()
-      .passthrough(),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'delete',
-    path: '/api/v1/runtimes/:server_name',
-    alias: 'delete_server_api_v1_runtimes__server_name__delete',
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'server_name',
-        type: 'Path',
-        schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
-      }
-    ],
-    response: z
-      .object({
-        apiVersion: z.string(),
-        kind: z.string().optional().default('Server'),
-        metadata: KindMetadata,
-        spec: ServerSpec,
-        status: z
-          .union([z.object({}).partial().strict().passthrough(), z.null()])
-          .optional()
-      })
-      .strict()
-      .passthrough(),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'get',
-    path: '/api/v1/runtimes/:server_name',
-    alias: 'get_server_api_v1_runtimes__server_name__get',
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'server_name',
-        type: 'Path',
-        schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
-      }
-    ],
-    response: z
-      .object({
-        apiVersion: z.string(),
-        kind: z.string().optional().default('Server'),
-        metadata: KindMetadata,
-        spec: ServerSpec,
-        status: z
-          .union([z.object({}).partial().strict().passthrough(), z.null()])
-          .optional()
-      })
-      .strict()
-      .passthrough(),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'put',
-    path: '/api/v1/runtimes/:server_name',
-    alias: 'update_server_api_v1_runtimes__server_name__put',
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'body',
-        type: 'Body',
-        schema: MCPServerConfig
-      },
-      {
-        name: 'server_name',
-        type: 'Path',
-        schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
-      }
-    ],
-    response: z
-      .object({
-        apiVersion: z.string(),
-        kind: z.string().optional().default('Server'),
-        metadata: KindMetadata,
-        spec: ServerSpec,
-        status: z
-          .union([z.object({}).partial().strict().passthrough(), z.null()])
-          .optional()
-      })
-      .strict()
-      .passthrough(),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'get',
-    path: '/api/v1/runtimes/:server_name/ingress',
-    alias: 'get_server_ingress_api_v1_runtimes__server_name__ingress_get',
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'server_name',
-        type: 'Path',
-        schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
-      }
-    ],
-    response: z
-      .object({
-        apiVersion: z.string(),
-        kind: z.string().optional().default('IngressRoute'),
-        metadata: KindMetadata,
-        spec: IngressConfig,
-        status: z.object({}).partial().strict().passthrough()
-      })
-      .strict()
-      .passthrough(),
-    errors: [
-      {
-        status: 422,
-        description: `Validation Error`,
-        schema: HTTPValidationError
-      }
-    ]
-  },
-  {
-    method: 'get',
-    path: '/api/v1/runtimes/:server_name/verify',
-    alias: 'verify_server_connection_api_v1_runtimes__server_name__verify_get',
-    requestFormat: 'json',
-    parameters: [
-      {
-        name: 'server_name',
-        type: 'Path',
-        schema: z.string()
-      },
-      {
-        name: 'X-ONEGREP-PROFILE-ID',
-        type: 'Header',
-        schema: X_ONEGREP_PROFILE_ID
       }
     ],
     response: z.unknown(),
@@ -2756,6 +2452,22 @@ The process:
         schema: HTTPValidationError
       }
     ]
+  },
+  {
+    method: 'get',
+    path: '/api/v1/toolprints/.well-known/schema',
+    alias: 'get_toolprint_schema_api_v1_toolprints__well_known_schema_get',
+    description: `Returns the schema for toolprint definitions.`,
+    requestFormat: 'json',
+    response: z.object({}).partial().strict().passthrough()
+  },
+  {
+    method: 'get',
+    path: '/api/v1/toolprints/.well-known/template',
+    alias: 'get_toolprint_template_api_v1_toolprints__well_known_template_get',
+    description: `Returns a template for toolprint definitions in YAML format.`,
+    requestFormat: 'json',
+    response: z.void()
   },
   {
     method: 'post',

@@ -290,4 +290,24 @@ export class OneGrepApiHighLevelClient {
     }
     return true
   }
+
+  async getToolprintJsonSchema(): Promise<object> {
+    const result = await makeApiCallWithResult<object>(async () => {
+      return await this.apiClient.get_toolprint_schema_api_v1_toolprints__well_known_schema_get()
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  async getToolprintTemplate(): Promise<string> {
+    const result = await makeApiCallWithResult<unknown>(async () => {
+      return await this.apiClient.get_toolprint_template_api_v1_toolprints__well_known_template_get()
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data! as unknown as string
+  }
 }
