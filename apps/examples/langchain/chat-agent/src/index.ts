@@ -21,6 +21,23 @@ interface ChatPrompt {
   message: string
 }
 
+/**
+ * Calculates the time taken to execute a function and returns the result and the time taken
+ * @param fn - The function to wrap
+ * @returns The result of the function and the time taken
+ */
+async function timeIt(fn: () => Promise<any>) {
+  const tStart = Date.now()
+  const result = await fn()
+  const taken = Date.now() - tStart
+  return { result, taken }
+}
+
+/**
+ * Creates a Langchain agent with the given tools
+ * @param tools - The tools to use in the agent
+ * @returns The agent
+ */
 async function createAgent(tools: any[]) {
   const model = new ChatOpenAI({
     modelName: OPENAI_MODEL,
@@ -34,6 +51,11 @@ async function createAgent(tools: any[]) {
   })
 }
 
+/**
+ * A simple reflection step to have an LLM understand the intent of the user's message
+ * @param message - The user's message
+ * @returns The intent of the user's message
+ */
 async function getAgentGoal(message: string) {
   const spinner = ora('Extracting goal...').start()
   // First, use a separate LLM call to understand the intent and search for relevant tools
@@ -52,21 +74,32 @@ async function getAgentGoal(message: string) {
   return intentResult.content
 }
 
+/**
+ * Entrypoint to process any new message from the user
+ * @param toolbox - The OneGrep toolbox
+ * @param message - The user's message
+ * @param chatHistory - The chat history
+ */
 async function processMessage(
   toolbox: LangchainToolbox,
   message: string,
   chatHistory: BaseMessage[] = []
 ): Promise<void> {
-  const spinner = ora('Thinking...').start()
   try {
     // First, use a separate LLM call to understand the intent and search for relevant tools
-    const goal = await getAgentGoal(message)
+    let spinner = ora('Extracting goal...').start()
+    const { result: goal, taken: goalTaken } = await timeIt(() =>
+      getAgentGoal(message)
+    )
     const query = typeof goal === 'string' ? goal : message
+    spinner.succeed(`Done ${chalk.gray(goalTaken)}ms`)
 
-    spinner.text = 'Searching for relevant tools...'
+    spinner = ora('Searching for relevant tools...').start()
 
     // Option 1 - Get a more comprehensive recommendation with a rich instruction set as well as specifc tools
-    const recommendation = await toolbox.recommend(query)
+    const { result: recommendation, taken: searchTaken } = await timeIt(() =>
+      toolbox.recommend(query)
+    )
     const selectedTools = recommendation.tools
     const recommendationPrompts = recommendation.messages
 
@@ -75,22 +108,27 @@ async function processMessage(
     // const selectedTools = searchResult.map((r) => r.result)
     // console.debug(`Tools found: ${selectedTools.map((t) => t.name).join(', ')}`)
 
+    spinner.succeed(`Done ${chalk.gray(searchTaken)}ms`)
+
     // Create the agent with the discovered tools
-    spinner.text = 'Generating conclusions...'
+    spinner = ora('Generating response...').start()
 
     const agent = await createAgent(selectedTools)
 
     // Execute the agent
-    const result = await agent.invoke({
-      messages: [
-        ...chatHistory, // the historical chat history
-        new HumanMessage(message), // the user's message
-        new AIMessage(query), // the intent we extracted from the user's message
-        ...recommendationPrompts // the recommendation prompts
-      ]
-    })
+    const { result: agentResult, taken: agentTaken } = await timeIt(() =>
+      agent.invoke({
+        messages: [
+          ...chatHistory, // the historical chat history
+          new HumanMessage(message), // the user's message
+          new AIMessage(query), // the intent we extracted from the user's message
+          ...recommendationPrompts // the recommendation prompts
+        ]
+      })
+    )
 
-    const aiResponse = result.messages[result.messages.length - 1].content
+    const aiResponse =
+      agentResult.messages[agentResult.messages.length - 1].content
     const aiMessage = aiResponse
       ? typeof aiResponse === 'string'
         ? aiResponse
@@ -101,20 +139,21 @@ async function processMessage(
     chatHistory.push(new HumanMessage(message))
     chatHistory.push(new AIMessage(aiMessage))
 
-    spinner.succeed('Done')
+    spinner.succeed(`Done ${chalk.gray(agentTaken)}ms`)
   } catch (error) {
     if (error instanceof Error && error.name === 'GraphRecursionError') {
-      spinner.fail('Agent reached maximum number of steps')
       throw new Error(
         'I reached my step limit. Could you try breaking down your request into smaller parts?'
       )
     }
-    spinner.fail('Error processing message')
     console.error('Full error:', error)
     throw error
   }
 }
 
+/**
+ * Entrypoint to start the chat agent
+ */
 async function start() {
   console.log(chalk.cyan('\n🤖 Welcome to the AI Agent!\n'))
 

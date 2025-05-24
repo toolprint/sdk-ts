@@ -167,6 +167,7 @@ export interface ToolDetailsStore {
  */
 export interface ToolCache extends ToolDetailsStore {
   get(toolId: ToolId): Promise<ToolDetails>
+  getMultiple(toolIds: ToolId[]): Promise<Map<ToolId, ToolDetails>>
   search(query: string): Promise<Array<ScoredResult<ToolDetails>>>
   recommend(goal: string): Promise<Recommendation>
 
@@ -179,16 +180,30 @@ export interface ToolCache extends ToolDetailsStore {
 export interface BaseToolbox<T, R> extends ToolDetailsStore {
   /** Returns a recommendation comprising of tools and messages describing the best way to use them given
    * the goal at hand.
+   * @param goal - The goal to use to recommend tools.
+   * @returns A recommendation comprising of tools and messages describing the best way to use them given
+   * the goal at hand.
    */
   recommend(goal: string): Promise<R>
 
   /**
    * Returns a tool by its id.
+   * @param toolId - The id of the tool to get.
+   * @returns The tool.
    */
   get(toolId: ToolId): Promise<T>
 
   /**
+   * Returns a map of tools by their ids.
+   * @param toolIds - The ids of the tools to get.
+   * @returns A map of tools by their ids.
+   */
+  getMultiple(toolIds: ToolId[]): Promise<Map<ToolId, T>>
+
+  /**
    * Searches for tools based on a query.
+   * @param query - The query to search for.
+   * @returns A list of tools that match the query.
    */
   search(query: string): Promise<Array<ScoredResult<T>>>
 

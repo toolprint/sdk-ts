@@ -1320,6 +1320,10 @@ const BasicPostResponse = z
   })
   .strict()
   .passthrough()
+const MultiIdPostBody = z
+  .object({ ids: z.union([z.array(z.string()), z.array(z.string().uuid())]) })
+  .strict()
+  .passthrough()
 const CreateInvitationRequest = z
   .object({
     email: z.string().email(),
@@ -1505,6 +1509,7 @@ export const schemas = {
   Toolprint_Input,
   BasicPostBody,
   BasicPostResponse,
+  MultiIdPostBody,
   CreateInvitationRequest,
   CreateUserRequest,
   IngressConfig,
@@ -2683,6 +2688,28 @@ The process:
       }
     ],
     response: ToolResource,
+    errors: [
+      {
+        status: 422,
+        description: `Validation Error`,
+        schema: HTTPValidationError
+      }
+    ]
+  },
+  {
+    method: 'post',
+    path: '/api/v1/tools/resources/batch',
+    alias: 'get_tool_resources_batch_api_v1_tools_resources_batch_post',
+    description: `Returns hydrated tool resources for the specified tool IDs in an efficient batch operation.`,
+    requestFormat: 'json',
+    parameters: [
+      {
+        name: 'body',
+        type: 'Body',
+        schema: MultiIdPostBody
+      }
+    ],
+    response: z.array(ToolResource),
     errors: [
       {
         status: 422,

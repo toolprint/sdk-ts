@@ -7,7 +7,6 @@ import {
   FilterOptions,
   ToolDetails,
   BasicToolDetails,
-  EquippedTool,
   ToolHandle,
   ConnectionManager,
   ToolCallInput,
@@ -228,6 +227,65 @@ export class UniversalToolCache implements ToolCache {
     await this.toolBasicDetailsCache.del(toolId)
   }
 
+  private createToolDetails(
+    basicToolDetails: BasicToolDetails,
+    toolResource: ToolResource,
+    serverClient: ToolServerClient
+  ): ToolDetails {
+    const details: ToolDetails = {
+      ...basicToolDetails,
+      properties: toolResource.properties as ToolProperties,
+      policy: toolResource.policy,
+      equip: async () => {
+        log.trace(`Converting to equipped tool`)
+        try {
+          const connection = await this.connectionManager.connect(serverClient)
+          log.info(
+            `Got connection to tool server ${toolResource.tool.server_id}`
+          )
+
+          const toolHandle = await connection.getHandle(basicToolDetails)
+          log.info(`Got tool handle for ${toolResource.tool.id}`)
+
+          return {
+            details,
+            handle: new SafeToolHandle(toolHandle)
+          }
+        } catch (error) {
+          log.error(`Error grabbing tool handle: ${error}`)
+          throw error
+        }
+      }
+    }
+    return details
+  }
+
+  private async getToolDetailsBatch(
+    toolIds: ToolId[]
+  ): Promise<Map<ToolId, ToolDetails>> {
+    const toolResources =
+      await this.highLevelClient.getToolResourcesBatch(toolIds)
+
+    const toolDetails: Map<ToolId, ToolDetails> = new Map()
+    for (const toolId of toolIds) {
+      const toolResource = toolResources.get(toolId)
+      if (toolResource) {
+        const basicToolDetails = await this.getToolBasicDetails(toolId)
+        const serverClient = await this.getServerClient(
+          toolResource.tool.server_id
+        )
+        const details = this.createToolDetails(
+          basicToolDetails,
+          toolResource,
+          serverClient
+        )
+        toolDetails.set(toolId, details)
+      }
+    }
+
+    return toolDetails
+  }
+
   /**
    * Get the details of a tool
    * @param toolId - The id of the tool.
@@ -249,46 +307,7 @@ export class UniversalToolCache implements ToolCache {
       resource.tool.server_id
     )
 
-    // Convert a BasicToolDetails to an EquippedTool (used as a lazy-loaded equip function)
-    const convertToEquippedTool = async (
-      basicToolDetails: BasicToolDetails
-    ): Promise<EquippedTool> => {
-      log.trace(`Converting to equipped tool`)
-
-      const getHandle = async (): Promise<ToolHandle> => {
-        try {
-          const connection = await this.connectionManager.connect(serverClient)
-          log.info(`Got connection to tool server ${resource.tool.server_id}`)
-
-          const toolHandle = await connection.getHandle(basicToolDetails)
-          log.info(`Got tool handle for ${resource.tool.id}`)
-
-          return toolHandle
-        } catch (error) {
-          log.error(`Error grabbing tool handle: ${error}`)
-          throw error
-        }
-      }
-
-      return {
-        details: toolDetails,
-        handle: new SafeToolHandle(await getHandle())
-      }
-    }
-
-    // ! NOTE: We can't cache ToolDetails because we provide the equip function
-    // Additionally, We really never want to cache Properties or Policy for very long
-    // because they can change more frequently than the tool details.  Cache individually if needed.
-    const toolDetails: ToolDetails = {
-      ...basicToolDetails,
-      properties: resource.properties as ToolProperties,
-      policy: resource.policy,
-      equip: () => convertToEquippedTool(basicToolDetails)
-    }
-
-    log.trace(`Got tool details`, toolDetails)
-
-    return toolDetails
+    return this.createToolDetails(basicToolDetails, resource, serverClient)
   }
 
   @handleErrors()
@@ -376,6 +395,11 @@ export class UniversalToolCache implements ToolCache {
     return await this.getToolDetails(toolId)
   }
 
+  @handleErrors()
+  async getMultiple(toolIds: ToolId[]): Promise<Map<ToolId, ToolDetails>> {
+    return await this.getToolDetailsBatch(toolIds)
+  }
+
   /**
    * Finds the best toolprint for a given goal (if one exists), and returns a
    * simplified Recommendation object. If no toolprint is found for the goal,
@@ -427,10 +451,12 @@ export class UniversalToolCache implements ToolCache {
 
     const results: ScoredResult<ToolDetails>[] = []
 
+    const toolIds = response.results.map((result) => result.item.id)
+    const toolDetailsMap = await this.getMultiple(toolIds)
+
     for (const result of response.results) {
-      const toolDetails = await this.get(result.item.id)
       results.push({
-        result: toolDetails,
+        result: toolDetailsMap.get(result.item.id)!,
         score: result.score
       })
     }

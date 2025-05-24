@@ -373,3 +373,20 @@ describe('Smithery Toolbox Tests', () => {
     await new Promise((resolve) => setTimeout(resolve, 1000))
   })
 })
+
+describe('Search Toolbox Tests', () => {
+  let toolbox: Toolbox
+
+  beforeAll(async () => {
+    log.info('Getting toolbox')
+    toolbox = await getToolbox()
+    log.info('Toolbox fetched')
+  })
+
+  it('should be able to search for tools', async () => {
+    const searchResults = await toolbox.search('search')
+    expect(searchResults).toBeDefined()
+    expect(searchResults.length).toBeGreaterThan(0)
+    log.info(`Search results: ${JSON.stringify(searchResults)}`)
+  })
+})

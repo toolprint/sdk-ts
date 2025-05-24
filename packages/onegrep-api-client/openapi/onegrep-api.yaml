@@ -694,6 +694,23 @@ components:
         - url
       title: MCPToolServerClient
       type: object
+    MultiIdPostBody:
+      description: A multi-id post body.
+      properties:
+        ids:
+          anyOf:
+            - items:
+                type: string
+              type: array
+            - items:
+                format: uuid
+                type: string
+              type: array
+          title: Ids
+      required:
+        - ids
+      title: MultiIdPostBody
+      type: object
     MultipleToolCustomTagsParamsRequest:
       description: Params to change the tags for multiple tools in an integration.
       properties:
@@ -3518,6 +3535,41 @@ paths:
       security:
         - APIKeyHeader: []
       summary: List Tools
+      tags:
+        - tools
+  /api/v1/tools/resources/batch:
+    post:
+      description: >-
+        Returns hydrated tool resources for the specified tool IDs in an
+        efficient batch operation.
+      operationId: get_tool_resources_batch_api_v1_tools_resources_batch_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiIdPostBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ToolResource'
+                title: >-
+                  Response Get Tool Resources Batch Api V1 Tools Resources Batch
+                  Post
+                type: array
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      security:
+        - APIKeyHeader: []
+      summary: Get Tool Resources Batch
       tags:
         - tools
   /api/v1/tools/{tool_id}:

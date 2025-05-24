@@ -37,33 +37,37 @@ export class Toolbox implements BaseToolbox<ToolDetails, Recommendation> {
   }
 
   async listTools(): Promise<Map<ToolId, BasicToolDetails>> {
-    return this.toolCache.listTools()
+    return await this.toolCache.listTools()
   }
 
   async listIntegrations(): Promise<string[]> {
-    return this.toolCache.listIntegrations()
+    return await this.toolCache.listIntegrations()
   }
 
   async filterTools(
     options?: FilterOptions
   ): Promise<Map<ToolId, ToolDetails>> {
-    return this.toolCache.filterTools(options)
+    return await this.toolCache.filterTools(options)
   }
 
   async get(toolId: ToolId): Promise<ToolDetails> {
-    return this.toolCache.get(toolId)
+    return await this.toolCache.get(toolId)
+  }
+
+  async getMultiple(toolIds: ToolId[]): Promise<Map<ToolId, ToolDetails>> {
+    return await this.toolCache.getMultiple(toolIds)
   }
 
   async recommend(goal: string): Promise<Recommendation> {
-    return this.toolCache.recommend(goal)
+    return await this.toolCache.recommend(goal)
   }
 
   async search(query: string): Promise<Array<ScoredResult<ToolDetails>>> {
-    return this.toolCache.search(query)
+    return await this.toolCache.search(query)
   }
 
   async refresh(): Promise<boolean> {
-    return this.toolCache.refresh()
+    return await this.toolCache.refresh()
   }
 
   async close(): Promise<void> {
