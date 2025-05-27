@@ -385,6 +385,9 @@ importers:
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
+      yaml:
+        specifier: ^2.3.1
+        version: 2.7.1
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -10214,11 +10217,6 @@ packages:
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
 
-  yaml@2.7.0:
-    resolution: {integrity: sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==}
-    engines: {node: '>= 14'}
-    hasBin: true
-
   yaml@2.7.1:
     resolution: {integrity: sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ==}
     engines: {node: '>= 14'}
@@ -12950,7 +12948,7 @@ snapshots:
       html-to-text: 9.0.5
       ignore: 5.3.2
       ioredis: 5.3.2
-      jsdom: 23.0.1(canvas@2.11.2(encoding@0.1.13))
+      jsdom: 23.0.1(canvas@2.11.2)
       jsonwebtoken: 9.0.2
       lodash: 4.17.21
       mammoth: 1.7.2
@@ -13611,7 +13609,7 @@ snapshots:
       form-data: 4.0.0
       generate-schema: 2.6.0
       html-to-text: 9.0.5
-      jsdom: 23.0.1(canvas@2.11.2(encoding@0.1.13))
+      jsdom: 23.0.1(canvas@2.11.2)
       langchain: 0.3.11(a1b1d8f579acddeca1083aab38e85215)
       lodash: 4.17.21
       mammoth: 1.7.2
@@ -13781,7 +13779,7 @@ snapshots:
 
   '@n8n/permissions@0.17.0': {}
 
-  '@n8n/task-runner@1.16.0(openai@4.78.1(encoding@0.1.13)(zod@3.24.2))':
+  '@n8n/task-runner@1.16.0(openai@4.78.1(encoding@0.1.13)(zod@3.24.1))':
     dependencies:
       '@n8n/config': 1.28.0
       '@n8n/di': 0.3.0
@@ -13790,7 +13788,7 @@ snapshots:
       acorn-walk: 8.3.4
       lodash: 4.17.21
       luxon: 3.4.4
-      n8n-core: 1.78.0(openai@4.78.1(encoding@0.1.13)(zod@3.24.2))
+      n8n-core: 1.78.0(openai@4.78.1(encoding@0.1.13)(zod@3.24.1))
       n8n-workflow: 1.77.0
       nanoid: 3.3.8
       ws: 8.18.2
@@ -19218,7 +19216,7 @@ snapshots:
   jsbn@1.1.0:
     optional: true
 
-  jsdom@23.0.1(canvas@2.11.2(encoding@0.1.13)):
+  jsdom@23.0.1(canvas@2.11.2):
     dependencies:
       cssstyle: 3.0.0
       data-urls: 5.0.0
@@ -19605,7 +19603,7 @@ snapshots:
       micromatch: 4.0.8
       pidtree: 0.6.0
       string-argv: 0.3.2
-      yaml: 2.7.0
+      yaml: 2.7.1
     transitivePeerDependencies:
       - supports-color
 
@@ -20110,7 +20108,7 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  n8n-core@1.78.0(openai@4.78.1(encoding@0.1.13)(zod@3.24.2)):
+  n8n-core@1.78.0(openai@4.78.1(encoding@0.1.13)(zod@3.24.1)):
     dependencies:
       '@langchain/core': 0.3.30(openai@4.78.1(encoding@0.1.13)(zod@3.24.2))
       '@n8n/client-oauth2': 0.22.0
@@ -20299,7 +20297,7 @@ snapshots:
       '@n8n/localtunnel': 3.0.0
       '@n8n/n8n-nodes-langchain': 1.78.0(5f813d7c2002331777990a64fd462480)
       '@n8n/permissions': 0.17.0
-      '@n8n/task-runner': 1.16.0(openai@4.78.1(encoding@0.1.13)(zod@3.24.2))
+      '@n8n/task-runner': 1.16.0(openai@4.78.1(encoding@0.1.13)(zod@3.24.1))
       '@n8n/typeorm': 0.3.20-12(@sentry/node@8.52.1)(ioredis@5.3.2)(mssql@10.0.2)(mysql2@3.11.0)(pg@8.12.0)(redis@4.6.12)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.10.16(@swc/helpers@0.5.15))(@types/node@22.13.4)(typescript@5.8.3))
       '@n8n_io/ai-assistant-sdk': 1.13.0
       '@n8n_io/license-sdk': 2.15.1
@@ -20342,7 +20340,7 @@ snapshots:
       lodash: 4.17.21
       luxon: 3.4.4
       mysql2: 3.11.0
-      n8n-core: 1.78.0(openai@4.78.1(encoding@0.1.13)(zod@3.24.2))
+      n8n-core: 1.78.0(openai@4.78.1(encoding@0.1.13)(zod@3.24.1))
       n8n-editor-ui: 1.78.0
       n8n-nodes-base: 1.78.0(@aws-sdk/client-sts@3.750.0)(@aws-sdk/credential-providers@3.750.0)(asn1.js@5.4.1)(date-fns@4.1.0)(encoding@0.1.13)(gcp-metadata@5.3.0(encoding@0.1.13))(promise-ftp-common@1.1.5)(socks@2.8.4)(zod@3.24.1)
       n8n-workflow: 1.77.0
@@ -23166,46 +23164,6 @@ snapshots:
   vitest@3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2(encoding@0.1.13)))(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1):
     dependencies:
       '@vitest/expect': 3.0.5
-      '@vitest/mocker': 3.0.5(vite@6.1.0(@types/node@22.15.2)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))
-      '@vitest/pretty-format': 3.0.5
-      '@vitest/runner': 3.0.5
-      '@vitest/snapshot': 3.0.5
-      '@vitest/spy': 3.0.5
-      '@vitest/utils': 3.0.5
-      chai: 5.2.0
-      debug: 4.4.0(supports-color@8.1.1)
-      expect-type: 1.1.0
-      magic-string: 0.30.17
-      pathe: 2.0.3
-      std-env: 3.8.0
-      tinybench: 2.9.0
-      tinyexec: 0.3.2
-      tinypool: 1.0.2
-      tinyrainbow: 2.0.0
-      vite: 6.1.0(@types/node@22.13.4)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
-      vite-node: 3.0.5(@types/node@22.13.4)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
-      why-is-node-running: 2.3.0
-    optionalDependencies:
-      '@types/debug': 4.1.12
-      '@types/node': 22.13.4
-      jsdom: 23.0.1(canvas@2.11.2(encoding@0.1.13))
-    transitivePeerDependencies:
-      - jiti
-      - less
-      - lightningcss
-      - msw
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
-
-  vitest@3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2))(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1):
-    dependencies:
-      '@vitest/expect': 3.0.5
       '@vitest/mocker': 3.0.5(vite@6.1.0(@types/node@22.13.4)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))
       '@vitest/pretty-format': 3.0.5
       '@vitest/runner': 3.0.5
@@ -23228,7 +23186,47 @@ snapshots:
     optionalDependencies:
       '@types/debug': 4.1.12
       '@types/node': 22.13.4
-      jsdom: 23.0.1(canvas@2.11.2(encoding@0.1.13))
+      jsdom: 23.0.1(canvas@2.11.2)
+    transitivePeerDependencies:
+      - jiti
+      - less
+      - lightningcss
+      - msw
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - yaml
+
+  vitest@3.0.5(@types/debug@4.1.12)(@types/node@22.13.4)(jiti@2.4.2)(jsdom@23.0.1(canvas@2.11.2))(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1):
+    dependencies:
+      '@vitest/expect': 3.0.5
+      '@vitest/mocker': 3.0.5(vite@6.1.0(@types/node@22.15.2)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1))
+      '@vitest/pretty-format': 3.0.5
+      '@vitest/runner': 3.0.5
+      '@vitest/snapshot': 3.0.5
+      '@vitest/spy': 3.0.5
+      '@vitest/utils': 3.0.5
+      chai: 5.2.0
+      debug: 4.4.0(supports-color@8.1.1)
+      expect-type: 1.1.0
+      magic-string: 0.30.17
+      pathe: 2.0.3
+      std-env: 3.8.0
+      tinybench: 2.9.0
+      tinyexec: 0.3.2
+      tinypool: 1.0.2
+      tinyrainbow: 2.0.0
+      vite: 6.1.0(@types/node@22.13.4)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
+      vite-node: 3.0.5(@types/node@22.13.4)(jiti@2.4.2)(terser@5.39.0)(tsx@4.19.4)(yaml@2.7.1)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@types/debug': 4.1.12
+      '@types/node': 22.13.4
+      jsdom: 23.0.1(canvas@2.11.2)
     transitivePeerDependencies:
       - jiti
       - less
@@ -23268,7 +23266,7 @@ snapshots:
     optionalDependencies:
       '@types/debug': 4.1.12
       '@types/node': 22.15.2
-      jsdom: 23.0.1(canvas@2.11.2(encoding@0.1.13))
+      jsdom: 23.0.1(canvas@2.11.2)
     transitivePeerDependencies:
       - jiti
       - less
@@ -23526,8 +23524,6 @@ snapshots:
   yallist@3.1.1: {}
 
   yallist@4.0.0: {}
-
-  yaml@2.7.0: {}
 
   yaml@2.7.1: {}
 

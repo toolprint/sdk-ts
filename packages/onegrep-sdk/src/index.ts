@@ -2,6 +2,7 @@ export * from './core/index.js'
 
 export * from './connection.js'
 export * from './schema.js'
+export * from './printer.js'
 export * from './toolbox.js'
 export * from './toolcache.js'
 export * from './types.js'

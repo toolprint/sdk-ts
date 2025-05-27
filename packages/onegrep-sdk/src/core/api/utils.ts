@@ -19,8 +19,22 @@ export class OneGrepApiError extends Error {
  */
 function axiosToOneGrepApiError(error: AxiosError): OneGrepApiError {
   return new OneGrepApiError(
-    `An axios error occurred: ${error.code} ${error.config?.method} ${error.config?.url} ${error.response?.status} ${error.message} ${error.response?.data}`
+    `The API call failed: ${error.code} ${error.config?.method} ${error.config?.url} ${error.response?.status} ${error.message} ${JSON.stringify(error.response?.data)}`
   )
+}
+
+function createAndLogApiError(error: unknown): OneGrepApiError {
+  const returnError =
+    error instanceof AxiosError
+      ? axiosToOneGrepApiError(error)
+      : new OneGrepApiError(`An unknown error occurred: ${error}`)
+
+  // Log the error for debugging (NOTE: it's sometimes expected that the API call fails and we handle it upwards)
+  log.error(
+    `API call failed with error ${typeof error}: ${returnError.message}`
+  )
+
+  return returnError
 }
 
 /**
@@ -39,15 +53,7 @@ export async function makeApiCallWithCallback<T>(
     const response = await apiCall()
     onSuccess?.(response)
   } catch (error) {
-    // Log the error
-    log.error(`API call failed: ${typeof error}`)
-
-    if (error instanceof AxiosError) {
-      log.error(`API call failed: ${error.config?.method} ${error.config?.url}`)
-      onError?.(axiosToOneGrepApiError(error))
-    } else {
-      onError?.(new OneGrepApiError(`An unknown error occurred: ${error}`))
-    }
+    onError?.(createAndLogApiError(error))
   }
 }
 
@@ -63,19 +69,9 @@ export async function makeApiCallWithResult<T>(
     const response = await apiCall()
     return { success: true, data: response }
   } catch (error) {
-    // Log the error for debugging
-    log.error(`API call failed: ${typeof error}`)
-
-    if (error instanceof AxiosError) {
-      return {
-        success: false,
-        error: axiosToOneGrepApiError(error)
-      }
-    } else {
-      return {
-        success: false,
-        error: new OneGrepApiError(`An unknown error occurred: ${error}`)
-      }
+    return {
+      success: false,
+      error: createAndLogApiError(error)
     }
   }
 }

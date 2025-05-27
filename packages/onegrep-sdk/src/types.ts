@@ -1,6 +1,7 @@
 import {
   Policy,
   Prompt,
+  Toolprint,
   ToolProperties,
   ToolServerClient
 } from '~/core/api/types.js'
@@ -211,4 +212,9 @@ export interface BaseToolbox<T, R> extends ToolDetailsStore {
    * Closes the toolbox and releases all associated resources.
    */
   close(): Promise<void>
+}
+
+export interface BaseToolPrinter {
+  validate(content: string, format: 'json' | 'yaml'): Promise<Toolprint>
+  register(toolprint: Toolprint): Promise<Toolprint> // ! TODO: return RegisteredToolprint?
 }

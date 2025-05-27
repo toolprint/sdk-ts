@@ -1,6 +1,6 @@
 {
   "name": "@onegrep/sdk",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "type": "module",
   "license": "MIT",
   "author": "OneGrep, Inc.",
@@ -90,7 +90,8 @@
     "keyv": "^5.3.3",
     "pkce-challenge": "^5.0.0",
     "uuid": "^11.1.0",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "yaml": "^2.3.1"
   },
   "peerDependencies": {
     "axios": "^1.7.9",
