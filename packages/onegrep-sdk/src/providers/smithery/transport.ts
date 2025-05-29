@@ -1,4 +1,7 @@
-import { createSmitheryUrl } from '@smithery/sdk'
+import {
+  createSmitheryUrl,
+  SmitheryUrlOptions
+} from '@smithery/sdk/shared/config.js'
 
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
@@ -9,11 +12,9 @@ import { InvalidTransportConfigError } from '~/connection.js'
 
 export function createSmitheryTransports(
   toolServerClient: SmitheryToolServerClient,
-  config: Record<string, any> = {},
-  apiKey?: string
+  smitheryUrlOptions: SmitheryUrlOptions
 ): Transport[] {
-  const smitheryApiKey = apiKey ?? process.env.SMITHERY_API_KEY
-  if (!smitheryApiKey) {
+  if (!smitheryUrlOptions.apiKey) {
     throw new InvalidTransportConfigError(
       'Smithery API key is required for Smithery connections'
     )
@@ -22,7 +23,7 @@ export function createSmitheryTransports(
   // Smithery is moving to prioritize http-streaming transport
   // TODO: Create transports for all connection types?
   const http_connection = toolServerClient.connections.find(
-    (c) => c.type === 'http'
+    (c: any) => c.type === 'http'
   )
   if (!http_connection) {
     throw new InvalidTransportConfigError('No HTTP connection found')
@@ -33,14 +34,14 @@ export function createSmitheryTransports(
     )
   }
 
-  // Validate the provided config against the config schema
-  if (http_connection.config_schema) {
+  // Validate the provided config against the config schema (not required if using profile)
+  if (!smitheryUrlOptions.profile && http_connection.config_schema) {
     log.debug('Validating Smithery launch config')
     const validator = jsonSchemaUtils.getValidator(
       http_connection.config_schema
     )
-    if (!validator(config)) {
-      throw new InvalidTransportConfigError(
+    if (!validator(smitheryUrlOptions.config)) {
+      log.warn(
         `Invalid Smithery launch config for: ${toolServerClient.server_id}`
       )
     }
@@ -49,8 +50,7 @@ export function createSmitheryTransports(
   // ! NOTE: do not log the `smithery_transport_url` as it contains the api key
   const smithery_transport_url = createSmitheryUrl(
     http_connection.deployment_url,
-    config,
-    smitheryApiKey
+    smitheryUrlOptions
   )
   return [new StreamableHTTPClientTransport(smithery_transport_url)]
 }

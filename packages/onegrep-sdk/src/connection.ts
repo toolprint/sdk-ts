@@ -28,6 +28,7 @@ import { createSmitheryTransports as smitheryMcpTransportOptions } from '~/provi
 import { log } from '~/core/log.js'
 import { xBlaxelHeaders } from './providers/blaxel/api.js'
 import { SecretManager } from './secrets/index.js'
+import { SmitheryUrlOptions } from '@smithery/sdk/shared/config.js'
 
 export class ClientSessionError extends Error {
   constructor(message: string) {
@@ -91,14 +92,20 @@ export const smitheryClientSessionMaker: ClientSessionMaker<SmitheryToolServerCl
   {
     create: async (client: SmitheryToolServerClient) => {
       return Promise.resolve(
-        new MultiTransportClientSession(smitheryMcpTransportOptions(client))
+        new MultiTransportClientSession(
+          smitheryMcpTransportOptions(client, {
+            apiKey: process.env.SMITHERY_API_KEY,
+            profile: 'default' // ! Probably won't work, it generates a random profile name
+          })
+        )
       )
     }
   }
 
 export const apiKeySmitheryClientSessionMaker = (
   secretManager: SecretManager,
-  apiKey: string
+  apiKey: string,
+  profileId: string
 ): ClientSessionMaker<SmitheryToolServerClient> => {
   return {
     create: async (client: SmitheryToolServerClient) => {
@@ -136,9 +143,15 @@ export const apiKeySmitheryClientSessionMaker = (
           }
         }
       }
+
+      const smitheryUrlOptions: SmitheryUrlOptions = {
+        apiKey,
+        profile: profileId,
+        config: smitheryConfig
+      }
       return Promise.resolve(
         new MultiTransportClientSession(
-          smitheryMcpTransportOptions(client, smitheryConfig, apiKey)
+          smitheryMcpTransportOptions(client, smitheryUrlOptions)
         )
       )
     }

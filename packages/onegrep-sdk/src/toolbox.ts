@@ -82,7 +82,8 @@ const registerSessionMakers = async (secretManager: SecretManager) => {
   const requestedSecretNames = [
     'BL_API_KEY',
     'BL_WORKSPACE',
-    'SMITHERY_API_KEY'
+    'SMITHERY_API_KEY',
+    'SMITHERY_PROFILE_ID'
   ]
   // Get requested secrets (do not throw an error if any are missing)
   const secrets = await secretManager.getSecrets(requestedSecretNames, false)
@@ -102,11 +103,12 @@ const registerSessionMakers = async (secretManager: SecretManager) => {
     log.info('Registered BlaxelSessionMaker')
   }
 
-  // Smithery provider requires an API key
-  if (secrets.has('SMITHERY_API_KEY')) {
+  // Smithery provider requires an API key and profile id
+  if (secrets.has('SMITHERY_API_KEY') && secrets.has('SMITHERY_PROFILE_ID')) {
     const smitherySessionMaker = apiKeySmitheryClientSessionMaker(
       secretManager,
-      secrets.get('SMITHERY_API_KEY')!
+      secrets.get('SMITHERY_API_KEY')!,
+      secrets.get('SMITHERY_PROFILE_ID')!
     )
     defaultToolServerSessionFactory.register(
       'smithery',
