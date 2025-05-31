@@ -46,9 +46,9 @@ export class OneGrepApiHighLevelClient {
 
   async initialize(): Promise<InitializeResponse> {
     const result = await makeApiCallWithResult<InitializeResponse>(async () => {
-      return (await SdkService.initializeApiV1SdkInitializeGet({
+      return await SdkService.initializeApiV1SdkInitializeGet({
         client: this.apiClient
-      })) as unknown as InitializeResponse
+      })
     })
     if (result.error) {
       throw result.error
@@ -59,9 +59,9 @@ export class OneGrepApiHighLevelClient {
   async authStatus(): Promise<AuthenticationStatus> {
     const result = await makeApiCallWithResult<AuthenticationStatus>(
       async () => {
-        return (await AccountService.getAuthStatusApiV1AccountAuthStatusGet({
+        return await AccountService.getAuthStatusApiV1AccountAuthStatusGet({
           client: this.apiClient
-        })) as unknown as AuthenticationStatus
+        })
       }
     )
     if (result.error) {
@@ -281,6 +281,28 @@ export class OneGrepApiHighLevelClient {
         })
       return toolProperties
     })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  async upsertToolTags(
+    integrationName: string,
+    toolNames: string[],
+    tags: Record<string, any>
+  ): Promise<Array<ToolResource>> {
+    const result = await makeApiCallWithResult<Array<ToolResource>>(
+      async () => {
+        return await IntegrationsService.upsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsCustomTagsPost(
+          {
+            client: this.apiClient,
+            path: { integration_name: integrationName },
+            body: { tool_names: toolNames, tags: tags }
+          }
+        )
+      }
+    )
     if (result.error) {
       throw result.error
     }
