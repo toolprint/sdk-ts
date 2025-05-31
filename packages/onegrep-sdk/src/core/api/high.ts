@@ -1,38 +1,54 @@
-import { ToolServerId } from '~/types.js'
-
-import { OneGrepApiClient } from './client.js'
 import {
-  SearchResponseScoredItemTool,
-  Tool,
-  ToolProperties,
-  ToolResource,
+  AuthenticationStatus,
+  ToolServerProvider,
   ToolServer,
-  ToolServerClient,
-  InitializeResponse,
+  Tool,
+  SearchService,
+  IntegrationsService,
+  ToolprintRecommendationReadable,
+  RegisteredToolprintReadable,
+  ToolprintInput,
+  ToolprintOutput,
+  ProvidersService,
+  AccountInformation
+} from '@repo/onegrep-api-client'
+import { ToolProperties } from '@repo/onegrep-api-client'
+import { ToolResource } from '@repo/onegrep-api-client'
+import { SearchResponseScoredItemTool } from '@repo/onegrep-api-client'
+import {
+  DefaultService,
+  SdkService,
+  AccountService,
+  FlagsService,
   UpsertSecretRequest,
   UpsertSecretResponse,
-  FlagsResponse,
-  AuthenticationStatus,
-  ToolprintRecommendation,
-  Toolprint,
-  RegisteredToolprint
-} from './types.js'
-
+  ServersService,
+  ToolsService,
+  ToolprintsService,
+  SecretsService,
+  InitializeResponse,
+  GetAllFlagsResponse
+} from '@repo/onegrep-api-client'
 import { makeApiCallWithResult } from './utils.js'
+import { OneGrepApiClient, ToolServerClient } from './types.js'
 
 export class OneGrepApiHighLevelClient {
   constructor(private readonly apiClient: OneGrepApiClient) {}
 
   async healthCheck(): Promise<boolean> {
     const result = await makeApiCallWithResult<void>(async () => {
-      await this.apiClient.health_health_get()
+      await DefaultService.healthHealthGet({
+        client: this.apiClient
+      })
     })
     return result.success
   }
 
   async initialize(): Promise<InitializeResponse> {
     const result = await makeApiCallWithResult<InitializeResponse>(async () => {
-      return await this.apiClient.initialize_api_v1_sdk_initialize_get()
+      return (await SdkService.initializeApiV1SdkInitializeGet({
+        client: this.apiClient
+      })) as unknown as InitializeResponse
     })
     if (result.error) {
       throw result.error
@@ -43,7 +59,9 @@ export class OneGrepApiHighLevelClient {
   async authStatus(): Promise<AuthenticationStatus> {
     const result = await makeApiCallWithResult<AuthenticationStatus>(
       async () => {
-        return await this.apiClient.get_auth_status_api_v1_account_auth_status_get()
+        return (await AccountService.getAuthStatusApiV1AccountAuthStatusGet({
+          client: this.apiClient
+        })) as unknown as AuthenticationStatus
       }
     )
     if (result.error) {
@@ -52,9 +70,11 @@ export class OneGrepApiHighLevelClient {
     return result.data!
   }
 
-  async getFlags(): Promise<FlagsResponse> {
-    const result = await makeApiCallWithResult<FlagsResponse>(async () => {
-      return await this.apiClient.get_all_flags_api_v1_flags__get()
+  async getAccountInformation(): Promise<AccountInformation> {
+    const result = await makeApiCallWithResult<AccountInformation>(async () => {
+      return await AccountService.getAccountInformationApiV1AccountGet({
+        client: this.apiClient
+      })
     })
     if (result.error) {
       throw result.error
@@ -62,10 +82,43 @@ export class OneGrepApiHighLevelClient {
     return result.data!
   }
 
+  async createAccountByInvitation(
+    invitationCode: string,
+    email: string
+  ): Promise<AccountInformation> {
+    const result = await makeApiCallWithResult<AccountInformation>(async () => {
+      return await AccountService.createAccountByInvitationApiV1AccountInvitationCodePost(
+        {
+          client: this.apiClient,
+          body: { invitation_code: invitationCode, email: email }
+        }
+      )
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  async getFlags(): Promise<Record<string, boolean | string>> {
+    const result = await makeApiCallWithResult<GetAllFlagsResponse>(
+      async () => {
+        return await FlagsService.getAllFlagsApiV1FlagsGet({
+          client: this.apiClient
+        })
+      }
+    )
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!.flags as unknown as Record<string, boolean>
+  }
+
   async getSecret(secretName: string): Promise<any> {
     const result = await makeApiCallWithResult<any>(async () => {
-      return await this.apiClient.get_secret_api_v1_secrets__secret_name__get({
-        params: { secret_name: secretName }
+      return await SecretsService.getSecretApiV1SecretsSecretNameGet({
+        client: this.apiClient,
+        path: { secret_name: secretName }
       })
     })
     if (result.error) {
@@ -77,20 +130,19 @@ export class OneGrepApiHighLevelClient {
   async upsertSecret(secretName: string, secret: string): Promise<boolean> {
     const result = await makeApiCallWithResult<UpsertSecretResponse>(
       async () => {
-        const body: UpsertSecretRequest = {
+        const request: UpsertSecretRequest = {
           value_type: 'string',
           value: secret
         }
-        return await this.apiClient.upsert_secret_api_v1_secrets__secret_name__put(
-          {
-            request: body
+        return await SecretsService.upsertSecretApiV1SecretsSecretNamePut({
+          client: this.apiClient,
+          body: {
+            request: request
           },
-          {
-            params: {
-              secret_name: secretName
-            }
+          path: {
+            secret_name: secretName
           }
-        )
+        })
       }
     )
     if (result.error) {
@@ -99,14 +151,28 @@ export class OneGrepApiHighLevelClient {
     return result.data!.success
   }
 
+  async getAllProviders(): Promise<ToolServerProvider[]> {
+    const result = await makeApiCallWithResult<ToolServerProvider[]>(
+      async () => {
+        return await ProvidersService.listProvidersApiV1ProvidersGet({
+          client: this.apiClient
+        })
+      }
+    )
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
   async getServerName(serverId: string): Promise<string> {
     const result = await makeApiCallWithResult<ToolServer>(async () => {
-      const toolServer =
-        await this.apiClient.get_server_api_v1_servers__server_id__get({
-          params: {
-            server_id: serverId
-          }
-        })
+      const toolServer = await ServersService.getServerApiV1ServersServerIdGet({
+        client: this.apiClient,
+        path: {
+          server_id: serverId
+        }
+      })
       return toolServer
     })
     if (result.error) {
@@ -115,23 +181,45 @@ export class OneGrepApiHighLevelClient {
     return result.data!.name
   }
 
-  async getAllServers(): Promise<Map<ToolServerId, ToolServer>> {
+  async getAllServers(): Promise<Record<string, ToolServer>> {
     const result = await makeApiCallWithResult<ToolServer[]>(async () => {
-      return await this.apiClient.list_servers_api_v1_servers__get()
+      return await ServersService.listServersApiV1ServersGet({
+        client: this.apiClient
+      })
     })
     if (result.error) {
       throw result.error
     }
-    const toolServersMap: Map<ToolServerId, ToolServer> = new Map()
+    const toolServersMap: Record<string, ToolServer> = {}
     for (const toolServer of result.data!) {
-      toolServersMap.set(toolServer.id, toolServer)
+      toolServersMap[toolServer.id] = toolServer
     }
     return toolServersMap
   }
 
   async getAllServerNames(): Promise<string[]> {
     const servers = await this.getAllServers()
-    return Array.from(servers.values()).map((server) => server.name)
+    return Object.values(servers).map((server) => server.name)
+  }
+
+  async getAllServersForProvider(
+    providerName: string
+  ): Promise<Record<string, ToolServer>> {
+    const providers = await this.getAllProviders()
+    const provider = providers.find(
+      (provider) => provider.name === providerName
+    )
+    if (!provider) {
+      throw new Error(`Provider ${providerName} not found`)
+    }
+    const servers = await this.getAllServers()
+    const serversByProvider: Record<string, ToolServer> = {}
+    for (const server of Object.values(servers)) {
+      if (server.provider_id === provider.id) {
+        serversByProvider[server.id] = server as ToolServer
+      }
+    }
+    return serversByProvider
   }
 
   /**
@@ -142,13 +230,12 @@ export class OneGrepApiHighLevelClient {
   async getServerClient(serverId: string): Promise<ToolServerClient> {
     const result = await makeApiCallWithResult<ToolServerClient>(async () => {
       const toolServerClient =
-        await this.apiClient.get_server_client_api_v1_servers__server_id__client_get(
-          {
-            params: {
-              server_id: serverId
-            }
+        await ServersService.getServerClientApiV1ServersServerIdClientGet({
+          client: this.apiClient,
+          path: {
+            server_id: serverId
           }
-        )
+        })
       return toolServerClient
     })
     if (result.error) {
@@ -159,7 +246,9 @@ export class OneGrepApiHighLevelClient {
 
   async listTools(): Promise<Tool[]> {
     const result = await makeApiCallWithResult<Tool[]>(async () => {
-      return await this.apiClient.list_tools_api_v1_tools__get()
+      return await ToolsService.listToolsApiV1ToolsGet({
+        client: this.apiClient
+      })
     })
     if (result.error) {
       throw result.error
@@ -169,8 +258,9 @@ export class OneGrepApiHighLevelClient {
 
   async getTool(toolId: string): Promise<Tool> {
     const result = await makeApiCallWithResult<Tool>(async () => {
-      return await this.apiClient.get_tool_api_v1_tools__tool_id__get({
-        params: {
+      return await ToolsService.getToolApiV1ToolsToolIdGet({
+        client: this.apiClient,
+        path: {
           tool_id: toolId
         }
       })
@@ -184,13 +274,11 @@ export class OneGrepApiHighLevelClient {
   async getToolProperties(toolId: string): Promise<ToolProperties> {
     const result = await makeApiCallWithResult<ToolProperties>(async () => {
       const toolProperties =
-        await this.apiClient.get_tool_properties_api_v1_tools__tool_id__properties_get(
-          {
-            params: {
-              tool_id: toolId
-            }
+        await ToolsService.getToolPropertiesApiV1ToolsToolIdPropertiesGet({
+          path: {
+            tool_id: toolId
           }
-        )
+        })
       return toolProperties
     })
     if (result.error) {
@@ -202,13 +290,12 @@ export class OneGrepApiHighLevelClient {
   async getToolResource(toolId: string): Promise<ToolResource> {
     const result = await makeApiCallWithResult<ToolResource>(async () => {
       const toolResource =
-        await this.apiClient.get_tool_resource_api_v1_tools__tool_id__resource_get(
-          {
-            params: {
-              tool_id: toolId
-            }
+        await ToolsService.getToolResourceApiV1ToolsToolIdResourceGet({
+          client: this.apiClient,
+          path: {
+            tool_id: toolId
           }
-        )
+        })
       return toolResource
     })
     if (result.error) {
@@ -222,11 +309,12 @@ export class OneGrepApiHighLevelClient {
   ): Promise<Map<string, ToolResource>> {
     const result = await makeApiCallWithResult<ToolResource[]>(async () => {
       const toolResources =
-        await this.apiClient.get_tool_resources_batch_api_v1_tools_resources_batch_post(
-          {
+        await ToolsService.getToolResourcesBatchApiV1ToolsResourcesBatchPost({
+          client: this.apiClient,
+          body: {
             ids: toolIds
           }
-        )
+        })
       return toolResources
     })
     if (result.error) {
@@ -244,9 +332,10 @@ export class OneGrepApiHighLevelClient {
     integrationName: string
   ): Promise<ToolResource[]> {
     const result = await makeApiCallWithResult<ToolResource[]>(async () => {
-      return await this.apiClient.get_integration_tools_api_v1_integrations__integration_name__tools_get(
+      return await IntegrationsService.getIntegrationToolsApiV1IntegrationsIntegrationNameToolsGet(
         {
-          params: {
+          client: this.apiClient,
+          path: {
             integration_name: integrationName
           }
         }
@@ -261,8 +350,11 @@ export class OneGrepApiHighLevelClient {
   async searchTools(query: string): Promise<SearchResponseScoredItemTool> {
     const result = await makeApiCallWithResult<SearchResponseScoredItemTool>(
       async () => {
-        return await this.apiClient.search_tools_api_v1_search_tools_post({
-          query: query
+        return await SearchService.searchToolsApiV1SearchToolsPost({
+          client: this.apiClient,
+          body: {
+            query: query
+          }
         })
       }
     )
@@ -272,12 +364,17 @@ export class OneGrepApiHighLevelClient {
     return result.data!
   }
 
-  async recommendToolprint(goal: string): Promise<ToolprintRecommendation> {
-    const result = await makeApiCallWithResult<ToolprintRecommendation>(
+  async recommendToolprint(
+    goal: string
+  ): Promise<ToolprintRecommendationReadable> {
+    const result = await makeApiCallWithResult<ToolprintRecommendationReadable>(
       async () => {
-        return await this.apiClient.get_toolprint_recommendation_api_v1_search_toolprints_recommendation_post(
+        return await SearchService.getToolprintRecommendationApiV1SearchToolprintsRecommendationPost(
           {
-            query: goal
+            client: this.apiClient,
+            body: {
+              query: goal
+            }
           }
         )
       }
@@ -288,25 +385,33 @@ export class OneGrepApiHighLevelClient {
     return result.data!
   }
 
-  async newToolprint(toolprint: Toolprint): Promise<Toolprint> {
-    const result = await makeApiCallWithResult<Toolprint>(async () => {
-      const registeredToolprint: RegisteredToolprint =
-        await this.apiClient.create_toolprint_api_v1_toolprints__post(toolprint)
-      return registeredToolprint.toolprint
-    })
-    if (result.error) {
-      throw result.error
-    }
-    return result.data!
-  }
-
-  async newToolprintFromJson(json: string): Promise<Toolprint> {
-    const result = await makeApiCallWithResult<Toolprint>(async () => {
-      const registeredToolprint: RegisteredToolprint =
-        await this.apiClient.create_toolprint_json_api_v1_toolprints_json_post({
-          content: json
+  async newToolprint(
+    toolprint: ToolprintInput
+  ): Promise<RegisteredToolprintReadable> {
+    const result = await makeApiCallWithResult<RegisteredToolprintReadable>(
+      async () => {
+        return await ToolprintsService.createToolprintApiV1ToolprintsPost({
+          client: this.apiClient,
+          body: toolprint
         })
-      return registeredToolprint.toolprint
+      }
+    )
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  async newToolprintFromJson(json: string): Promise<ToolprintOutput> {
+    const result = await makeApiCallWithResult<ToolprintOutput>(async () => {
+      const output: ToolprintOutput =
+        (await ToolprintsService.createToolprintJsonApiV1ToolprintsJsonPost({
+          client: this.apiClient,
+          body: {
+            content: json
+          }
+        })) as unknown as ToolprintOutput
+      return output
     })
     if (result.error) {
       throw result.error
@@ -314,24 +419,30 @@ export class OneGrepApiHighLevelClient {
     return result.data!
   }
 
-  async newToolprintFromYaml(yaml: string): Promise<Toolprint> {
-    const result = await makeApiCallWithResult<Toolprint>(async () => {
-      const registeredToolprint: RegisteredToolprint =
-        await this.apiClient.create_toolprint_yaml_api_v1_toolprints_yaml_post(
-          yaml
-        )
-      return registeredToolprint.toolprint
+  async newToolprintFromYaml(
+    yaml: string
+  ): Promise<RegisteredToolprintReadable> {
+    const result = await makeApiCallWithResult<ToolprintOutput>(async () => {
+      const output: ToolprintOutput =
+        (await ToolprintsService.createToolprintYamlApiV1ToolprintsYamlPost({
+          client: this.apiClient,
+          body: yaml
+        })) as unknown as ToolprintOutput
+      return output
     })
     if (result.error) {
       throw result.error
     }
-    return result.data!
+    return result.data! as unknown as RegisteredToolprintReadable
   }
 
-  async validateToolprint(toolprint: Toolprint): Promise<boolean> {
-    const result = await makeApiCallWithResult<unknown>(async () => {
-      return await this.apiClient.validate_toolprint_api_v1_toolprints_validate_post(
-        toolprint
+  async validateToolprint(toolprint: ToolprintInput): Promise<boolean> {
+    const result = await makeApiCallWithResult<boolean>(async () => {
+      return await ToolprintsService.validateToolprintApiV1ToolprintsValidatePost(
+        {
+          client: this.apiClient,
+          body: toolprint
+        }
       )
     })
     if (result.error) {
@@ -343,10 +454,13 @@ export class OneGrepApiHighLevelClient {
   }
 
   async validateToolprintInJson(json: string): Promise<boolean> {
-    const result = await makeApiCallWithResult<unknown>(async () => {
-      return await this.apiClient.validate_toolprint_json_api_v1_toolprints_validate_json_post(
+    const result = await makeApiCallWithResult<boolean>(async () => {
+      return await ToolprintsService.validateToolprintJsonApiV1ToolprintsValidateJsonPost(
         {
-          content: json
+          client: this.apiClient,
+          body: {
+            content: json
+          }
         }
       )
     })
@@ -359,9 +473,12 @@ export class OneGrepApiHighLevelClient {
   }
 
   async validateToolprintInYaml(yaml: string): Promise<boolean> {
-    const result = await makeApiCallWithResult<unknown>(async () => {
-      return await this.apiClient.validate_toolprint_yaml_api_v1_toolprints_validate_yaml_post(
-        yaml
+    const result = await makeApiCallWithResult<string>(async () => {
+      return await ToolprintsService.validateToolprintYamlApiV1ToolprintsValidateYamlPost(
+        {
+          client: this.apiClient,
+          body: yaml
+        }
       )
     })
     if (result.error) {
@@ -374,7 +491,11 @@ export class OneGrepApiHighLevelClient {
 
   async getToolprintJsonSchema(): Promise<object> {
     const result = await makeApiCallWithResult<object>(async () => {
-      return await this.apiClient.get_toolprint_schema_api_v1_toolprints__well_known_schema_get()
+      return await ToolprintsService.getToolprintSchemaApiV1ToolprintsWellKnownSchemaGet(
+        {
+          client: this.apiClient
+        }
+      )
     })
     if (result.error) {
       throw result.error
@@ -383,12 +504,16 @@ export class OneGrepApiHighLevelClient {
   }
 
   async getToolprintTemplate(): Promise<string> {
-    const result = await makeApiCallWithResult<unknown>(async () => {
-      return await this.apiClient.get_toolprint_template_api_v1_toolprints__well_known_template_get()
+    const result = await makeApiCallWithResult<string>(async () => {
+      return await ToolprintsService.getToolprintTemplateApiV1ToolprintsWellKnownTemplateGet(
+        {
+          client: this.apiClient
+        }
+      )
     })
     if (result.error) {
       throw result.error
     }
-    return result.data! as unknown as string
+    return result.data!
   }
 }

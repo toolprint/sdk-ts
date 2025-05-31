@@ -1,8 +1,5 @@
-import { z } from 'zod'
-
 import { loggingSchema, getEnv, getLogger } from '@repo/utils'
 import { describe, expect, it } from 'vitest'
-import type { Logger } from '@repo/utils'
 
 const testLogLevel = () => {
   return process.env.ONEGREP_SDK_TEST_LOG_LEVEL ?? 'debug'

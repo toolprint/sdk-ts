@@ -3,29 +3,28 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "types": "dist/types/index.d.ts",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "types": "dist/types/src/index.d.ts",
+  "main": "dist/cjs/src/index.js",
+  "module": "dist/esm/src/index.js",
   "exports": {
     "import": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./dist/esm/index.js"
+      "types": "./dist/types/src/index.d.ts",
+      "default": "./dist/esm/src/index.js"
     },
     "require": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./dist/cjs/index.js"
+      "types": "./dist/types/src/index.d.ts",
+      "default": "./dist/cjs/src/index.js"
     }
   },
   "outputs": [
     "dist/**/*"
   ],
   "scripts": {
-    "generate": "openapi-zod-client ./openapi/onegrep-api.yaml --output ./src/api.ts --prettier ../../prettier.config.js --export-schemas --export-types --strict-objects --default-status --with-docs --with-description",
-    "check-types": "tsc -p tsconfig.check.json --noEmit",
-    "build:types": "tsc -p tsconfig.types.json",
+    "generate": "openapi-ts",
+    "check-types": "tsc -p tsconfig.json --noEmit",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
-    "build": "pnpm run clean:dist && pnpm run build:types && pnpm run build:cjs && pnpm run build:esm",
+    "build": "npm run build:cjs && npm run build:esm",
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest watch --config vitest.config.ts",
     "clean:dist": "rimraf ./dist",
@@ -35,19 +34,24 @@
     "clean:modules": "rimraf ./node_modules"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.69.0",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.13.4",
     "openapi-endpoint-trimmer": "^2.0.1",
     "openapi-zod-client": "^1.18.3",
+    "path": "^0.12.7",
     "rimraf": "^6.0.1",
+    "tsup": "^8.3.6",
     "typescript": "latest",
     "vitest": "^3.0.5"
   },
   "dependencies": {
+    "@hey-api/client-axios": "^0.8.0",
+    "@hey-api/client-fetch": "^0.11.0",
     "@repo/utils": "workspace:*",
     "@zodios/core": "^10.9.6",
-    "zod": "^3.24.2",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.2"
   },
   "peerDependencies": {
     "axios": "^1.7.9"

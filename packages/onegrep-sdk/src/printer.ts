@@ -1,7 +1,10 @@
 import { BaseToolPrinter } from './types.js'
-import { Toolprint } from './core/api/types.js'
 import { OneGrepApiHighLevelClient } from './core/index.js'
 import YAML from 'yaml'
+import {
+  RegisteredToolprintReadable,
+  ToolprintInput
+} from '@repo/onegrep-api-client'
 
 class ToolprintValidationError extends Error {
   constructor(message: string, cause?: unknown) {
@@ -20,7 +23,10 @@ class ToolprintRegistrationError extends Error {
 export class ToolPrinter implements BaseToolPrinter {
   constructor(private readonly client: OneGrepApiHighLevelClient) {}
 
-  async validate(content: string, format: 'json' | 'yaml'): Promise<Toolprint> {
+  async validate(
+    content: string,
+    format: 'json' | 'yaml'
+  ): Promise<ToolprintInput> {
     // ! TODO: validation in API should return Toolprint object parsed and validated
     if (format === 'json') {
       const parsed = JSON.parse(content)
@@ -33,7 +39,7 @@ export class ToolPrinter implements BaseToolPrinter {
           new Error('Validation failures: ' + JSON.stringify(isValid)) // TODO: return validation errors from API
         )
       }
-      return parsed as Toolprint
+      return parsed as ToolprintInput
     } else if (format === 'yaml') {
       const parsed = YAML.parse(content)
       const isValid = await this.client.validateToolprintInYaml(
@@ -45,13 +51,15 @@ export class ToolPrinter implements BaseToolPrinter {
           new Error('Validation failures: ' + JSON.stringify(isValid)) // TODO: return validation errors from API
         )
       }
-      return parsed as Toolprint
+      return parsed as ToolprintInput
     } else {
       throw new ToolprintValidationError('Invalid format: ' + format)
     }
   }
 
-  async register(toolprint: Toolprint): Promise<Toolprint> {
+  async register(
+    toolprint: ToolprintInput
+  ): Promise<RegisteredToolprintReadable> {
     try {
       return await this.client.newToolprint(toolprint)
     } catch (error) {

@@ -249,6 +249,40 @@ components:
         - event_name
       title: CanonicalResource
       type: object
+    ComposioToolServerClient:
+      description: A client for a tool server that is a composio server.
+      properties:
+        allowed_tools:
+          items:
+            type: string
+          title: Allowed Tools
+          type: array
+        auth_config_id:
+          title: Auth Config Id
+          type: string
+        client_type:
+          const: composio
+          title: Client Type
+          type: string
+        composio_server_id:
+          title: Composio Server Id
+          type: string
+        mcp_url:
+          title: Mcp Url
+          type: string
+        server_id:
+          format: uuid
+          title: Server Id
+          type: string
+      required:
+        - server_id
+        - client_type
+        - composio_server_id
+        - auth_config_id
+        - allowed_tools
+        - mcp_url
+      title: ComposioToolServerClient
+      type: object
     CreateInvitationRequest:
       description: Request model for creating an invitation
       properties:
@@ -358,6 +392,7 @@ components:
             discriminator:
               mapping:
                 blaxel: '#/components/schemas/BlaxelToolServerClient'
+                composio: '#/components/schemas/ComposioToolServerClient'
                 mcp: '#/components/schemas/MCPToolServerClient'
                 smithery: '#/components/schemas/SmitheryToolServerClient'
               propertyName: client_type
@@ -365,6 +400,7 @@ components:
               - $ref: '#/components/schemas/MCPToolServerClient'
               - $ref: '#/components/schemas/BlaxelToolServerClient'
               - $ref: '#/components/schemas/SmitheryToolServerClient'
+              - $ref: '#/components/schemas/ComposioToolServerClient'
           title: Clients
           type: array
         doppler_config:
@@ -3104,6 +3140,7 @@ paths:
                 discriminator:
                   mapping:
                     blaxel: '#/components/schemas/BlaxelToolServerClient'
+                    composio: '#/components/schemas/ComposioToolServerClient'
                     mcp: '#/components/schemas/MCPToolServerClient'
                     smithery: '#/components/schemas/SmitheryToolServerClient'
                   propertyName: client_type
@@ -3111,6 +3148,7 @@ paths:
                   - $ref: '#/components/schemas/MCPToolServerClient'
                   - $ref: '#/components/schemas/BlaxelToolServerClient'
                   - $ref: '#/components/schemas/SmitheryToolServerClient'
+                  - $ref: '#/components/schemas/ComposioToolServerClient'
                 title: >-
                   Response Get Server Client Api V1 Servers  Server Id  Client
                   Get

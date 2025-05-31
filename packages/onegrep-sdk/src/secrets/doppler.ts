@@ -2,7 +2,9 @@ import DopplerSDK from '@dopplerhq/node-sdk'
 
 import { SecretManager } from './types.js'
 
-import { InitializeResponse, OneGrepApiClient } from '~/core/index.js'
+import { InitializeResponse } from '@repo/onegrep-api-client'
+
+import { OneGrepApiClient } from '~/core/index.js'
 import { OneGrepApiHighLevelClient } from '~/core/index.js'
 import { clientFromConfig } from '~/core/index.js'
 

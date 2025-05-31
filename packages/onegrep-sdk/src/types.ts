@@ -1,10 +1,12 @@
 import {
+  ToolProperties,
   Policy,
   Prompt,
-  Toolprint,
-  ToolProperties,
-  ToolServerClient
-} from '~/core/api/types.js'
+  ToolprintInput,
+  RegisteredToolprintReadable
+} from '@repo/onegrep-api-client'
+
+import { ToolServerClient } from '~/core/api/types.js'
 
 export type ToolServerProviderId = string
 export type ToolServerId = string
@@ -215,6 +217,6 @@ export interface BaseToolbox<T, R> extends ToolDetailsStore {
 }
 
 export interface BaseToolPrinter {
-  validate(content: string, format: 'json' | 'yaml'): Promise<Toolprint>
-  register(toolprint: Toolprint): Promise<Toolprint> // ! TODO: return RegisteredToolprint?
+  validate(content: string, format: 'json' | 'yaml'): Promise<ToolprintInput>
+  register(toolprint: ToolprintInput): Promise<RegisteredToolprintReadable>
 }

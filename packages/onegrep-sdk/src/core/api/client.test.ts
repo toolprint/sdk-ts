@@ -2,35 +2,43 @@ import { clientFromConfig } from './client.js'
 import { describe, it, expect } from 'vitest'
 
 import { testLog } from '../../../test/log.test.js'
+import { ToolServer } from 'node_modules/@repo/onegrep-api-client/dist/types/src/types.gen.js'
 
 const log = testLog
 
 describe('API Client Integration Tests', () => {
-  it.skip('should successfully call the health endpoint', async () => {
+  it('should successfully call the health endpoint', async () => {
     const client = clientFromConfig()
-    const response = await client.health_health_get()
+    const response = await client.get({
+      url: '/health'
+    })
     expect(response).toBeDefined()
-    log.info(response)
+    expect(response.status).toBe(200)
+    log.info(JSON.stringify(response.data))
   })
 
   it('should successfully list servers', async () => {
     const client = clientFromConfig()
-    const response = await client.list_servers_api_v1_servers__get()
+    const response = await client.get({
+      url: '/api/v1/servers'
+    })
     expect(response).toBeDefined()
-    log.info(response)
+    expect(response.status).toBe(200)
+    log.info(JSON.stringify(response.data))
   })
 
   it('should successfully get server client', async () => {
     const client = clientFromConfig()
-    const servers = await client.list_servers_api_v1_servers__get()
-    const server = servers[0]
-    const response =
-      await client.get_server_client_api_v1_servers__server_id__client_get({
-        params: {
-          server_id: server.id
-        }
-      })
+    const serversResponse = await client.get({
+      url: '/api/v1/servers'
+    })
+    const servers = serversResponse.data as Map<string, ToolServer>
+    const server = Array.from(servers.values())[0]
+    const response = await client.get({
+      url: `/api/v1/servers/${server.id}/client`
+    })
     expect(response).toBeDefined()
-    log.info(response)
+    expect(response.status).toBe(200)
+    log.info(JSON.stringify(response.data))
   })
 })

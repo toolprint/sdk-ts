@@ -15,6 +15,7 @@ import 'dotenv/config'
 import { fail } from 'assert'
 
 import { testLog } from '../test/log.test.js'
+import { ToolServer } from '@repo/onegrep-api-client'
 
 const log = testLog
 
@@ -166,6 +167,23 @@ describe('Base Toolbox Tests', () => {
   })
 })
 
+describe('Search Toolbox Tests', () => {
+  let toolbox: Toolbox
+
+  beforeAll(async () => {
+    log.info('Getting toolbox')
+    toolbox = await getToolbox()
+    log.info('Toolbox fetched')
+  })
+
+  it('should be able to search for tools', async () => {
+    const searchResults = await toolbox.search('search')
+    expect(searchResults).toBeDefined()
+    expect(searchResults.length).toBeGreaterThan(0)
+    log.info(`Search results: ${JSON.stringify(searchResults)}`)
+  })
+})
+
 describe('Blaxel Toolbox Tests', () => {
   let toolbox: Toolbox
 
@@ -174,10 +192,18 @@ describe('Blaxel Toolbox Tests', () => {
   const integrationName = 'exa'
   const toolName = 'web_search'
 
+  let blaxelServers: Record<string, ToolServer>
+
   beforeAll(async () => {
     log.info('Getting toolbox')
     toolbox = await getToolbox()
     log.info('Toolbox fetched')
+    blaxelServers = await toolbox.api.getAllServersForProvider('blaxel')
+    log.info(`Blaxel servers: ${JSON.stringify(blaxelServers)}`)
+
+    if (Object.keys(blaxelServers).length === 0) {
+      throw new Error('No Blaxel servers found')
+    }
   })
 
   afterAll(async () => {
@@ -295,10 +321,22 @@ describe('Blaxel Toolbox Tests', () => {
 describe('Smithery Toolbox Tests', () => {
   let toolbox: Toolbox
 
+  let smitheryServers: Record<string, ToolServer>
+
+  const serverId = '3f9bf702-a521-5f41-b6d7-076067314163' // @hesreallyhim/mcp-server-isitdown
+  const serverName = '@hesreallyhim/mcp-server-isitdown'
+  const toolName = 'get_website_status'
+
   beforeAll(async () => {
     log.info('Getting toolbox')
     toolbox = await getToolbox()
     log.info('Toolbox fetched')
+    smitheryServers = await toolbox.api.getAllServersForProvider('smithery')
+    log.info(`Smithery servers: ${JSON.stringify(smitheryServers)}`)
+
+    if (Object.keys(smitheryServers).length === 0) {
+      throw new Error('No Smithery servers found')
+    }
   })
 
   afterAll(async () => {
@@ -308,10 +346,24 @@ describe('Smithery Toolbox Tests', () => {
     }
   })
 
-  it('should be able to make a tool call with valid input', async () => {
-    const toolDetails = await toolbox.get(
-      '55e6659a-1c58-525f-8d0c-2f6899883fad'
-    ) // ! @PhillipRt/think-mcp-server
+  it('should be able to make a tool call with invalid input', async () => {
+    const smitheryServer = Object.values(smitheryServers).find(
+      (server) => server.id === serverId
+    )
+    if (!smitheryServer) {
+      throw new Error(`Server ${serverId} not found`)
+    }
+    const toolMap = await toolbox.filterTools({
+      integrationNames: [smitheryServer.name]
+    })
+    const toolId = Array.from(toolMap.values()).find(
+      (tool) => tool.name === toolName
+    )?.id
+    if (!toolId) {
+      throw new Error(`Tool ${toolName} not found`)
+    }
+
+    const toolDetails = await toolbox.get(toolId)
     expect(toolDetails).toBeDefined()
     log.info(`found tool: ${toolDetails.name}`)
 
@@ -323,7 +375,7 @@ describe('Smithery Toolbox Tests', () => {
     log.info(`equipped tool: ${tool.details.name}`)
 
     const args = {
-      thought: 'Is the moon made of cheese?'
+      invalid_key: 'baz'
     }
 
     const response: ToolCallResponse<any> = await tool.handle.call({
@@ -332,7 +384,7 @@ describe('Smithery Toolbox Tests', () => {
     })
     expect(response).toBeDefined()
     expect(response).toBeTypeOf('object')
-    expect(response.isError).toBe(false)
+    expect(response.isError).toBe(true)
 
     const output = response as ToolCallOutput<any>
     log.info(`Output: ${JSON.stringify(output)}`)
@@ -341,9 +393,26 @@ describe('Smithery Toolbox Tests', () => {
   })
 
   it('should be able to make a tool call with valid input and server config', async () => {
-    const toolDetails = await toolbox.get(
-      'a029eb98-b9f6-54e5-95c9-c4586fad0e4d'
-    ) // ! @flrngel/mcp-painter
+    const smitheryServer = Object.values(smitheryServers).find(
+      (server) => server.id === serverId
+    )
+    if (!smitheryServer) {
+      throw new Error(`Server ${serverId} not found`)
+    }
+    const toolMap = await toolbox.filterTools({
+      integrationNames: [smitheryServer.name]
+    })
+    for (const tool of toolMap.values()) {
+      console.log(`tool: ${JSON.stringify(tool)}`)
+    }
+    const toolId = Array.from(toolMap.values()).find(
+      (tool) => tool.name === toolName
+    )?.id
+    if (!toolId) {
+      throw new Error(`Tool ${toolName} not found`)
+    }
+
+    const toolDetails = await toolbox.get(toolId)
     expect(toolDetails).toBeDefined()
     log.info(`found tool: ${toolDetails.name}`)
 
@@ -355,8 +424,7 @@ describe('Smithery Toolbox Tests', () => {
     log.info(`equipped tool: ${tool.details.name}`)
 
     const args = {
-      width: 100,
-      height: 100
+      root_domain: 'google.com'
     }
 
     const response: ToolCallResponse<any> = await tool.handle.call({
@@ -374,19 +442,110 @@ describe('Smithery Toolbox Tests', () => {
   })
 })
 
-describe('Search Toolbox Tests', () => {
+describe('Composio Toolbox Tests', () => {
   let toolbox: Toolbox
+
+  let composioServers: Record<string, ToolServer>
+
+  const toolName = 'LINEAR_LIST_LINEAR_PROJECTS' // No args required
+  const toolNameWithRequiredArgs = 'LINEAR_LIST_LINEAR_TEAMS' // project_id required
 
   beforeAll(async () => {
     log.info('Getting toolbox')
     toolbox = await getToolbox()
     log.info('Toolbox fetched')
+    composioServers = await toolbox.api.getAllServersForProvider('composio')
+    log.info(`Composio servers: ${JSON.stringify(composioServers)}`)
   })
 
-  it('should be able to search for tools', async () => {
-    const searchResults = await toolbox.search('search')
-    expect(searchResults).toBeDefined()
-    expect(searchResults.length).toBeGreaterThan(0)
-    log.info(`Search results: ${JSON.stringify(searchResults)}`)
+  afterAll(async () => {
+    if (toolbox) {
+      await toolbox.close()
+      log.info('Toolbox closed')
+    }
+  })
+
+  it('should be able to make a tool call with invalid input', async () => {
+    const composioServer = Object.values(composioServers)[0]
+    const toolMap = await toolbox.filterTools({
+      integrationNames: [composioServer.name]
+    })
+    const toolId = Array.from(toolMap.values()).find(
+      (tool) => tool.name === toolNameWithRequiredArgs
+    )?.id
+    expect(toolId).toBeDefined()
+    if (!toolId) {
+      throw new Error(`Tool ${toolName} not found`)
+    }
+
+    const toolDetails = await toolbox.get(toolId)
+    expect(toolDetails).toBeDefined()
+    log.info(`found tool: ${toolDetails.name}`)
+
+    const tool: EquippedTool = await toolDetails.equip()
+    expect(tool).toBeDefined()
+    if (!tool) {
+      throw new Error('Tool not found')
+    }
+    log.info(`equipped tool: ${tool.details.name}`)
+
+    const args = {
+      invalid_key: 'baz'
+    }
+
+    const response: ToolCallResponse<any> = await tool.handle.call({
+      args: args,
+      approval: undefined
+    })
+    expect(response).toBeDefined()
+    expect(response).toBeTypeOf('object')
+    expect(response.isError).toBe(true)
+
+    const output = response as ToolCallOutput<any>
+    log.info(`Output: ${JSON.stringify(output)}`)
+
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+  })
+
+  it('should be able to make a tool call with valid input', async () => {
+    const composioServer = Object.values(composioServers)[0]
+    const toolMap = await toolbox.filterTools({
+      integrationNames: [composioServer.name]
+    })
+    const toolId = Array.from(toolMap.values()).find(
+      (tool) => tool.name === toolName
+    )?.id
+    expect(toolId).toBeDefined()
+    if (!toolId) {
+      throw new Error(`Tool ${toolName} not found`)
+    }
+
+    const toolDetails = await toolbox.get(toolId)
+    expect(toolDetails).toBeDefined()
+    log.info(`found tool: ${toolDetails.name}`)
+
+    const tool: EquippedTool = await toolDetails.equip()
+    expect(tool).toBeDefined()
+    if (!tool) {
+      throw new Error('Tool not found')
+    }
+    log.info(`equipped tool: ${tool.details.name}`)
+
+    const args = {}
+
+    const response: ToolCallResponse<any> = await tool.handle.call({
+      args: args,
+      approval: undefined
+    })
+
+    console.log(`Response: ${JSON.stringify(response)}`)
+    expect(response).toBeDefined()
+    expect(response).toBeTypeOf('object')
+    expect(response.isError).toBe(false)
+
+    const output = response as ToolCallOutput<any>
+    log.info(`Output: ${JSON.stringify(output)}`)
+
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   })
 })

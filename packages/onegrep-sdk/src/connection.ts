@@ -1,9 +1,10 @@
 import { initialize } from '@blaxel/core'
+import { ToolServerClient } from '~/core/index.js'
 import {
   BlaxelToolServerClient,
-  SmitheryToolServerClient,
-  ToolServerClient
-} from '~/core/index.js'
+  ComposioToolServerClient,
+  SmitheryToolServerClient
+} from '@repo/onegrep-api-client'
 import { createBlaxelConnection } from '~/providers/blaxel/connection.js'
 import { createSmitheryConnection } from '~/providers/smithery/connection.js'
 import {
@@ -29,6 +30,8 @@ import { log } from '~/core/log.js'
 import { xBlaxelHeaders } from './providers/blaxel/api.js'
 import { SecretManager } from './secrets/index.js'
 import { SmitheryUrlOptions } from '@smithery/sdk/shared/config.js'
+import { createComposioTransports } from './providers/composio/transport.js'
+import { createComposioConnection } from './providers/composio/connection.js'
 
 export class ClientSessionError extends Error {
   constructor(message: string) {
@@ -158,6 +161,19 @@ export const apiKeySmitheryClientSessionMaker = (
   }
 }
 
+export const apiKeyComposioClientSessionMaker = (
+  apiKey: string
+): ClientSessionMaker<ComposioToolServerClient> => {
+  log.debug('Creating Composio client session maker', apiKey)
+  return {
+    create: async (client: ComposioToolServerClient) => {
+      return Promise.resolve(
+        new MultiTransportClientSession(createComposioTransports(client))
+      )
+    }
+  }
+}
+
 class RegisteredClientSessionFactory {
   private clientTypeToSessionMaker: Map<
     string,
@@ -281,6 +297,17 @@ export class ToolServerConnectionManager implements ConnectionManager {
 
       return await createSmitheryConnection(
         client as SmitheryToolServerClient,
+        mcpClientSession
+      )
+    }
+
+    if (client.client_type === 'composio') {
+      const mcpClientSession =
+        await this.toolServerSessionManager.getSession(client)
+      extendOnClose(this, mcpClientSession)
+
+      return await createComposioConnection(
+        client as ComposioToolServerClient,
         mcpClientSession
       )
     }

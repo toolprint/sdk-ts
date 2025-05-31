@@ -2,11 +2,9 @@
 
 CLIENT_DIR="./packages/onegrep-api-client/src"
 
-# Find files containing the pattern and handle spaces in filenames
-find $CLIENT_DIR -type f -name "*.ts" -print0 | xargs -0 grep -l "z.discriminatedUnion('client_type', \[" | while IFS= read -r file; do
-  echo "Processing: $file"
-  # Use double quotes around variables to preserve spaces
-  sed -i '' "s/z.discriminatedUnion('client_type', \\[/z.union([/g" "$file"
-done
+# Add the following to the end of the file (I'm not sure why these wouldn't be exported by default)
+echo "export * from './client.gen.js'" >> $CLIENT_DIR/index.ts
+echo "export * from './schemas.gen.js'" >> $CLIENT_DIR/index.ts
+echo "export * from './zod.gen.js'" >> $CLIENT_DIR/index.ts
 
-echo "Replacement complete."
+echo "Fix complete."

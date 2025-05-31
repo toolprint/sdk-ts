@@ -1,6 +1,6 @@
 import { log } from '../log.js'
 
-import { AxiosError } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 
 /**
  * Custom error class for OneGrep API errors.
@@ -21,6 +21,16 @@ function axiosToOneGrepApiError(error: AxiosError): OneGrepApiError {
   return new OneGrepApiError(
     `The API call failed: ${error.code} ${error.config?.method} ${error.config?.url} ${error.response?.status} ${error.message} ${JSON.stringify(error.response?.data)}`
   )
+}
+
+function isAxiosResponse<T = any>(resp: any): resp is AxiosResponse<T> {
+  if (resp && typeof resp === 'object' && 'status' in resp) {
+    if (resp.status >= 200 && resp.status < 300) {
+      return true
+    }
+    log.warn(`Unexpected response status: ${resp.status}`)
+  }
+  return false
 }
 
 function createAndLogApiError(error: unknown): OneGrepApiError {
@@ -63,11 +73,18 @@ export async function makeApiCallWithCallback<T>(
  * @returns Promise<{ success: boolean; data?: T; error?: unknown }> - Always resolves with a result object
  */
 export async function makeApiCallWithResult<T>(
-  apiCall: () => Promise<T>
+  apiCall: () => Promise<unknown>
 ): Promise<{ success: boolean; data?: T; error?: unknown }> {
   try {
     const response = await apiCall()
-    return { success: true, data: response }
+    if (isAxiosResponse<T>(response)) {
+      return {
+        success: true,
+        data: response.data as T
+      }
+    }
+    log.warn('Unexpected response type', response)
+    throw new Error(`Unexpected response type: ${response}`)
   } catch (error) {
     return {
       success: false,

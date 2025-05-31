@@ -38,8 +38,7 @@ export class FlagsProvider {
 
     // Cache flags by user_id in case the SDK is used in a multi-user environment
     return this.flagsCache.wrap(user_id, async () => {
-      const flags = await this.apiClient.getFlags()
-      return flags.flags
+      return await this.apiClient.getFlags()
     })
   }
 

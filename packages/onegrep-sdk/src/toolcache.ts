@@ -1,4 +1,16 @@
 import {
+  Tool,
+  ToolProperties,
+  ToolResource,
+  SearchResponseScoredItemTool,
+  InitializeResponse,
+  Prompt,
+  ScoredItemTool
+} from '@repo/onegrep-api-client'
+
+import { ToolServerClient } from '~/core/api/types.js'
+
+import {
   ScoredResult,
   ToolCache,
   ToolId,
@@ -15,16 +27,8 @@ import {
   Recommendation
 } from './types.js'
 
-import { OneGrepApiClient, Prompt } from '~/core/index.js'
+import { OneGrepApiClient } from '~/core/index.js'
 import { OneGrepApiHighLevelClient } from '~/core/index.js'
-import {
-  ToolProperties,
-  ToolServerClient,
-  SearchResponseScoredItemTool,
-  ToolResource,
-  Tool,
-  InitializeResponse
-} from '~/core/index.js'
 
 import { Keyv } from 'keyv'
 import { Cache, createCache } from 'cache-manager'
@@ -378,7 +382,9 @@ export class UniversalToolCache implements ToolCache {
         }
         return tool
       })
-    ).then((tools) => tools.filter((tool): tool is Tool => tool !== null))
+    ).then((tools) =>
+      tools.filter((tool: Tool | null): tool is Tool => tool !== null)
+    )
 
     // Get the details for the filtered tool using the basic details cache
     const result: Map<ToolId, ToolDetails> = new Map()
@@ -451,7 +457,9 @@ export class UniversalToolCache implements ToolCache {
 
     const results: ScoredResult<ToolDetails>[] = []
 
-    const toolIds = response.results.map((result) => result.item.id)
+    const toolIds = response.results.map(
+      (result: ScoredItemTool) => result.item.id
+    )
     const toolDetailsMap = await this.getMultiple(toolIds)
 
     for (const result of response.results) {

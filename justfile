@@ -123,6 +123,10 @@ gateway:
 test name=".*":
     pnpm turbo run test -- --testNamePattern={{name}}
 
+[group('test')]
+test-api-client name=".*":
+    pnpm turbo run test --filter=@repo/onegrep-api-client -- --testNamePattern={{name}}
+
 # test the sdk package (use `test-sdk ".*"` to filter by test name regex)
 # * Note that "name" isn't the file name but the name of the test class within a file.
 # Example to filter to langchain tests: `just test-sdk ".*Langchain.*"` or `just test-sdk ".*Blaxel.*"`

@@ -6,7 +6,8 @@ import {
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 
-import { log, SmitheryToolServerClient } from '~/core/index.js'
+import { log } from '~/core/index.js'
+import { SmitheryToolServerClient } from '@repo/onegrep-api-client'
 import { jsonSchemaUtils } from '~/schema.js'
 import { InvalidTransportConfigError } from '~/connection.js'
 

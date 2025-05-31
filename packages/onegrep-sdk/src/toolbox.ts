@@ -1,6 +1,7 @@
 import {
   clientFromConfig,
   OneGrepApiClient,
+  OneGrepApiHighLevelClient,
   ToolServerClient
 } from '~/core/index.js'
 import {
@@ -19,6 +20,7 @@ import { createToolCache } from '~/toolcache.js'
 
 import {
   apiKeyBlaxelClientSessionMaker,
+  apiKeyComposioClientSessionMaker,
   apiKeySmitheryClientSessionMaker,
   defaultToolServerSessionFactory
 } from './connection.js'
@@ -28,12 +30,16 @@ import { SecretManager } from './secrets/index.js'
 import { log } from '~/core/log.js'
 
 export class Toolbox implements BaseToolbox<ToolDetails, Recommendation> {
-  apiClient: OneGrepApiClient
-  toolCache: ToolCache
+  private toolCache: ToolCache
+  private highLevelClient: OneGrepApiHighLevelClient
 
   constructor(apiClient: OneGrepApiClient, toolCache: ToolCache) {
-    this.apiClient = apiClient
     this.toolCache = toolCache
+    this.highLevelClient = new OneGrepApiHighLevelClient(apiClient)
+  }
+
+  get api(): OneGrepApiHighLevelClient {
+    return this.highLevelClient
   }
 
   async listTools(): Promise<Map<ToolId, BasicToolDetails>> {
@@ -83,7 +89,8 @@ const registerSessionMakers = async (secretManager: SecretManager) => {
     'BL_API_KEY',
     'BL_WORKSPACE',
     'SMITHERY_API_KEY',
-    'SMITHERY_PROFILE_ID'
+    'SMITHERY_PROFILE_ID',
+    'COMPOSIO_API_KEY'
   ]
   // Get requested secrets (do not throw an error if any are missing)
   const secrets = await secretManager.getSecrets(requestedSecretNames, false)
@@ -115,6 +122,18 @@ const registerSessionMakers = async (secretManager: SecretManager) => {
       smitherySessionMaker as ClientSessionMaker<ToolServerClient>
     )
     log.info('Registered SmitherySessionMaker')
+  }
+
+  // Composio provider requires an API key
+  if (secrets.has('COMPOSIO_API_KEY')) {
+    const composioSessionMaker = apiKeyComposioClientSessionMaker(
+      secrets.get('COMPOSIO_API_KEY')!
+    )
+    defaultToolServerSessionFactory.register(
+      'composio',
+      composioSessionMaker as ClientSessionMaker<ToolServerClient>
+    )
+    log.info('Registered ComposioSessionMaker')
   }
 
   // ! As a hack, we need to sync the process environment to get environment variables for authentication

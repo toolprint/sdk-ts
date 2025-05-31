@@ -58,10 +58,10 @@ importers:
     dependencies:
       '@blaxel/core':
         specifier: 0.2.0
-        version: 0.2.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))
+        version: 0.2.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))
       '@blaxel/langgraph':
         specifier: 0.2.0
-        version: 0.2.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))(@langchain/aws@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@langchain/google-genai@0.1.6(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(zod@3.24.3))(@langchain/google-vertexai@0.1.8(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(encoding@0.1.13)(zod@3.24.3))(@langchain/groq@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.2))(@langchain/mistralai@0.2.0(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@langchain/ollama@0.1.4(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@opentelemetry/api@1.9.0)(axios@1.9.0)(cheerio@1.0.0)(encoding@0.1.13)(handlebars@4.7.8)(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))(ws@8.18.2)
+        version: 0.2.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))(@langchain/aws@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@langchain/google-genai@0.1.6(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(zod@3.24.3))(@langchain/google-vertexai@0.1.8(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(encoding@0.1.13)(zod@3.24.3))(@langchain/groq@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.2))(@langchain/mistralai@0.2.0(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@langchain/ollama@0.1.4(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@opentelemetry/api@1.9.0)(axios@1.9.0)(cheerio@1.0.0)(encoding@0.1.13)(handlebars@4.7.8)(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))(ws@8.18.2)
       '@langchain/core':
         specifier: 0.3.51
         version: 0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))
@@ -230,6 +230,12 @@ importers:
 
   packages/onegrep-api-client:
     dependencies:
+      '@hey-api/client-axios':
+        specifier: ^0.8.0
+        version: 0.8.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))(axios@1.7.9)
+      '@hey-api/client-fetch':
+        specifier: ^0.11.0
+        version: 0.11.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))
       '@repo/utils':
         specifier: workspace:*
         version: link:../utils
@@ -246,6 +252,9 @@ importers:
         specifier: ^3.24.2
         version: 3.24.2
     devDependencies:
+      '@hey-api/openapi-ts':
+        specifier: ^0.69.0
+        version: 0.69.0(typescript@5.8.3)
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -258,9 +267,15 @@ importers:
       openapi-zod-client:
         specifier: ^1.18.3
         version: 1.18.3(react@19.0.0)
+      path:
+        specifier: ^0.12.7
+        version: 0.12.7
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
+      tsup:
+        specifier: ^8.3.6
+        version: 8.3.6(@swc/core@1.10.16(@swc/helpers@0.5.15))(jiti@2.4.2)(postcss@8.5.2)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.1)
       typescript:
         specifier: latest
         version: 5.8.3
@@ -272,16 +287,22 @@ importers:
     dependencies:
       '@blaxel/core':
         specifier: 0.2.14
-        version: 0.2.14(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))
+        version: 0.2.14(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))
       '@blaxel/langgraph':
         specifier: ^0.2.0
-        version: 0.2.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))(@langchain/aws@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@langchain/google-genai@0.1.6(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(zod@3.24.2))(@langchain/google-vertexai@0.1.8(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(zod@3.24.2))(@langchain/groq@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(ws@8.18.2))(@langchain/mistralai@0.2.0(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@langchain/ollama@0.1.4(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@opentelemetry/api@1.9.0)(axios@1.7.9)(cheerio@1.0.0)(encoding@0.1.13)(handlebars@4.7.8)(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))(ws@8.18.2)
+        version: 0.2.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))(@langchain/aws@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@langchain/google-genai@0.1.6(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(zod@3.24.2))(@langchain/google-vertexai@0.1.8(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(zod@3.24.2))(@langchain/groq@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(ws@8.18.2))(@langchain/mistralai@0.2.0(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@langchain/ollama@0.1.4(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@opentelemetry/api@1.9.0)(axios@1.9.0)(cheerio@1.0.0)(encoding@0.1.13)(handlebars@4.7.8)(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))(ws@8.18.2)
+      '@composio/mcp':
+        specifier: ^1.0.5
+        version: 1.0.5
       '@dopplerhq/node-sdk':
         specifier: ^1.3.0
         version: 1.3.0
+      '@hey-api/client-axios':
+        specifier: ^0.8.0
+        version: 0.8.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))(axios@1.9.0)
       '@hey-api/client-fetch':
         specifier: ^0.10.0
-        version: 0.10.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))
+        version: 0.10.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))
       '@langchain/core':
         specifier: ^0.3.51
         version: 0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))
@@ -299,13 +320,13 @@ importers:
         version: 1.4.3(encoding@0.1.13)(react@19.0.0)(ws@8.18.2)
       '@zodios/core':
         specifier: ^10.9.6
-        version: 10.9.6(axios@1.7.9)(zod@3.24.2)
+        version: 10.9.6(axios@1.9.0)(zod@3.24.2)
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
       axios:
         specifier: ^1.7.9
-        version: 1.7.9(debug@4.4.0)
+        version: 1.9.0
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -318,6 +339,9 @@ importers:
       chalk:
         specifier: ^5.3.0
         version: 5.4.1
+      composio-core:
+        specifier: ^0.5.39
+        version: 0.5.39(@ai-sdk/openai@1.3.22(zod@3.24.2))(@cloudflare/workers-types@4.20250529.0)(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(@langchain/openai@0.5.10(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(ws@8.18.2))(ai@4.3.16(react@19.0.0)(zod@3.24.2))(langchain@0.3.24(9d6d9400a4911abf5c551d18b1c70105))(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -466,6 +490,12 @@ packages:
   '@acuminous/bitsyntax@0.1.2':
     resolution: {integrity: sha512-29lUK80d1muEQqiUsSo+3A0yP6CdspgC95EnKBMi22Xlwt79i/En4Vr67+cXhU+cZjbti3TgGGC5wy1stIywVQ==}
     engines: {node: '>=0.8'}
+
+  '@ai-sdk/openai@1.3.22':
+    resolution: {integrity: sha512-QwA+2EkG0QyjVR+7h6FE7iOu2ivNqAVMm9UJZkVxxTk5OIq5fFJDTEI/zICEMuHImTTXR2JjsL6EirJ28Jc4cw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.0.0
 
   '@ai-sdk/provider-utils@2.2.8':
     resolution: {integrity: sha512-fqhG+4sCVv8x7nFzYnFo19ryhAa3w096Kmc3hWxMQfW/TubPOmt3A6tYZhl4mUfQWWQMsuSkLrtjlWuXBVSGQA==}
@@ -1071,6 +1101,9 @@ packages:
   '@changesets/write@0.4.0':
     resolution: {integrity: sha512-CdTLvIOPiCNuH71pyDu3rA+Q0n65cmAbXnwWH84rKGiFumFzkmHNT8KHTMEchcxN+Kl8I54xGUhJ7l3E7X396Q==}
 
+  '@cloudflare/workers-types@4.20250529.0':
+    resolution: {integrity: sha512-l6tVFpI6MUChMD0wK+Jhikb+aCbrmIR58CVpV/BhRT4THjl+nFhTT5N5ZqX42FDXdE3hCPLjueBMpPRhPUOB2A==}
+
   '@colors/colors@1.6.0':
     resolution: {integrity: sha512-Ir+AOibqzrIsL6ajt3Rz3LskB7OiMVHqltZmspbW/TJuTVuyOMirVqAkjfY6JISiLHgyNqicAC8AyHHGzNd/dA==}
     engines: {node: '>=0.1.90'}
@@ -1147,6 +1180,14 @@ packages:
   '@common.js/is-network-error@1.0.1':
     resolution: {integrity: sha512-dkk7FX8L/JLia5pi+IQ11lCw2D6FTmbWL2iWTHgCbP40/deeXgknlkEQcQ/rOkjwQbqp8RZ4ey/anR17K66sqw==}
     engines: {node: '>=16'}
+
+  '@composio/mcp@1.0.3-0':
+    resolution: {integrity: sha512-IpbfST0SSs/CEv+PIf6+EL0feNuJhQyUrOHJLPge8NhyLLrCyVqvujRIPyRUUjy0NDsked/Mm5VpJmYM6OACbg==}
+    hasBin: true
+
+  '@composio/mcp@1.0.5':
+    resolution: {integrity: sha512-Zq9CwFuZD0f2H3XFFqCYwjISTlkBOHKMeEdtHg9L/D9jShNMtJ2Hl8nWbL0MeK5DvwXOtBOqHrIKUGNPNsppmw==}
+    hasBin: true
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1596,17 +1637,33 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  '@hey-api/client-axios@0.2.12':
+    resolution: {integrity: sha512-lBehVhbnhvm41cFguZuy1FO+4x8NO3Qy/ooL0Jw4bdqTu21n7DmZMPsXEF0gL7/gNdTt4QkJGwaojy+8ExtE8w==}
+    peerDependencies:
+      axios: '>= 1.0.0 < 2'
+
+  '@hey-api/client-axios@0.8.0':
+    resolution: {integrity: sha512-We3QY26J42iRVtdh2blvB5O7CU1X9kcLUZqS3+eJQyV24VkJmTx8004fcggrd0z6B+yUdKEjkeZC3NvU9S4eQw==}
+    peerDependencies:
+      '@hey-api/openapi-ts': < 2
+      axios: '>= 1.0.0 < 2'
+
   '@hey-api/client-fetch@0.10.0':
     resolution: {integrity: sha512-C7vzj4t52qPiHCqjn1l8cRTI2p4pZCd7ViLtJDTHr5ZwI4sWOYC1tmv6bd529qqY6HFFbhGCz4TAZSwKAMJncg==}
     peerDependencies:
       '@hey-api/openapi-ts': < 2
 
-  '@hey-api/json-schema-ref-parser@1.0.5':
-    resolution: {integrity: sha512-bWUV9ICwvU5I3YKVZqWIUXFC2SIXznUi/u+LqurJx6ILiyImfZD5+g/lj3w4EiyXxmjqyaxptzUz/1IgK3vVtw==}
+  '@hey-api/client-fetch@0.11.0':
+    resolution: {integrity: sha512-Wafgv5BMCVjdYPgE60CL8NSC6Fi3j3PZYES8Qg23xO+9JNrjN5PguOIHQS2FMKaZ8jMtpa3S4I3ni0XBh/VeSg==}
+    peerDependencies:
+      '@hey-api/openapi-ts': < 2
+
+  '@hey-api/json-schema-ref-parser@1.0.6':
+    resolution: {integrity: sha512-yktiFZoWPtEW8QKS65eqKwA5MTKp88CyiL8q72WynrBs/73SAaxlSWlA2zW/DZlywZ5hX1OYzrCC0wFdvO9c2w==}
     engines: {node: '>= 16'}
 
-  '@hey-api/openapi-ts@0.67.3':
-    resolution: {integrity: sha512-hoLis1YOPBw3+JjwjX+lU6mJZ69PekJ7fYY0qFTFmVuCMhlHk7lbU69SnJk/3GqeUGLL6cXS1s0OtvJJD5mZbg==}
+  '@hey-api/openapi-ts@0.69.0':
+    resolution: {integrity: sha512-ADEDH+a9RB2tlsOUZmiP6CMf9ju5exjDmylDwJqQ47YaxG7Qe3dQFt84cCV8SZQ6G5kFcHdNefFupBJM+EbimA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=22.10.0}
     hasBin: true
     peerDependencies:
@@ -1656,6 +1713,10 @@ packages:
     resolution: {integrity: sha512-RxSa9VjcDWgWCYsaLdZItdCnJj7p4LxggaEk+Y3MP0dHKoxez8ioG07DVekVbZZqccsrL+oPB/N9AzVPxj4blg==}
     engines: {node: '>=0.8.0'}
 
+  '@inquirer/checkbox@2.5.0':
+    resolution: {integrity: sha512-sMgdETOfi2dUHT8r7TT1BTKOwNvdDGFDXYWtQ2J69SvlYNntk9I/gJe7r5yvMwwsuKnYbuRs3pNhx4tgNck5aA==}
+    engines: {node: '>=18'}
+
   '@inquirer/checkbox@4.1.6':
     resolution: {integrity: sha512-62u896rWCtKKE43soodq5e/QcRsA22I+7/4Ov7LESWnKRO6BVo2A1DFLDmXL9e28TB0CfHc3YtkbPm7iwajqkg==}
     engines: {node: '>=18'}
@@ -1664,6 +1725,10 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@inquirer/confirm@3.2.0':
+    resolution: {integrity: sha512-oOIwPs0Dvq5220Z8lGL/6LHRTEr9TgLHmiI99Rj1PJ1p1czTys+olrgBqZk4E2qC0YTzeHprxSQmoHioVdJ7Lw==}
+    engines: {node: '>=18'}
 
   '@inquirer/confirm@5.1.10':
     resolution: {integrity: sha512-FxbQ9giWxUWKUk2O5XZ6PduVnH2CZ/fmMKMBkH71MHJvWr7WL5AHKevhzF1L5uYWB2P548o1RzVxrNd3dpmk6g==}
@@ -1683,6 +1748,14 @@ packages:
       '@types/node':
         optional: true
 
+  '@inquirer/core@9.2.1':
+    resolution: {integrity: sha512-F2VBt7W/mwqEU4bL0RnHNZmC/OxzNx9cOYxHqnXX3MP6ruYvZUZAW9imgN9+h/uBT/oP8Gh888J2OZSbjSeWcg==}
+    engines: {node: '>=18'}
+
+  '@inquirer/editor@2.2.0':
+    resolution: {integrity: sha512-9KHOpJ+dIL5SZli8lJ6xdaYLPPzB8xB9GZItg39MBybzhxA16vxmszmQFrRwbOA918WA2rvu8xhDEg/p6LXKbw==}
+    engines: {node: '>=18'}
+
   '@inquirer/editor@4.2.11':
     resolution: {integrity: sha512-YoZr0lBnnLFPpfPSNsQ8IZyKxU47zPyVi9NLjCWtna52//M/xuL0PGPAxHxxYhdOhnvY2oBafoM+BI5w/JK7jw==}
     engines: {node: '>=18'}
@@ -1691,6 +1764,10 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@inquirer/expand@2.3.0':
+    resolution: {integrity: sha512-qnJsUcOGCSG1e5DTOErmv2BPQqrtT6uzqn1vI/aYGiPKq+FgslGZmtdnXbhuI7IlT7OByDoEEqdnhUnVR2hhLw==}
+    engines: {node: '>=18'}
 
   '@inquirer/expand@4.0.13':
     resolution: {integrity: sha512-HgYNWuZLHX6q5y4hqKhwyytqAghmx35xikOGY3TcgNiElqXGPas24+UzNPOwGUZa5Dn32y25xJqVeUcGlTv+QQ==}
@@ -1705,6 +1782,10 @@ packages:
     resolution: {integrity: sha512-eOg92lvrn/aRUqbxRyvpEWnrvRuTYRifixHkYVpJiygTgVSBIHDqLh0SrMQXkafvULg3ck11V7xvR+zcgvpHFw==}
     engines: {node: '>=18'}
 
+  '@inquirer/input@2.3.0':
+    resolution: {integrity: sha512-XfnpCStx2xgh1LIRqPXrTNEEByqQWoxsWYzNRSEUxJ5c6EQlhMogJ3vHKu8aXuTacebtaZzMAHwEL0kAflKOBw==}
+    engines: {node: '>=18'}
+
   '@inquirer/input@4.1.10':
     resolution: {integrity: sha512-kV3BVne3wJ+j6reYQUZi/UN9NZGZLxgc/tfyjeK3mrx1QI7RXPxGp21IUTv+iVHcbP4ytZALF8vCHoxyNSC6qg==}
     engines: {node: '>=18'}
@@ -1713,6 +1794,10 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@inquirer/number@1.1.0':
+    resolution: {integrity: sha512-ilUnia/GZUtfSZy3YEErXLJ2Sljo/mf9fiKc08n18DdwdmDbOzRcTv65H1jjDvlsAuvdFXf4Sa/aL7iw/NanVA==}
+    engines: {node: '>=18'}
 
   '@inquirer/number@3.0.13':
     resolution: {integrity: sha512-IrLezcg/GWKS8zpKDvnJ/YTflNJdG0qSFlUM/zNFsdi4UKW/CO+gaJpbMgQ20Q58vNKDJbEzC6IebdkprwL6ew==}
@@ -1723,6 +1808,10 @@ packages:
       '@types/node':
         optional: true
 
+  '@inquirer/password@2.2.0':
+    resolution: {integrity: sha512-5otqIpgsPYIshqhgtEwSspBQE40etouR8VIxzpJkv9i0dVHIpyhiivbkH9/dGiMLdyamT54YRdGJLfl8TFnLHg==}
+    engines: {node: '>=18'}
+
   '@inquirer/password@4.0.13':
     resolution: {integrity: sha512-NN0S/SmdhakqOTJhDwOpeBEEr8VdcYsjmZHDb0rblSh2FcbXQOr+2IApP7JG4WE3sxIdKytDn4ed3XYwtHxmJQ==}
     engines: {node: '>=18'}
@@ -1731,6 +1820,10 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@inquirer/prompts@5.5.0':
+    resolution: {integrity: sha512-BHDeL0catgHdcHbSFFUddNzvx/imzJMft+tWDPwTm3hfu8/tApk1HrooNngB2Mb4qY+KaRWF+iZqoVUPeslEog==}
+    engines: {node: '>=18'}
 
   '@inquirer/prompts@7.5.1':
     resolution: {integrity: sha512-5AOrZPf2/GxZ+SDRZ5WFplCA2TAQgK3OYrXCYmJL5NaTu4ECcoWFlfUZuw7Es++6Njv7iu/8vpYJhuzxUH76Vg==}
@@ -1741,6 +1834,10 @@ packages:
       '@types/node':
         optional: true
 
+  '@inquirer/rawlist@2.3.0':
+    resolution: {integrity: sha512-zzfNuINhFF7OLAtGHfhwOW2TlYJyli7lOUoJUXw/uyklcwalV6WRXBXtFIicN8rTRK1XTiPWB4UY+YuW8dsnLQ==}
+    engines: {node: '>=18'}
+
   '@inquirer/rawlist@4.1.1':
     resolution: {integrity: sha512-VBUC0jPN2oaOq8+krwpo/mf3n/UryDUkKog3zi+oIi8/e5hykvdntgHUB9nhDM78RubiyR1ldIOfm5ue+2DeaQ==}
     engines: {node: '>=18'}
@@ -1749,6 +1846,10 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@inquirer/search@1.1.0':
+    resolution: {integrity: sha512-h+/5LSj51dx7hp5xOn4QFnUaKeARwUCLs6mIhtkJ0JYPBLmEYjdHSYh7I6GrLg9LwpJ3xeX0FZgAG1q0QdCpVQ==}
+    engines: {node: '>=18'}
 
   '@inquirer/search@3.0.13':
     resolution: {integrity: sha512-9g89d2c5Izok/Gw/U7KPC3f9kfe5rA1AJ24xxNZG0st+vWekSk7tB9oE+dJv5JXd0ZSijomvW0KPMoBd8qbN4g==}
@@ -1759,6 +1860,10 @@ packages:
       '@types/node':
         optional: true
 
+  '@inquirer/select@2.5.0':
+    resolution: {integrity: sha512-YmDobTItPP3WcEI86GvPo+T2sRHkxxOq/kXmsBjHS5BVXUgvgZ5AfJjkvQvZr03T81NnI3KrrRuMzeuYUQRFOA==}
+    engines: {node: '>=18'}
+
   '@inquirer/select@4.2.1':
     resolution: {integrity: sha512-gt1Kd5XZm+/ddemcT3m23IP8aD8rC9drRckWoP/1f7OL46Yy2FGi8DSmNjEjQKtPl6SV96Kmjbl6p713KXJ/Jg==}
     engines: {node: '>=18'}
@@ -1767,6 +1872,14 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@inquirer/type@1.5.5':
+    resolution: {integrity: sha512-MzICLu4yS7V8AA61sANROZ9vT1H3ooca5dSmI1FjZkzq7o/koMsRfQSzRtFo+F3Ao4Sf1C0bpLKejpKB/+j6MA==}
+    engines: {node: '>=18'}
+
+  '@inquirer/type@2.0.0':
+    resolution: {integrity: sha512-XvJRx+2KR3YXyYtPUUy+qd9i7p+GO9Ko6VIIpWlBrpWwXDv8WLFeHTxz35CfQFUiBMLXlGHhGzys7lqit9gWag==}
+    engines: {node: '>=18'}
 
   '@inquirer/type@3.0.6':
     resolution: {integrity: sha512-/mKVCtVpyBu3IDarv0G+59KC4stsD5mDsGpYh+GKs1NZT88Jh52+cuoA1AtLk2Q0r/quNl+1cSUyLRHBFeD0XA==}
@@ -3785,6 +3898,9 @@ packages:
   '@types/multer@1.4.12':
     resolution: {integrity: sha512-pQ2hoqvXiJt2FP9WQVLPRO+AmiIm/ZYkavPlIQnx282u4ZrVdztx0pkh3jjpQt0Kz+YI0YhSG264y08UJKoUQg==}
 
+  '@types/mute-stream@0.0.4':
+    resolution: {integrity: sha512-CPM9nzrCPPJHQNA9keH9CVkVI+WR5kMa+7XEs5jcGQ0VoAGnLv242w8lIVgwAEfmE4oufJRaTc9PNLQl0ioAow==}
+
   '@types/mysql@2.15.26':
     resolution: {integrity: sha512-DSLCOXhkvfS5WNNPbfn2KdICAmk8lLc+/PNvnPnF7gOdMZCxopXduqv0OQ13y/yA/zXTSikZZqVgybUxOEg6YQ==}
 
@@ -3887,6 +4003,9 @@ packages:
 
   '@types/whatwg-url@11.0.5':
     resolution: {integrity: sha512-coYR071JRaHa+xoEvvYqvnIHaVqaYrLPbsufM9BF63HkwI5Lgmy2QR8Q5K/lYDYo5AK82wOvSOS0UsLTpTG7uQ==}
+
+  '@types/wrap-ansi@3.0.0':
+    resolution: {integrity: sha512-ltIpx+kM7g/MLRZfkbL7EsCEjfzCcScLpkg37eXEtx5kmrAKBkTJwd1GIAjDSL8wTpM6Hzn5YO4pSb91BEwu1g==}
 
   '@types/ws@8.5.14':
     resolution: {integrity: sha512-bd/YFLW+URhBzMXurx7lWByOu+xzU9+kb3RboOteXYDfW+tr+JZa99OyNmPINEGB/ahzKrEuc8rcv4gnpJmxTw==}
@@ -4727,6 +4846,10 @@ packages:
     resolution: {integrity: sha512-aCj4O5wKyszjMmDT4tZj93kxyydN/K5zPWSCe6/0AV/AA1pqe5ZBIw0a2ZfPQV7lL5/yb5HsUreJ6UFAF1tEQw==}
     engines: {node: '>=18'}
 
+  cli-progress@3.12.0:
+    resolution: {integrity: sha512-tRkV3HJ1ASwm19THiiLIXLO7Im7wlTuKnvkYaTkyoAPefqjNg7W7DHKUlGRxy9vxDvbyCYQkQozvptuMkGCg8A==}
+    engines: {node: '>=4'}
+
   cli-spinners@2.9.2:
     resolution: {integrity: sha512-ywqV+5MmyL4E7ybXgKys4DugZbX0FC6LnwrhjuykIjnK9k8OQacQ7axGKnjDXWNhns0xot3bZI5h55H8yo9cJg==}
     engines: {node: '>=6'}
@@ -4839,6 +4962,18 @@ packages:
 
   component-type@1.2.1:
     resolution: {integrity: sha512-Kgy+2+Uwr75vAi6ChWXgHuLvd+QLD7ssgpaRq2zCvt80ptvAfMc/hijcJxXkBa2wMlEZcJvC2H8Ubo+A9ATHIg==}
+
+  composio-core@0.5.39:
+    resolution: {integrity: sha512-7BeSFlfRzr1cbIfGYJW4jQ3BHwaObOaFKiRJIFuWOmvOrTABl1hbxGkWPA3C+uFw9CFXbZhrLWNyD7lhYy2Scg==}
+    hasBin: true
+    peerDependencies:
+      '@ai-sdk/openai': '>=0.0.36'
+      '@cloudflare/workers-types': '>=4.20240718.0'
+      '@langchain/core': '>=0.2.18'
+      '@langchain/openai': '>=0.2.5'
+      ai: '>=3.2.22'
+      langchain: '>=0.2.11'
+      openai: '>=4.50.0'
 
   compressible@2.0.18:
     resolution: {integrity: sha512-AF3r7P5dWxL8MxyITRMlORQNaOA2IkAFaTr4k7BUumjPtRpGDTZpl0Pb1XCO6JeDCBdp126Cgs9sMxqSjgYyRg==}
@@ -6361,6 +6496,9 @@ packages:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
     deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
+  inherits@2.0.3:
+    resolution: {integrity: sha512-x00IRNXNy63jwGkJmzPigoySHbaqpNuzKbBOmzK+g2OdZpQ9w+sxCN+VSB3ja7IAge2OP2qpfxTjeNcyjmW1uw==}
+
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
@@ -6370,6 +6508,10 @@ packages:
   ini@4.1.1:
     resolution: {integrity: sha512-QQnnxNyfvmHFIsj7gkPcYymR8Jdw/o7mp5ZFihxn6h8Ci6fh3Dx4E1gPjpQEpIuPo9XVNY/ZUwh4BPMjGyL01g==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
+  inquirer@10.2.2:
+    resolution: {integrity: sha512-tyao/4Vo36XnUItZ7DnUXX4f1jVao2mSrleV/5IPtW/XAEA26hRVsbc68nuTEKWcr5vMP/1mVoT2O7u8H4v1Vg==}
+    engines: {node: '>=18'}
 
   inquirer@12.6.1:
     resolution: {integrity: sha512-MGFnzHVS3l3oM3cy+LWkyR7UUtVEn3D5U41CZbEY34szToWoJAvaVtCTz1mxsEzZFk/HXWyCArn0HDgloTXMDw==}
@@ -7447,6 +7589,10 @@ packages:
     resolution: {integrity: sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==}
     hasBin: true
 
+  mute-stream@1.0.0:
+    resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
   mute-stream@2.0.0:
     resolution: {integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA==}
     engines: {node: ^18.17.0 || >=20.5.0}
@@ -7954,6 +8100,14 @@ packages:
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
 
+  path-root-regex@0.1.2:
+    resolution: {integrity: sha512-4GlJ6rZDhQZFE0DPVKh0e9jmZ5egZfxTkp7bcRDuPlJXbAwhxcl2dINPUAsjLdejqaLsCeg8axcLjIbvBjN4pQ==}
+    engines: {node: '>=0.10.0'}
+
+  path-root@0.1.1:
+    resolution: {integrity: sha512-QLcPegTHF11axjfojBIoDygmS2E3Lf+8+jI6wOVmNVenrKSo3mFdSGiIgdSHenczw3wPtlVMQaFVwGmM7BJdtg==}
+    engines: {node: '>=0.10.0'}
+
   path-scurry@1.11.1:
     resolution: {integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==}
     engines: {node: '>=16 || 14 >=14.18'}
@@ -7972,6 +8126,9 @@ packages:
   path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
+
+  path@0.12.7:
+    resolution: {integrity: sha512-aXXC6s+1w7otVF9UletFkFcDsJeO7lSZBPUQhtb5O0xJe8LtYhj/GxldoL09bBj9+ZmE2hNoHqQSFMN5fikh4Q==}
 
   pathe@1.1.2:
     resolution: {integrity: sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==}
@@ -8270,6 +8427,9 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  pusher-js@8.4.0-rc2:
+    resolution: {integrity: sha512-d87GjOEEl9QgO5BWmViSqW0LOzPvybvX6WA9zLUstNdB57jVJuR27zHkRnrav2a3+zAMlHbP2Og8wug+rG8T+g==}
+
   pyodide@0.23.4:
     resolution: {integrity: sha512-WpQUHaIXQ1xede5BMqPAjBcmopxN22s5hEsYOR8T7/UW/fkNLFUn07SaemUgthbtvedD5JGymMMj4VpD9sGMTg==}
 
@@ -8477,6 +8637,10 @@ packages:
   resolve-from@5.0.0:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
+
+  resolve-package-path@4.0.3:
+    resolution: {integrity: sha512-SRpNAPW4kewOaNUt8VPqhJ0UMxawMwzJD8V7m1cJfdSTK9ieZwS6K7Dabsm4bmLFM96Z5Y/UznrpG5kt1im8yA==}
+    engines: {node: '>= 12'}
 
   resolve-pkg-maps@1.0.0:
     resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
@@ -9600,6 +9764,9 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
+  util@0.10.4:
+    resolution: {integrity: sha512-0Pm9hTQ3se5ll1XihRic3FDIku70C+iHUdT/W926rSgHV5QgXsYbKZN8MSC3tJtSkhuROzvsQjAaFENRXr+19A==}
+
   util@0.12.5:
     resolution: {integrity: sha512-kZf/K6hEIrWHI6XqOFUiiMa+79wE/D8Q+NCNAWclkyg3b4d2k7s0QGepNjiABc+aR3N1PAyHL7p6UcLY6LmrnA==}
 
@@ -10053,6 +10220,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@ai-sdk/openai@1.3.22(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/provider': 1.1.3
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.24.2)
+      zod: 3.24.2
+
+  '@ai-sdk/provider-utils@2.2.8(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/provider': 1.1.3
+      nanoid: 3.3.8
+      secure-json-parse: 2.7.0
+      zod: 3.24.2
+
   '@ai-sdk/provider-utils@2.2.8(zod@3.24.3)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
@@ -10064,6 +10244,16 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
+  '@ai-sdk/react@1.2.12(react@19.0.0)(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.24.2)
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.24.2)
+      react: 19.0.0
+      swr: 2.3.3(react@19.0.0)
+      throttleit: 2.1.0
+    optionalDependencies:
+      zod: 3.24.2
+
   '@ai-sdk/react@1.2.12(react@19.0.0)(zod@3.24.3)':
     dependencies:
       '@ai-sdk/provider-utils': 2.2.8(zod@3.24.3)
@@ -10073,6 +10263,13 @@ snapshots:
       throttleit: 2.1.0
     optionalDependencies:
       zod: 3.24.3
+
+  '@ai-sdk/ui-utils@1.2.11(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/provider': 1.1.3
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.24.2)
+      zod: 3.24.2
+      zod-to-json-schema: 3.24.5(zod@3.24.2)
 
   '@ai-sdk/ui-utils@1.2.11(zod@3.24.3)':
     dependencies:
@@ -11523,9 +11720,9 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@blaxel/core@0.2.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))':
+  '@blaxel/core@0.2.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))':
     dependencies:
-      '@hey-api/client-fetch': 0.10.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))
+      '@hey-api/client-fetch': 0.10.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))
       '@modelcontextprotocol/sdk': 1.11.0
       crypto: 1.0.1
       dotenv: 16.5.0
@@ -11541,9 +11738,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@blaxel/core@0.2.14(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))':
+  '@blaxel/core@0.2.14(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))':
     dependencies:
-      '@hey-api/client-fetch': 0.10.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))
+      '@hey-api/client-fetch': 0.10.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))
       '@modelcontextprotocol/sdk': 1.11.0
       axios: 1.9.0
       dotenv: 16.5.0
@@ -11561,9 +11758,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@blaxel/langgraph@0.2.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))(@langchain/aws@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@langchain/google-genai@0.1.6(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(zod@3.24.2))(@langchain/google-vertexai@0.1.8(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(zod@3.24.2))(@langchain/groq@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(ws@8.18.2))(@langchain/mistralai@0.2.0(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@langchain/ollama@0.1.4(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@opentelemetry/api@1.9.0)(axios@1.7.9)(cheerio@1.0.0)(encoding@0.1.13)(handlebars@4.7.8)(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))(ws@8.18.2)':
+  '@blaxel/langgraph@0.2.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))(@langchain/aws@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@langchain/google-genai@0.1.6(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(zod@3.24.2))(@langchain/google-vertexai@0.1.8(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(zod@3.24.2))(@langchain/groq@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(ws@8.18.2))(@langchain/mistralai@0.2.0(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@langchain/ollama@0.1.4(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))))(@opentelemetry/api@1.9.0)(axios@1.9.0)(cheerio@1.0.0)(encoding@0.1.13)(handlebars@4.7.8)(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))(ws@8.18.2)':
     dependencies:
-      '@blaxel/core': 0.2.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))
+      '@blaxel/core': 0.2.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))
       '@google/generative-ai': 0.24.1
       '@langchain/anthropic': 0.3.20(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)
       '@langchain/cohere': 0.3.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)
@@ -11573,7 +11770,7 @@ snapshots:
       '@opentelemetry/instrumentation': 0.200.0(@opentelemetry/api@1.9.0)
       '@traceloop/instrumentation-langchain': 0.13.0(@opentelemetry/api@1.9.0)
       cohere-ai: 7.17.1(encoding@0.1.13)
-      langchain: 0.3.24(c7bedd23656eaf47db7b2a4eb5fd5f2e)
+      langchain: 0.3.24(9d6d9400a4911abf5c551d18b1c70105)
       zod: 3.24.3
       zod-to-json-schema: 3.24.5(zod@3.24.3)
     transitivePeerDependencies:
@@ -11601,9 +11798,9 @@ snapshots:
       - utf-8-validate
       - ws
 
-  '@blaxel/langgraph@0.2.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))(@langchain/aws@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@langchain/google-genai@0.1.6(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(zod@3.24.3))(@langchain/google-vertexai@0.1.8(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(encoding@0.1.13)(zod@3.24.3))(@langchain/groq@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.2))(@langchain/mistralai@0.2.0(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@langchain/ollama@0.1.4(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@opentelemetry/api@1.9.0)(axios@1.9.0)(cheerio@1.0.0)(encoding@0.1.13)(handlebars@4.7.8)(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))(ws@8.18.2)':
+  '@blaxel/langgraph@0.2.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))(@langchain/aws@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@langchain/google-genai@0.1.6(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(zod@3.24.3))(@langchain/google-vertexai@0.1.8(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(encoding@0.1.13)(zod@3.24.3))(@langchain/groq@0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(encoding@0.1.13)(ws@8.18.2))(@langchain/mistralai@0.2.0(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@langchain/ollama@0.1.4(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))))(@opentelemetry/api@1.9.0)(axios@1.9.0)(cheerio@1.0.0)(encoding@0.1.13)(handlebars@4.7.8)(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3))(ws@8.18.2)':
     dependencies:
-      '@blaxel/core': 0.2.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))
+      '@blaxel/core': 0.2.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))
       '@google/generative-ai': 0.24.1
       '@langchain/anthropic': 0.3.20(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(encoding@0.1.13)
       '@langchain/cohere': 0.3.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3)))(encoding@0.1.13)
@@ -11813,6 +12010,8 @@ snapshots:
       human-id: 4.1.1
       prettier: 2.8.8
 
+  '@cloudflare/workers-types@4.20250529.0': {}
+
   '@colors/colors@1.6.0': {}
 
   '@commitlint/cli@19.7.1(@types/node@22.15.2)(typescript@5.7.3)':
@@ -11926,6 +12125,10 @@ snapshots:
       chalk: 5.4.1
 
   '@common.js/is-network-error@1.0.1': {}
+
+  '@composio/mcp@1.0.3-0': {}
+
+  '@composio/mcp@1.0.5': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -12283,20 +12486,38 @@ snapshots:
       protobufjs: 7.4.0
       yargs: 17.7.2
 
-  '@hey-api/client-fetch@0.10.0(@hey-api/openapi-ts@0.67.3(typescript@5.8.3))':
+  '@hey-api/client-axios@0.2.12(axios@1.9.0)':
     dependencies:
-      '@hey-api/openapi-ts': 0.67.3(typescript@5.8.3)
+      axios: 1.9.0
 
-  '@hey-api/json-schema-ref-parser@1.0.5':
+  '@hey-api/client-axios@0.8.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))(axios@1.7.9)':
+    dependencies:
+      '@hey-api/openapi-ts': 0.69.0(typescript@5.8.3)
+      axios: 1.7.9(debug@4.4.0)
+
+  '@hey-api/client-axios@0.8.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))(axios@1.9.0)':
+    dependencies:
+      '@hey-api/openapi-ts': 0.69.0(typescript@5.8.3)
+      axios: 1.9.0
+
+  '@hey-api/client-fetch@0.10.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))':
+    dependencies:
+      '@hey-api/openapi-ts': 0.69.0(typescript@5.8.3)
+
+  '@hey-api/client-fetch@0.11.0(@hey-api/openapi-ts@0.69.0(typescript@5.8.3))':
+    dependencies:
+      '@hey-api/openapi-ts': 0.69.0(typescript@5.8.3)
+
+  '@hey-api/json-schema-ref-parser@1.0.6':
     dependencies:
       '@jsdevtools/ono': 7.1.3
       '@types/json-schema': 7.0.15
       js-yaml: 4.1.0
       lodash: 4.17.21
 
-  '@hey-api/openapi-ts@0.67.3(typescript@5.8.3)':
+  '@hey-api/openapi-ts@0.69.0(typescript@5.8.3)':
     dependencies:
-      '@hey-api/json-schema-ref-parser': 1.0.5
+      '@hey-api/json-schema-ref-parser': 1.0.6
       c12: 2.0.1
       commander: 13.0.0
       handlebars: 4.7.8
@@ -12348,6 +12569,14 @@ snapshots:
       readable-stream: 1.1.14
       xregexp: 2.0.0
 
+  '@inquirer/checkbox@2.5.0':
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/figures': 1.0.11
+      '@inquirer/type': 1.5.5
+      ansi-escapes: 4.3.2
+      yoctocolors-cjs: 2.1.2
+
   '@inquirer/checkbox@4.1.6(@types/node@22.15.2)':
     dependencies:
       '@inquirer/core': 10.1.11(@types/node@22.15.2)
@@ -12357,6 +12586,11 @@ snapshots:
       yoctocolors-cjs: 2.1.2
     optionalDependencies:
       '@types/node': 22.15.2
+
+  '@inquirer/confirm@3.2.0':
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/type': 1.5.5
 
   '@inquirer/confirm@5.1.10(@types/node@22.15.2)':
     dependencies:
@@ -12378,6 +12612,27 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.15.2
 
+  '@inquirer/core@9.2.1':
+    dependencies:
+      '@inquirer/figures': 1.0.11
+      '@inquirer/type': 2.0.0
+      '@types/mute-stream': 0.0.4
+      '@types/node': 22.15.2
+      '@types/wrap-ansi': 3.0.0
+      ansi-escapes: 4.3.2
+      cli-width: 4.1.0
+      mute-stream: 1.0.0
+      signal-exit: 4.1.0
+      strip-ansi: 6.0.1
+      wrap-ansi: 6.2.0
+      yoctocolors-cjs: 2.1.2
+
+  '@inquirer/editor@2.2.0':
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/type': 1.5.5
+      external-editor: 3.1.0
+
   '@inquirer/editor@4.2.11(@types/node@22.15.2)':
     dependencies:
       '@inquirer/core': 10.1.11(@types/node@22.15.2)
@@ -12385,6 +12640,12 @@ snapshots:
       external-editor: 3.1.0
     optionalDependencies:
       '@types/node': 22.15.2
+
+  '@inquirer/expand@2.3.0':
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/type': 1.5.5
+      yoctocolors-cjs: 2.1.2
 
   '@inquirer/expand@4.0.13(@types/node@22.15.2)':
     dependencies:
@@ -12396,12 +12657,22 @@ snapshots:
 
   '@inquirer/figures@1.0.11': {}
 
+  '@inquirer/input@2.3.0':
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/type': 1.5.5
+
   '@inquirer/input@4.1.10(@types/node@22.15.2)':
     dependencies:
       '@inquirer/core': 10.1.11(@types/node@22.15.2)
       '@inquirer/type': 3.0.6(@types/node@22.15.2)
     optionalDependencies:
       '@types/node': 22.15.2
+
+  '@inquirer/number@1.1.0':
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/type': 1.5.5
 
   '@inquirer/number@3.0.13(@types/node@22.15.2)':
     dependencies:
@@ -12410,6 +12681,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.15.2
 
+  '@inquirer/password@2.2.0':
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/type': 1.5.5
+      ansi-escapes: 4.3.2
+
   '@inquirer/password@4.0.13(@types/node@22.15.2)':
     dependencies:
       '@inquirer/core': 10.1.11(@types/node@22.15.2)
@@ -12417,6 +12694,19 @@ snapshots:
       ansi-escapes: 4.3.2
     optionalDependencies:
       '@types/node': 22.15.2
+
+  '@inquirer/prompts@5.5.0':
+    dependencies:
+      '@inquirer/checkbox': 2.5.0
+      '@inquirer/confirm': 3.2.0
+      '@inquirer/editor': 2.2.0
+      '@inquirer/expand': 2.3.0
+      '@inquirer/input': 2.3.0
+      '@inquirer/number': 1.1.0
+      '@inquirer/password': 2.2.0
+      '@inquirer/rawlist': 2.3.0
+      '@inquirer/search': 1.1.0
+      '@inquirer/select': 2.5.0
 
   '@inquirer/prompts@7.5.1(@types/node@22.15.2)':
     dependencies:
@@ -12433,6 +12723,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.15.2
 
+  '@inquirer/rawlist@2.3.0':
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/type': 1.5.5
+      yoctocolors-cjs: 2.1.2
+
   '@inquirer/rawlist@4.1.1(@types/node@22.15.2)':
     dependencies:
       '@inquirer/core': 10.1.11(@types/node@22.15.2)
@@ -12440,6 +12736,13 @@ snapshots:
       yoctocolors-cjs: 2.1.2
     optionalDependencies:
       '@types/node': 22.15.2
+
+  '@inquirer/search@1.1.0':
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/figures': 1.0.11
+      '@inquirer/type': 1.5.5
+      yoctocolors-cjs: 2.1.2
 
   '@inquirer/search@3.0.13(@types/node@22.15.2)':
     dependencies:
@@ -12450,6 +12753,14 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.15.2
 
+  '@inquirer/select@2.5.0':
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/figures': 1.0.11
+      '@inquirer/type': 1.5.5
+      ansi-escapes: 4.3.2
+      yoctocolors-cjs: 2.1.2
+
   '@inquirer/select@4.2.1(@types/node@22.15.2)':
     dependencies:
       '@inquirer/core': 10.1.11(@types/node@22.15.2)
@@ -12459,6 +12770,14 @@ snapshots:
       yoctocolors-cjs: 2.1.2
     optionalDependencies:
       '@types/node': 22.15.2
+
+  '@inquirer/type@1.5.5':
+    dependencies:
+      mute-stream: 1.0.0
+
+  '@inquirer/type@2.0.0':
+    dependencies:
+      mute-stream: 1.0.0
 
   '@inquirer/type@3.0.6(@types/node@22.15.2)':
     optionalDependencies:
@@ -15252,6 +15571,10 @@ snapshots:
     dependencies:
       '@types/express': 5.0.1
 
+  '@types/mute-stream@0.0.4':
+    dependencies:
+      '@types/node': 22.15.2
+
   '@types/mysql@2.15.26':
     dependencies:
       '@types/node': 22.15.2
@@ -15361,6 +15684,8 @@ snapshots:
   '@types/whatwg-url@11.0.5':
     dependencies:
       '@types/webidl-conversions': 7.0.3
+
+  '@types/wrap-ansi@3.0.0': {}
 
   '@types/ws@8.5.14':
     dependencies:
@@ -15630,6 +15955,11 @@ snapshots:
       axios: 1.7.9(debug@4.4.0)
       zod: 3.24.3
 
+  '@zodios/core@10.9.6(axios@1.9.0)(zod@3.24.2)':
+    dependencies:
+      axios: 1.9.0
+      zod: 3.24.2
+
   JSONStream@1.3.5:
     dependencies:
       jsonparse: 1.3.1
@@ -15670,7 +16000,7 @@ snapshots:
 
   acorn-walk@8.3.4:
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.14.1
 
   acorn@8.14.0: {}
 
@@ -15695,6 +16025,18 @@ snapshots:
       clean-stack: 2.2.0
       indent-string: 4.0.0
     optional: true
+
+  ai@4.3.16(react@19.0.0)(zod@3.24.2):
+    dependencies:
+      '@ai-sdk/provider': 1.1.3
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.24.2)
+      '@ai-sdk/react': 1.2.12(react@19.0.0)(zod@3.24.2)
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.24.2)
+      '@opentelemetry/api': 1.9.0
+      jsondiffpatch: 0.6.0
+      zod: 3.24.2
+    optionalDependencies:
+      react: 19.0.0
 
   ai@4.3.16(react@19.0.0)(zod@3.24.3):
     dependencies:
@@ -16422,6 +16764,10 @@ snapshots:
     dependencies:
       restore-cursor: 5.1.0
 
+  cli-progress@3.12.0:
+    dependencies:
+      string-width: 4.2.3
+
   cli-spinners@2.9.2: {}
 
   cli-truncate@4.0.0:
@@ -16548,6 +16894,31 @@ snapshots:
       dot-prop: 5.3.0
 
   component-type@1.2.1: {}
+
+  composio-core@0.5.39(@ai-sdk/openai@1.3.22(zod@3.24.2))(@cloudflare/workers-types@4.20250529.0)(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(@langchain/openai@0.5.10(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(ws@8.18.2))(ai@4.3.16(react@19.0.0)(zod@3.24.2))(langchain@0.3.24(9d6d9400a4911abf5c551d18b1c70105))(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)):
+    dependencies:
+      '@ai-sdk/openai': 1.3.22(zod@3.24.2)
+      '@cloudflare/workers-types': 4.20250529.0
+      '@composio/mcp': 1.0.3-0
+      '@hey-api/client-axios': 0.2.12(axios@1.9.0)
+      '@langchain/core': 0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))
+      '@langchain/openai': 0.5.10(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(ws@8.18.2)
+      ai: 4.3.16(react@19.0.0)(zod@3.24.2)
+      axios: 1.9.0
+      chalk: 4.1.2
+      cli-progress: 3.12.0
+      commander: 12.1.0
+      inquirer: 10.2.2
+      langchain: 0.3.24(9d6d9400a4911abf5c551d18b1c70105)
+      open: 8.4.2
+      openai: 4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)
+      pusher-js: 8.4.0-rc2
+      resolve-package-path: 4.0.3
+      uuid: 10.0.0
+      zod: 3.24.3
+      zod-to-json-schema: 3.24.5(zod@3.24.3)
+    transitivePeerDependencies:
+      - debug
 
   compressible@2.0.18:
     dependencies:
@@ -18527,11 +18898,24 @@ snapshots:
       once: 1.4.0
       wrappy: 1.0.2
 
+  inherits@2.0.3: {}
+
   inherits@2.0.4: {}
 
   ini@1.3.8: {}
 
   ini@4.1.1: {}
+
+  inquirer@10.2.2:
+    dependencies:
+      '@inquirer/core': 9.2.1
+      '@inquirer/prompts': 5.5.0
+      '@inquirer/type': 1.5.5
+      '@types/mute-stream': 0.0.4
+      ansi-escapes: 4.3.2
+      mute-stream: 1.0.0
+      run-async: 3.0.0
+      rxjs: 7.8.2
 
   inquirer@12.6.1(@types/node@22.15.2):
     dependencies:
@@ -19053,7 +19437,7 @@ snapshots:
       - openai
       - ws
 
-  langchain@0.3.24(c7bedd23656eaf47db7b2a4eb5fd5f2e):
+  langchain@0.3.24(9d6d9400a4911abf5c551d18b1c70105):
     dependencies:
       '@langchain/core': 0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2))
       '@langchain/openai': 0.5.10(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(ws@8.18.2)
@@ -19078,7 +19462,7 @@ snapshots:
       '@langchain/groq': 0.1.3(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))(encoding@0.1.13)(ws@8.18.2)
       '@langchain/mistralai': 0.2.0(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))
       '@langchain/ollama': 0.1.4(@langchain/core@0.3.51(openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.2)))
-      axios: 1.7.9(debug@4.4.0)
+      axios: 1.9.0
       cheerio: 1.0.0
       handlebars: 4.7.8
     transitivePeerDependencies:
@@ -19715,6 +20099,8 @@ snapshots:
       xtend: 4.0.2
 
   mustache@4.2.0: {}
+
+  mute-stream@1.0.0: {}
 
   mute-stream@2.0.0: {}
 
@@ -20462,7 +20848,6 @@ snapshots:
       zod: 3.24.2
     transitivePeerDependencies:
       - encoding
-    optional: true
 
   openai@4.98.0(encoding@0.1.13)(ws@8.18.2)(zod@3.24.3):
     dependencies:
@@ -20697,6 +21082,12 @@ snapshots:
 
   path-parse@1.0.7: {}
 
+  path-root-regex@0.1.2: {}
+
+  path-root@0.1.1:
+    dependencies:
+      path-root-regex: 0.1.2
+
   path-scurry@1.11.1:
     dependencies:
       lru-cache: 10.4.3
@@ -20712,6 +21103,11 @@ snapshots:
   path-to-regexp@8.2.0: {}
 
   path-type@4.0.0: {}
+
+  path@0.12.7:
+    dependencies:
+      process: 0.11.10
+      util: 0.10.4
 
   pathe@1.1.2: {}
 
@@ -20996,6 +21392,10 @@ snapshots:
 
   punycode@2.3.1: {}
 
+  pusher-js@8.4.0-rc2:
+    dependencies:
+      tweetnacl: 1.0.3
+
   pyodide@0.23.4(encoding@0.1.13):
     dependencies:
       base-64: 1.0.0
@@ -21265,6 +21665,10 @@ snapshots:
   resolve-from@4.0.0: {}
 
   resolve-from@5.0.0: {}
+
+  resolve-package-path@4.0.3:
+    dependencies:
+      path-root: 0.1.1
 
   resolve-pkg-maps@1.0.0: {}
 
@@ -22545,6 +22949,10 @@ snapshots:
   utf8@3.0.0: {}
 
   util-deprecate@1.0.2: {}
+
+  util@0.10.4:
+    dependencies:
+      inherits: 2.0.3
 
   util@0.12.5:
     dependencies:

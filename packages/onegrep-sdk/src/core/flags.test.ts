@@ -5,7 +5,7 @@ import { testLog } from '../../test/log.test.js'
 const log = testLog
 
 import { OneGrepApiHighLevelClient } from './api/high.js'
-import { FlagsProvider, getFlagsProvider } from './flags.js'
+import { getFlagsProvider } from './flags.js'
 
 class MockHighLevelClient extends OneGrepApiHighLevelClient {
   constructor() {
@@ -20,13 +20,10 @@ class MockHighLevelClient extends OneGrepApiHighLevelClient {
     }
   }
 
-  async getFlags() {
+  async getFlags(): Promise<Record<string, boolean | string>> {
     return {
-      flags: {
-        'test-flag-boolean': true,
-        'test-flag-string': 'value'
-      },
-      user_id: 'test-user-id'
+      'test-flag-boolean': true,
+      'test-flag-string': 'value'
     }
   }
 }
