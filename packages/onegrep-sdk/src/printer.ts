@@ -4,7 +4,7 @@ import YAML from 'yaml'
 import {
   RegisteredToolprintReadable,
   ToolprintInput
-} from '@repo/onegrep-api-client'
+} from '@onegrep/api-client'
 
 class ToolprintValidationError extends Error {
   constructor(message: string, cause?: unknown) {

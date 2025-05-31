@@ -1,4 +1,4 @@
-import { SmitheryToolServerClient } from '@repo/onegrep-api-client'
+import { SmitheryToolServerClient } from '@onegrep/api-client'
 import {
   BasicToolDetails,
   ToolCallInput,

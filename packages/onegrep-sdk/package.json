@@ -1,6 +1,6 @@
 {
   "name": "@onegrep/sdk",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "type": "module",
   "license": "MIT",
   "author": "OneGrep, Inc.",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
-    "@repo/onegrep-api-client": "workspace:*",
+    "@onegrep/api-client": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/utils": "workspace:*",
     "@rollup/plugin-alias": "^5.1.1",

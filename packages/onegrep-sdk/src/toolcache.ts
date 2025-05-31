@@ -6,7 +6,7 @@ import {
   InitializeResponse,
   Prompt,
   ScoredItemTool
-} from '@repo/onegrep-api-client'
+} from '@onegrep/api-client'
 
 import { ToolServerClient } from '~/core/api/types.js'
 

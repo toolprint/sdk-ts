@@ -4,7 +4,7 @@ import {
   BlaxelToolServerClient,
   ComposioToolServerClient,
   SmitheryToolServerClient
-} from '@repo/onegrep-api-client'
+} from '@onegrep/api-client'
 import { createBlaxelConnection } from '~/providers/blaxel/connection.js'
 import { createSmitheryConnection } from '~/providers/smithery/connection.js'
 import {

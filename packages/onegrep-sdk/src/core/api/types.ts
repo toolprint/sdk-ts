@@ -4,7 +4,7 @@ import {
   ComposioToolServerClient,
   McpToolServerClient,
   SmitheryToolServerClient
-} from '@repo/onegrep-api-client'
+} from '@onegrep/api-client'
 
 export type OneGrepApiClient = typeof client
 

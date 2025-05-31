@@ -10,7 +10,7 @@ import {
   ToolServerConnection
 } from '~/types.js'
 
-import { BlaxelToolServerClient } from '@repo/onegrep-api-client'
+import { BlaxelToolServerClient } from '@onegrep/api-client'
 
 import { Function, getTool as getBlaxelServerTools } from '@blaxel/core'
 

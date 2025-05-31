@@ -22,7 +22,7 @@ import { z, ZodTypeAny } from 'zod'
 import { log } from '~/core/log.js'
 import { StructuredToolsRecommendation } from './types.js'
 import { SystemMessage } from '@langchain/core/messages'
-import { Prompt } from '@repo/onegrep-api-client'
+import { Prompt } from '@onegrep/api-client'
 
 /**
  * Convert an EquippedTool to a DynamicStructuredTool that's compatible with LangChain agents

@@ -1,4 +1,4 @@
-import { ComposioToolServerClient } from '@repo/onegrep-api-client'
+import { ComposioToolServerClient } from '@onegrep/api-client'
 import {
   BasicToolDetails,
   ObjectResultContent,

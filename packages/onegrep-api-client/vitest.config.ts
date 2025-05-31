@@ -7,6 +7,7 @@ export default defineConfig({
     tsconfigRaw: '{}'
   },
   test: {
+    include: ['test/**/*.test.ts'],
     clearMocks: true,
     globals: true,
     setupFiles: ['dotenv/config']

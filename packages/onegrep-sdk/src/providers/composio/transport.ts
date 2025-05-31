@@ -1,6 +1,6 @@
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
-import { ComposioToolServerClient } from '@repo/onegrep-api-client'
+import { ComposioToolServerClient } from '@onegrep/api-client'
 
 export function createComposioTransports(
   toolServerClient: ComposioToolServerClient

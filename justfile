@@ -184,6 +184,16 @@ publish-sdk:
 publish-sdk-dry-run:
     pnpm turbo run publish:npm:dry-run --filter=@onegrep/sdk
 
+# publish the api client
+[group('publish')]
+publish-api-client:
+    pnpm turbo run publish:npm --filter=@onegrep/api-client
+
+# publish the api client (dry run)
+[group('publish')]
+publish-api-client-dry-run:
+    pnpm turbo run publish:npm:dry-run --filter=@onegrep/api-client
+
 # clean dist folders
 [group('clean')]
 clean-dist:

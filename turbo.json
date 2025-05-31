@@ -7,7 +7,7 @@
     "generate": {
       "outputs": ["src/**/*.ts"]
     },
-    "@repo/onegrep-api-client#generate": {
+    "@onegrep/api-client#generate": {
       "dependsOn": [],
       "inputs": ["openapi/onegrep-api.yaml"],
       "outputs": ["src/**/*.ts"]
@@ -17,7 +17,7 @@
       "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"]
     },
     "@onegrep/sdk#build": {
-      "dependsOn": ["@repo/utils#build", "@repo/onegrep-api-client#build"]
+      "dependsOn": ["@repo/utils#build", "@onegrep/api-client#build"]
     },
     "lint": {
       "dependsOn": ["^lint"]

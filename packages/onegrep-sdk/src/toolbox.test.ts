@@ -15,7 +15,7 @@ import 'dotenv/config'
 import { fail } from 'assert'
 
 import { testLog } from '../test/log.test.js'
-import { ToolServer } from '@repo/onegrep-api-client'
+import { ToolServer } from '@onegrep/api-client'
 
 const log = testLog
 

@@ -11,10 +11,10 @@ import {
   ToolprintOutput,
   ProvidersService,
   AccountInformation
-} from '@repo/onegrep-api-client'
-import { ToolProperties } from '@repo/onegrep-api-client'
-import { ToolResource } from '@repo/onegrep-api-client'
-import { SearchResponseScoredItemTool } from '@repo/onegrep-api-client'
+} from '@onegrep/api-client'
+import { ToolProperties } from '@onegrep/api-client'
+import { ToolResource } from '@onegrep/api-client'
+import { SearchResponseScoredItemTool } from '@onegrep/api-client'
 import {
   DefaultService,
   SdkService,
@@ -28,7 +28,7 @@ import {
   SecretsService,
   InitializeResponse,
   GetAllFlagsResponse
-} from '@repo/onegrep-api-client'
+} from '@onegrep/api-client'
 import { makeApiCallWithResult } from './utils.js'
 import { OneGrepApiClient, ToolServerClient } from './types.js'
 
