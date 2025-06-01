@@ -19,22 +19,37 @@ import {
 
 import { log } from '~/core/log.js'
 import { z } from 'zod'
-import { composioToolSet } from './api.js'
+import { getComposioToolSet } from './api.js'
 
 export class ComposioToolServerConnection implements ToolServerConnection {
   private toolServerClient: ComposioToolServerClient
   private mcpClientSession: ClientSession | undefined
-  private toolSet: ComposioToolSet
+  private toolSet: ComposioToolSet | undefined
   private toolsByName: Map<string, any>
 
   constructor(
     toolServerClient: ComposioToolServerClient,
-    mcpClientSession?: ClientSession
+    mcpClientSession?: ClientSession,
+    apiKey?: string
   ) {
     this.toolServerClient = toolServerClient
     this.mcpClientSession = mcpClientSession
-    this.toolSet = composioToolSet // ! TODO: inject instead?
     this.toolsByName = new Map()
+    if (apiKey) {
+      this.toolSet = getComposioToolSet(apiKey)
+    }
+  }
+
+  private async ensureToolSet(): Promise<ComposioToolSet> {
+    if (!this.toolSet) {
+      const secrets = await getDopplerSecretManager()
+      const apiKey = await secrets.getSecret('COMPOSIO_API_KEY')
+      if (!apiKey) {
+        throw new Error('Composio API key not found')
+      }
+      this.toolSet = getComposioToolSet(apiKey)
+    }
+    return this.toolSet
   }
 
   /**
@@ -92,8 +107,9 @@ export class ComposioToolServerConnection implements ToolServerConnection {
           throw new Error(`Tool not found: ${toolDetails.name}`)
         }
 
+        const toolSet = await this.ensureToolSet()
         const actionExecuteResponse: ActionExecuteResponse =
-          await this.toolSet.executeAction({
+          await toolSet.executeAction({
             action: toolDetails.name,
             params: toolCallInput.args
           })
@@ -173,20 +189,20 @@ export async function createComposioConnection(
     return new ComposioToolServerConnection(client, mcpClientSession)
   }
 
-  // Verify the we can authenticate with Composio and that the workspace matches the tool server's workspace.
+  // Verify we can authenticate with Composio and get the API key
   try {
     const secrets = await getDopplerSecretManager()
-    const apiKeyPresent = secrets.hasSecret('COMPOSIO_API_KEY')
-    if (!apiKeyPresent) {
+    const apiKey = await secrets.getSecret('COMPOSIO_API_KEY')
+    if (!apiKey) {
       throw new Error('Composio API key not found')
     }
+    return new ComposioToolServerConnection(client, undefined, apiKey)
   } catch (error) {
     // ! TODO: Warn for now, but we should probably throw an error here when we can reliably validate the Composio function.
     log.warn(
       `Unable to verify Composio authentication for tool server ${client.server_id}`,
       error
     )
+    return new ComposioToolServerConnection(client)
   }
-
-  return new ComposioToolServerConnection(client)
 }
