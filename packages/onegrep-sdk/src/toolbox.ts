@@ -14,7 +14,7 @@ import {
   BasicToolDetails,
   Recommendation
 } from '~/types.js'
-import { getDopplerSecretManager } from './secrets/doppler.js'
+import { createDopplerSecretManager } from './secrets/doppler.js'
 
 import { createToolCache } from '~/toolcache.js'
 
@@ -151,7 +151,7 @@ export async function createToolbox(
 ) {
   // Make sure the secret manager is initialized
   const secretManager =
-    providedSecretManager ?? (await getDopplerSecretManager())
+    providedSecretManager ?? (await createDopplerSecretManager(apiClient))
   await secretManager.initialize()
 
   // Register available session makers
