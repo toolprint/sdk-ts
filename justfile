@@ -125,7 +125,7 @@ test name=".*":
 
 [group('test')]
 test-api-client name=".*":
-    pnpm turbo run test --filter=@repo/onegrep-api-client -- --testNamePattern={{name}}
+    pnpm turbo run test --filter=@onegrep/api-client -- --testNamePattern={{name}}
 
 # test the sdk package (use `test-sdk ".*"` to filter by test name regex)
 # * Note that "name" isn't the file name but the name of the test class within a file.

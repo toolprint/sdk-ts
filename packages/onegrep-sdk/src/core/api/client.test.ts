@@ -2,7 +2,7 @@ import { clientFromConfig } from './client.js'
 import { describe, it, expect } from 'vitest'
 
 import { testLog } from '../../../test/log.test.js'
-import { ToolServer } from 'node_modules/@repo/onegrep-api-client/dist/types/src/types.gen.js'
+import { ToolServer } from '@onegrep/api-client'
 
 const log = testLog
 
