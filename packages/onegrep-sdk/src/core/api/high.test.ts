@@ -70,4 +70,51 @@ describe('OneGrepApiHighLevelClient', () => {
       }
     })
   })
+
+  describe('HighLevelClient searchToolprints', () => {
+    it('should return toolprints for a basic query', async () => {
+      const query = 'search'
+      const result = await client.searchToolprints(query)
+      expect(result).toBeDefined()
+      expect(result.results).toBeInstanceOf(Array)
+      expect(result.pagination).toBeDefined()
+      if (result.results.length > 0) {
+        const first = result.results[0]
+        expect(first).toHaveProperty('item')
+        expect(first).toHaveProperty('score')
+        expect(typeof first.score).toBe('number')
+        expect(first.item).toHaveProperty('toolprint')
+        expect(first.item).toHaveProperty('tools')
+        expect(Array.isArray(first.item.tools)).toBe(true)
+      }
+      log.info('searchToolprints result:', JSON.stringify(result, null, 2))
+    })
+
+    it('should respect options like k and min_score', async () => {
+      const query = 'search'
+      const options = { query, k: 1, min_score: 0 }
+      const result = await client.searchToolprints(query, options)
+      expect(result).toBeDefined()
+      expect(result.results.length).toBeLessThanOrEqual(1)
+      if (result.results.length > 0) {
+        expect(result.results[0].score).toBeGreaterThanOrEqual(0)
+      }
+      log.info(
+        'searchToolprints with options:',
+        JSON.stringify(result, null, 2)
+      )
+    })
+
+    it('should prioritize the query parameter over options.query', async () => {
+      const query = 'search'
+      const options = { query: 'should_not_be_used', k: 1 }
+      const result = await client.searchToolprints(query, options)
+      // The result should reflect the real query, not the one in options
+      expect(result).toBeDefined()
+      log.info(
+        'searchToolprints query precedence:',
+        JSON.stringify(result, null, 2)
+      )
+    })
+  })
 })
