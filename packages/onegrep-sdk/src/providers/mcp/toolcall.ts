@@ -229,7 +229,7 @@ export const mcpCallTool = async (
     const result = await mcpClient.callTool(callToolRequest.params)
     if (result.isError) {
       log.error(`Tool call failed result: ${JSON.stringify(result)}`)
-      throw new Error(`Tool call failed. Reason: ${result.error}`)
+      throw new Error(`Tool call failed.\nReason: ${result.content}`)
     }
     return parseResultFunc(result as CallToolResult)
   } catch (error) {
