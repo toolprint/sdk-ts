@@ -9,6 +9,25 @@ import { OneGrepApiClient } from './types.js'
 import { log } from '../log.js'
 
 /**
+ * Create a client that can be used to check the health of the API.
+ * @param baseUrl - The base URL of the API
+ * @returns An instance of the OneGrep API Client
+ */
+export function createUnauthenticatedClient(baseUrl: string): OneGrepApiClient {
+  try {
+    const client = createClient(
+      createConfig<ClientOptions>({
+        baseURL: baseUrl
+      })
+    )
+    return client as unknown as OneGrepApiClient
+  } catch (error) {
+    log.error(`Error creating OneGrep Unauthenticated Client: ${error}`)
+    throw error
+  }
+}
+
+/**
  * Create a raw API Client given multiple optional parameters. A baseURL is always required.
  * @param clientParams - The parameters for the client
  * @returns An instance of the OneGrep API Client
