@@ -55,15 +55,15 @@ export interface ClientSessionMaker<T extends ToolServerClient> {
 }
 
 export const blaxelClientSessionMaker: ClientSessionMaker<BlaxelToolServerClient> =
-{
-  create: async (client: BlaxelToolServerClient) => {
-    return Promise.resolve(
-      new RefreshableMultiTransportClientSession(
-        blaxelMcpTransportOptions(client.blaxel_function)
+  {
+    create: async (client: BlaxelToolServerClient) => {
+      return Promise.resolve(
+        new RefreshableMultiTransportClientSession(
+          blaxelMcpTransportOptions(client.blaxel_function)
+        )
       )
-    )
+    }
   }
-}
 
 export const apiKeyBlaxelClientSessionMaker = (
   apiKey: string,
@@ -92,18 +92,18 @@ export const apiKeyBlaxelClientSessionMaker = (
 }
 
 export const smitheryClientSessionMaker: ClientSessionMaker<SmitheryToolServerClient> =
-{
-  create: async (client: SmitheryToolServerClient) => {
-    return Promise.resolve(
-      new MultiTransportClientSession(
-        smitheryMcpTransportOptions(client, {
-          apiKey: process.env.SMITHERY_API_KEY,
-          profile: 'default' // ! Probably won't work, it generates a random profile name
-        })
+  {
+    create: async (client: SmitheryToolServerClient) => {
+      return Promise.resolve(
+        new MultiTransportClientSession(
+          smitheryMcpTransportOptions(client, {
+            apiKey: process.env.SMITHERY_API_KEY,
+            profile: 'default' // ! Probably won't work, it generates a random profile name
+          })
+        )
       )
-    )
+    }
   }
-}
 
 export const apiKeySmitheryClientSessionMaker = (
   secretManager: SecretManager,

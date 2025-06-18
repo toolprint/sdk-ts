@@ -33,7 +33,7 @@ import { makeApiCallWithResult } from './utils.js'
 import { OneGrepApiClient, ToolServerClient } from './types.js'
 
 export class OneGrepApiHighLevelClient {
-  constructor(private readonly apiClient: OneGrepApiClient) { }
+  constructor(private readonly apiClient: OneGrepApiClient) {}
 
   async healthCheck(): Promise<boolean> {
     const result = await makeApiCallWithResult<void>(async () => {
