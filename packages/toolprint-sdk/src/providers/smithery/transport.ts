@@ -7,7 +7,7 @@ import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 
 import { log } from '~/core/index.js'
-import { SmitheryToolServerClient } from '../../../../toolprint-api-client/dist/types/src/index.js'
+import { SmitheryToolServerClient } from '@toolprint/api-client'
 import { jsonSchemaUtils } from '~/schema.js'
 import { InvalidTransportConfigError } from '~/connection.js'
 

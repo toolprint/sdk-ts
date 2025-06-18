@@ -6,7 +6,7 @@ import {
   InitializeResponse,
   Prompt,
   ScoredItemTool
-} from '../../toolprint-api-client/dist/types/src/index.js'
+} from '@toolprint/api-client'
 
 import { ToolServerClient } from '~/core/api/types.js'
 

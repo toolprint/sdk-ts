@@ -1,4 +1,4 @@
-import { ComposioToolServerClient } from '../../../../toolprint-api-client/dist/types/src/index.js'
+import { ComposioToolServerClient } from '@toolprint/api-client'
 import {
   BasicToolDetails,
   ObjectResultContent,

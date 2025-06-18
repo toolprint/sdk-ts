@@ -1,4 +1,4 @@
-import { SmitheryToolServerClient } from '../../../../toolprint-api-client/dist/types/src/index.js'
+import { SmitheryToolServerClient } from '@toolprint/api-client'
 import {
   BasicToolDetails,
   ToolCallInput,

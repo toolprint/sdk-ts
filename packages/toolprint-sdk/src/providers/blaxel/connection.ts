@@ -10,7 +10,7 @@ import {
   ToolServerConnection
 } from '~/types.js'
 
-import { BlaxelToolServerClient } from '../../../../toolprint-api-client/dist/types/src/index.js'
+import { BlaxelToolServerClient } from '@toolprint/api-client'
 
 import { Function, getTool as getBlaxelServerTools } from '@blaxel/core'
 

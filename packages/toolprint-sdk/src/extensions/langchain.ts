@@ -22,7 +22,7 @@ import { z, ZodTypeAny } from 'zod'
 import { log } from '~/core/log.js'
 import { StructuredToolsRecommendation } from './types.js'
 import { SystemMessage } from '@langchain/core/messages'
-import { Prompt } from '../../../toolprint-api-client/dist/types/src/index.js'
+import { Prompt } from '@toolprint/api-client'
 
 /**
  * Convert an EquippedTool to a DynamicStructuredTool that's compatible with LangChain agents
@@ -81,8 +81,7 @@ const convertToLangChainMessages = (prompts: Prompt[]): SystemMessage[] => {
  * Toolbox interfaces to let us extend the Toolbox for various agent frameworks.
  */
 export class LangchainToolbox
-  implements BaseToolbox<StructuredTool, StructuredToolsRecommendation>
-{
+  implements BaseToolbox<StructuredTool, StructuredToolsRecommendation> {
   toolbox: Toolbox
 
   constructor(toolbox: Toolbox) {

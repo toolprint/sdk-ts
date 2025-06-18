@@ -2,7 +2,7 @@ import DopplerSDK from '@dopplerhq/node-sdk'
 
 import { SecretManager } from './types.js'
 
-import { InitializeResponse } from '../../../toolprint-api-client/dist/types/src/index.js'
+import { InitializeResponse } from '@toolprint/api-client'
 
 import { OneGrepApiClient } from '~/core/index.js'
 import { OneGrepApiHighLevelClient } from '~/core/index.js'
