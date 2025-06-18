@@ -6,7 +6,7 @@ import {
   InitializeResponse,
   Prompt,
   ScoredItemTool
-} from '@onegrep/api-client'
+} from '../../toolprint-api-client/dist/types/src/index.js'
 
 import { ToolServerClient } from '~/core/api/types.js'
 

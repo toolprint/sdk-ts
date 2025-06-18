@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
-    "@onegrep/api-client": "workspace:*",
+    "@toolprint/api-client": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/utils": "workspace:*",
     "@rollup/plugin-alias": "^5.1.1",

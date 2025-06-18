@@ -4,7 +4,7 @@ import {
   Prompt,
   ToolprintInput,
   RegisteredToolprintReadable
-} from '@onegrep/api-client'
+} from '../../toolprint-api-client/dist/types/src/index.js'
 
 import { ToolServerClient } from '~/core/api/types.js'
 
@@ -18,7 +18,7 @@ export type JsonSchema = Record<string, any> | boolean
  * Schemas that represent how to pass inputs to a tool.
  */
 export type ToolCallArgs = Record<string, any>
-export interface ToolCallApproval {}
+export interface ToolCallApproval { }
 export interface ToolCallInput {
   args: ToolCallArgs
   approval: ToolCallApproval | undefined

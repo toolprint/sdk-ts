@@ -1,4 +1,4 @@
-import { SmitheryToolServerClient } from '@onegrep/api-client'
+import { SmitheryToolServerClient } from '../../../../toolprint-api-client/dist/types/src/index.js'
 import {
   BasicToolDetails,
   ToolCallInput,

@@ -6,7 +6,7 @@ import {
   ToolprintInput,
   ToolprintMetaInput,
   ToolprintTool
-} from '@onegrep/api-client'
+} from '../../../../toolprint-api-client/dist/types/src/index.js'
 import { OneGrepApiError } from './utils.js'
 
 const log = testLog

@@ -12,12 +12,10 @@ import {
   ProvidersService,
   AccountInformation,
   SearchResponseScoredItemRegisteredToolprintReadable,
-  SearchRequest
-} from '@onegrep/api-client'
-import { ToolProperties } from '@onegrep/api-client'
-import { ToolResource } from '@onegrep/api-client'
-import { SearchResponseScoredItemTool } from '@onegrep/api-client'
-import {
+  SearchRequest,
+  ToolProperties,
+  ToolResource,
+  SearchResponseScoredItemTool,
   DefaultService,
   SdkService,
   AccountService,
@@ -30,12 +28,12 @@ import {
   SecretsService,
   InitializeResponse,
   GetAllFlagsResponse
-} from '@onegrep/api-client'
+} from '@toolprint/api-client'
 import { makeApiCallWithResult } from './utils.js'
 import { OneGrepApiClient, ToolServerClient } from './types.js'
 
 export class OneGrepApiHighLevelClient {
-  constructor(private readonly apiClient: OneGrepApiClient) {}
+  constructor(private readonly apiClient: OneGrepApiClient) { }
 
   async healthCheck(): Promise<boolean> {
     const result = await makeApiCallWithResult<void>(async () => {

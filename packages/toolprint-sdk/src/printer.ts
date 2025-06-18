@@ -4,7 +4,7 @@ import YAML from 'yaml'
 import {
   RegisteredToolprintReadable,
   ToolprintInput
-} from '@onegrep/api-client'
+} from '../../toolprint-api-client/dist/types/src/index.js'
 
 class ToolprintValidationError extends Error {
   constructor(message: string, cause?: unknown) {
@@ -21,7 +21,7 @@ class ToolprintRegistrationError extends Error {
 }
 
 export class ToolPrinter implements BaseToolPrinter {
-  constructor(private readonly client: OneGrepApiHighLevelClient) {}
+  constructor(private readonly client: OneGrepApiHighLevelClient) { }
 
   async validate(
     content: string,

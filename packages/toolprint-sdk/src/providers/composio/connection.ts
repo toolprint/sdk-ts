@@ -1,4 +1,4 @@
-import { ComposioToolServerClient } from '@onegrep/api-client'
+import { ComposioToolServerClient } from '../../../../toolprint-api-client/dist/types/src/index.js'
 import {
   BasicToolDetails,
   ObjectResultContent,

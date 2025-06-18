@@ -38,7 +38,7 @@ reinstall:
 # update the api client spec
 [group('openapi')]
 update-openapi-spec base-url="https://dev.sandbox.onegrep.dev":
-    curl {{base-url}}/openapi/sdk-client.yaml --output ./packages/onegrep-api-client/openapi/onegrep-api.yaml
+    curl {{base-url}}/openapi/sdk-client.yaml --output ./packages/toolprint-api-client/openapi/toolprint-api.yaml
 
 [group('openapi')]
 update-openapi-spec-local:
@@ -219,7 +219,7 @@ bump-versions level='patch':
 
     # Actually perform the version bump
     @cd packages/toolprint-sdk && pnpm version {{level}}
-    @cd packages/onegrep-api-client && pnpm version {{level}}
+    @cd packages/toolprint-api-client && pnpm version {{level}}
 
 
 # Bump patch versions of all non-private packages

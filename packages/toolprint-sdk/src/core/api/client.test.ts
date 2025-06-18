@@ -1,8 +1,7 @@
 import { clientFromConfig } from './client.js'
 import { describe, it, expect } from 'vitest'
-
 import { testLog } from '../../../test/log.test.js'
-import { ToolServer } from '@onegrep/api-client'
+import { ToolServer } from '@toolprint/api-client'
 
 const log = testLog
 
