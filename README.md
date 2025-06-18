@@ -1,9 +1,9 @@
 <div align="center">
-  <img src="assets/onegrep.png" alt="OneGrep Logo" width="200"/>
+  <img src="assets/onegrep.png" alt="Toolprint Logo" width="200"/>
 
-# OneGrep TypeScript SDK
+# Toolprint TypeScript SDK
 
-[![Release](https://img.shields.io/github/v/release/OneGrep/typescript-sdk)](https://github.com/OneGrep/typescript-sdk/releases/latest)
+[![Release](https://img.shields.io/github/v/release/toolprint/sdk-ts)](https://github.com/toolprint/sdk-ts/releases/latest)
 [![PNPM](https://img.shields.io/badge/pnpm-v10.4.1-orange)](https://pnpm.io)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.14.0-brightgreen)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/typescript-5.x-blue)](https://www.typescriptlang.org)
@@ -13,10 +13,10 @@
 
 _Import a single SDK to power your agents with semantic tool search, trainable contexts, and feedback-driven selection that gets smarter over time. Access tools from any provider through a unified API with configurable security policies and guardrails._
 
-[Documentation](packages/onegrep-sdk/docs/apiSpec.md) |
-[API Reference](packages/onegrep-sdk/docs/apiSpec.md#api-methods) |
+[Documentation](packages/toolprint-sdk/docs/apiSpec.md) |
+[API Reference](packages/toolprint-sdk/docs/apiSpec.md#api-methods) |
 [Getting Started](#getting-started) |
-[Join our Community](https://join.slack.com/t/onegrep-community/shared_invite/placeholder)
+[Join our Community](https://join.slack.com/t/toolprint-community/shared_invite/placeholder)
 
 </div>
 
@@ -58,23 +58,23 @@ _Import a single SDK to power your agents with semantic tool search, trainable c
 
 1. **Request Access**
 
-   - Visit [onegrep.dev](https://www.onegrep.dev/) to join the waitlist
-   - You'll receive an invite to the OneGrep sandbox environment
+   - Visit [www.toolprint.ai](https://www.toolprint.ai/) to join the waitlist
+   - You'll receive an invite to the Toolprint sandbox environment
 
 2. **Install the CLI**
 
 ```bash
-# Install the OneGrep CLI
-npx -y @onegrep/cli
+# Install the Toolprint CLI
+npx -y @toolprint/cli
 
 # Create your account
-npx @onegrep/cli account
+npx @toolprint/cli account
 # Select "Create Account" when prompted
 ```
 
 ### Sandbox Environment
 
-The OneGrep sandbox comes pre-configured with:
+The Toolprint sandbox comes pre-configured with:
 
 - A collection of popular AI tools across different categories (chat, search, code analysis, etc.)
 - Example tool contexts trained for common agent scenarios
@@ -91,7 +91,7 @@ Find tools that match your agent's goals using natural language:
 
 ```bash
 # Start the CLI tool explorer
-npx @onegrep/cli tools
+npx @toolprint/cli tools
 
 # Select "search" from the menu
 # Enter your query when prompted:
@@ -106,7 +106,7 @@ Try out tools directly from the CLI:
 
 ```bash
 # Start the CLI tool explorer
-npx @onegrep/cli tools
+npx @toolprint/cli tools
 
 # Select "Explore integrations"
 # Select "exa" from the list
@@ -122,7 +122,7 @@ Improve tool selection by adding custom context:
 
 ```bash
 # Start the CLI tool explorer
-npx @onegrep/cli tools
+npx @toolprint/cli tools
 
 # Select "Explore integrations"
 # Select any tool
@@ -131,7 +131,7 @@ npx @onegrep/cli tools
 # Add a value (e.g., "mcp monitoring")
 
 # Now search again:
-npx @onegrep/cli tools
+npx @toolprint/cli tools
 # Select "search"
 # Try a query related to your tag:
 "I need to monitor MCP status"
@@ -145,26 +145,26 @@ Once you have sandbox access, install the SDK:
 
 ```bash
 # Install using PNPM
-pnpm add @onegrep/sdk
+pnpm add @toolprint/sdk
 ```
 
 Set up your environment:
 
 ```bash
 # Get your API key from the CLI
-npx @onegrep/cli account
+npx @toolprint/cli account
 # Select "Show authentication status"
 # Your API key will be displayed
 
 # Set the API key in your environment
-export ONEGREP_API_KEY="your_sandbox_api_key"
-# Set the URL to your onegrep deployment (or the public sandbox)
-export ONEGREP_API_URL="https://test-sandbox.onegrep.dev"
+export TOOLPRINT_API_KEY="your_sandbox_api_key"
+# Set the URL to your toolprint deployment (or the public sandbox)
+export TOOLPRINT_API_URL="https://test-sandbox.toolprint.ai"
 ```
 
 #### Run an Agent
 
-Let's start with a complete example of running an agent that uses OneGrep for dynamic tool selection. This example uses LangChain for the agent loop and Blaxel for managing the agent runtime.
+Let's start with a complete example of running an agent that uses Toolprint for dynamic tool selection. This example uses LangChain for the agent loop and Blaxel for managing the agent runtime.
 
 First, install the Just command runner:
 
@@ -186,17 +186,17 @@ just bl-chat
 
 This will start a local agent that:
 
-- Uses OneGrep SDK for intelligent tool selection
+- Uses Toolprint SDK for intelligent tool selection
 - Implements a ReAct agent loop with LangChain
 - Runs in a secure Blaxel runtime environment
 
 #### LangChain Integration
 
-OneGrep seamlessly integrates with LangChain, providing type-safe tool bindings:
+Toolprint seamlessly integrates with LangChain, providing type-safe tool bindings:
 
 ```typescript
-import { getToolbox } from '@onegrep/sdk'
-import { createLangchainToolbox } from '@onegrep/sdk/extensions/langchain'
+import { getToolbox } from '@toolprint/sdk'
+import { createLangchainToolbox } from '@toolprint/sdk/extensions/langchain'
 
 // Initialize toolboxes
 const toolbox = await getToolbox()
@@ -223,11 +223,11 @@ const result = await agent.invoke({
 })
 ```
 
-For more examples and detailed API documentation, check out our [Documentation](packages/onegrep-sdk/docs/apiSpec.md).
+For more examples and detailed API documentation, check out our [Documentation](packages/toolprint-sdk/docs/apiSpec.md).
 
 ## 🔗 Supported Providers
 
-OneGrep integrates with the following tool providers:
+Toolprint integrates with the following tool providers:
 
 ### [Blaxel](https://blaxel.ai)
 
@@ -237,11 +237,11 @@ The AI-first tool hosting platform with built-in security and scalability. Blaxe
 
 A modern tool hosting platform focused on developer experience and enterprise features. Smithery offers extensive tool management capabilities and robust security controls.
 
-> Want to add support for your tool hosting platform? Please reach out to us at support@onegrep.dev or [Create a Provider Support Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+)!
+> Want to add support for your tool hosting platform? Please reach out to us at support@toolprint.ai or [Create a Provider Support Request](https://github.com/toolprint/sdk-ts/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+)!
 
 ## 📖 Next Steps
 
-Ready to explore more advanced capabilities? Check out our [API Reference](packages/onegrep-sdk/docs/apiSpec.md#api-methods) to learn about:
+Ready to explore more advanced capabilities? Check out our [API Reference](packages/toolprint-sdk/docs/apiSpec.md#api-methods) to learn about:
 
 - Advanced filtering and search options
 - Custom tool context training
@@ -251,14 +251,14 @@ Ready to explore more advanced capabilities? Check out our [API Reference](packa
 
 ## 🤝 Contributing
 
-We welcome contributions to the OneGrep TypeScript SDK! Here's how you can help:
+We welcome contributions to the Toolprint TypeScript SDK! Here's how you can help:
 
 ### Development Setup
 
 ```bash
 # Fork the repository & clone it
-git clone https://github.com/OneGrep/typescript-sdk.git
-cd typescript-sdk
+git clone https://github.com/toolprint/sdk-ts.git
+cd sdk-ts
 
 # Install dependencies & build
 just install
@@ -279,7 +279,7 @@ just build
 
 ### Feature Requests
 
-Have an idea for a new feature? [Create a Feature Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml) using one of these types:
+Have an idea for a new feature? [Create a Feature Request](https://github.com/toolprint/sdk-ts/issues/new?template=feature_request.yml) using one of these types:
 
 - General SDK Enhancement
 - New Runtime Support
@@ -294,7 +294,7 @@ The template will guide you through providing:
 
 ### Bug Reports
 
-Found a bug? [Create a Bug Report](https://github.com/OneGrep/typescript-sdk/issues/new?template=bug_report.yml) with:
+Found a bug? [Create a Bug Report](https://github.com/toolprint/sdk-ts/issues/new?template=bug_report.yml) with:
 
 **Required Information:**
 
@@ -313,12 +313,12 @@ The template will guide you through providing all necessary information to help 
 #### Authentication Errors
 
 ```bash
-Error: Failed to authenticate with OneGrep API
+Error: Failed to authenticate with Toolprint API
 ```
 
-- Ensure `ONEGREP_API_KEY` is set in your environment
-- Verify your API key is valid by running `npx @onegrep/cli account`
-- Check if your API URL is correct (`ONEGREP_API_URL`)
+- Ensure `TOOLPRINT_API_KEY` is set in your environment
+- Verify your API key is valid by running `npx @toolprint/cli account`
+- Check if your API URL is correct (`TOOLPRINT_API_URL`)
 
 #### Tool Not Found
 
@@ -342,9 +342,9 @@ Error: Tool execution failed: Invalid input
 
 ### Getting Help
 
-- Join our [Community Slack](https://join.slack.com/t/onegrep-community/shared_invite/placeholder)
-- Open an [Issue](https://github.com/OneGrep/typescript-sdk/issues)
-- Check our [API Reference](packages/onegrep-sdk/docs/apiSpec.md) for detailed documentation
+- Join our [Community Slack](https://join.slack.com/t/toolprint-community/shared_invite/placeholder)
+- Open an [Issue](https://github.com/toolprint/sdk-ts/issues)
+- Check our [API Reference](packages/toolprint-sdk/docs/apiSpec.md) for detailed documentation
 
 ## 📝 License
 

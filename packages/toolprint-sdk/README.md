@@ -1,9 +1,9 @@
 <div align="center">
   <img src="../../assets/onegrep.png" alt="OneGrep Logo" width="200"/>
 
-# OneGrep TypeScript SDK
+# Toolprint TypeScript SDK
 
-[![Release](https://img.shields.io/github/v/release/OneGrep/typescript-sdk)](https://github.com/OneGrep/typescript-sdk/releases/latest)
+[![Release](https://img.shields.io/github/v/release/toolprint/sdk-ts)](https://github.com/toolprint/sdk-ts/releases/latest)
 [![PNPM](https://img.shields.io/badge/pnpm-v10.4.1-orange)](https://pnpm.io)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.14.0-brightgreen)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/typescript-5.x-blue)](https://www.typescriptlang.org)
@@ -239,7 +239,7 @@ A computing platform for agentic AI that delivers the services and infrastructur
 
 Smithery is a platform that helps developers find and deploy AI agent-compatible services that follow the Model Context Protocols (MCP) specification. It serves as a central hub for discovering and hosting MCP servers, with the goal of making agentic services more accessible.
 
-> Want to add support for your tool hosting platform? Please reach out to us at support@onegrep.dev or [Create a Provider Support Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+)!
+> Want to add support for your tool hosting platform? Please reach out to us at support@toolprint.ai or [Create a Provider Support Request](https://github.com/toolprint/sdk-ts/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+)!
 
 ## 📖 Next Steps
 
@@ -259,8 +259,8 @@ We welcome contributions to the OneGrep TypeScript SDK! Here's how you can help:
 
 ```bash
 # Fork the repository & clone it
-git clone https://github.com/OneGrep/typescript-sdk.git
-cd typescript-sdk
+git clone https://github.com/toolprint/sdk-ts.git
+cd sdk-ts
 
 # Install dependencies & build
 just install
@@ -281,7 +281,7 @@ just build
 
 ### Feature Requests
 
-Have an idea for a new feature? [Create a Feature Request](https://github.com/OneGrep/typescript-sdk/issues/new?template=feature_request.yml) using one of these types:
+Have an idea for a new feature? [Create a Feature Request](https://github.com/toolprint/sdk-ts/issues/new?template=feature_request.yml) using one of these types:
 
 - General SDK Enhancement
 - New Runtime Support
@@ -296,7 +296,7 @@ The template will guide you through providing:
 
 ### Bug Reports
 
-Found a bug? [Create a Bug Report](https://github.com/OneGrep/typescript-sdk/issues/new?template=bug_report.yml) with:
+Found a bug? [Create a Bug Report](https://github.com/toolprint/sdk-ts/issues/new?template=bug_report.yml) with:
 
 **Required Information:**
 
@@ -345,7 +345,7 @@ Error: Tool execution failed: Invalid input
 ### Getting Help
 
 - Join our [Community Slack](https://join.slack.com/t/onegrep-community/shared_invite/placeholder)
-- Open an [Issue](https://github.com/OneGrep/typescript-sdk/issues)
+- Open an [Issue](https://github.com/toolprint/sdk-ts/issues)
 - Check our [API Reference](docs/apiSpec.md) for detailed documentation
 
 ## 📝 License
