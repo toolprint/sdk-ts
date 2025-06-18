@@ -7,6 +7,23 @@ export PATH := "./node_modules/.bin:" + env_var('PATH')
 _default:
     just -l -u
 
+[group('utils')]
+warn_msg *msg='':
+    @echo -e "\n\n\033[1;33m{{msg}}\033[0m\n\n"
+
+[group('utils')]
+warn_local_disclaimers:
+    @just warn_msg "1. ENSURE that you have set your api endpoint to localhost:8080. ConfigProvider utilizes whatever is in ~/.onegrep/config.json if it exists."
+    @just warn_msg "2. CHECK that you are logged into the correct Blaxel workspace. For local, it's typically aa-local-test > bl login aa-local-test"
+    @sleep 3
+
+[group('utils')]
+get_confirmation *msg='':
+    #!/usr/bin/env bash
+    read -p "{{msg}} [y/N] " -n 1 -r
+    echo
+    [[ $REPLY =~ ^[Yy]$ ]]
+
 # install dependencies
 [group('install')]
 install:
@@ -176,13 +193,13 @@ version-sdk:
 
 # publish the sdk
 [group('publish')]
-publish-sdk:
-    pnpm turbo run publish:npm --filter=@toolprint/sdk
+publish-sdk *args='':
+    cd packages/toolprint-sdk && pnpm publish {{args}}
 
 # publish the sdk (dry run)
 [group('publish')]
-publish-sdk-dry-run:
-    pnpm turbo run publish:npm:dry-run --filter=@toolprint/sdk
+publish-sdk-dry-run *args='':
+    cd packages/toolprint-sdk && pnpm publish --dry-run {{args}}
 
 # publish the api client
 [group('publish')]
@@ -208,3 +225,31 @@ clean-modules:
 [group('clean')]
 clean:
     pnpm turbo run clean
+
+# Bump versions of all non-private packages
+[group('version')]
+bump-versions level='patch':
+    # Show current versions
+    @echo "Current package versions:"
+    @echo "------------------------"
+    pnpm -r --filter=!./apps/** list --json | jq -r '.[] | select(.private != true) | .name + ": " + .version'
+    @echo "------------------------"
+    @echo "\nWill bump {{level}} version for these packages"
+    @just get_confirmation "Proceed with version bump?"
+
+    # Actually perform the version bump
+    @cd packages/toolprint-sdk && pnpm version {{level}}
+    @cd packages/onegrep-api-client && pnpm version {{level}}
+
+
+# Bump patch versions of all non-private packages
+[group('version')]
+bump-patch: (bump-versions "patch")
+
+# Bump minor versions of all non-private packages
+[group('version')]
+bump-minor: (bump-versions "minor")
+
+# Bump major versions of all non-private packages
+[group('version')]
+bump-major: (bump-versions "major")
