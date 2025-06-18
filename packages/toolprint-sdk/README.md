@@ -154,14 +154,14 @@ Set up your environment:
 
 ```bash
 # Get your API key from the CLI
-npx @onegrep/cli account
+npx @toolprint/cli account
 # Select "Show authentication status"
 # Your API key will be displayed
 
 # Set the API key in your environment
 export ONEGREP_API_KEY="your_sandbox_api_key"
-# Set the URL to your onegrep deployment (or the public sandbox)
-export ONEGREP_API_URL="https://test-sandbox.onegrep.dev"
+# Set the URL to your toolprint deployment (or the public sandbox)
+export ONEGREP_API_URL="https://demo.sandbox.onegrep.dev"
 ```
 
 #### Run an Agent
@@ -315,11 +315,11 @@ The template will guide you through providing all necessary information to help 
 #### Authentication Errors
 
 ```bash
-Error: Failed to authenticate with OneGrep API
+Error: Failed to authenticate with Toolprint API
 ```
 
 - Ensure `ONEGREP_API_KEY` is set in your environment
-- Verify your API key is valid by running `npx @onegrep/cli account`
+- Verify your API key is valid by running `npx @toolprint/cli account`
 - Check if your API URL is correct (`ONEGREP_API_URL`)
 
 #### Tool Not Found

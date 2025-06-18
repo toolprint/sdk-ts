@@ -157,9 +157,9 @@ npx @toolprint/cli account
 # Your API key will be displayed
 
 # Set the API key in your environment
-export TOOLPRINT_API_KEY="your_sandbox_api_key"
+export ONEGREP_API_KEY="your_sandbox_api_key"
 # Set the URL to your toolprint deployment (or the public sandbox)
-export TOOLPRINT_API_URL="https://test-sandbox.toolprint.ai"
+export ONEGREP_API_URL="https://demo.sandbox.onegrep.dev"
 ```
 
 #### Run an Agent
@@ -316,9 +316,9 @@ The template will guide you through providing all necessary information to help 
 Error: Failed to authenticate with Toolprint API
 ```
 
-- Ensure `TOOLPRINT_API_KEY` is set in your environment
+- Ensure `ONEGREP_API_KEY` is set in your environment
 - Verify your API key is valid by running `npx @toolprint/cli account`
-- Check if your API URL is correct (`TOOLPRINT_API_URL`)
+- Check if your API URL is correct (`ONEGREP_API_URL`)
 
 #### Tool Not Found
 
