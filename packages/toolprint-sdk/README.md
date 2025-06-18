@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/onegrep.png" alt="Toolprint Logo" width="200"/>
+  <img src="../../assets/onegrep.png" alt="OneGrep Logo" width="200"/>
 
 # Toolprint TypeScript SDK
 
@@ -13,10 +13,10 @@
 
 _Import a single SDK to power your agents with semantic tool search, trainable contexts, and feedback-driven selection that gets smarter over time. Access tools from any provider through a unified API with configurable security policies and guardrails._
 
-[Documentation](packages/toolprint-sdk/docs/apiSpec.md) |
-[API Reference](packages/toolprint-sdk/docs/apiSpec.md#api-methods) |
+[Documentation](docs/apiSpec.md) |
+[API Reference](docs/apiSpec.md#api-methods) |
 [Getting Started](#getting-started) |
-[Join our Community](https://join.slack.com/t/toolprint-community/shared_invite/placeholder)
+[Join our Community](https://join.slack.com/t/onegrep-community/shared_invite/placeholder)
 
 </div>
 
@@ -58,28 +58,30 @@ _Import a single SDK to power your agents with semantic tool search, trainable c
 
 1. **Request Access**
 
-   - Visit [www.toolprint.ai](https://www.toolprint.ai/) to join the waitlist
-   - You'll receive an invite to the Toolprint sandbox environment
+   - Visit [onegrep.dev](https://www.onegrep.dev/) to join the waitlist
+   - You'll receive an invite to the OneGrep sandbox environment
 
 2. **Install the CLI**
 
 ```bash
-# Install the Toolprint CLI
-npx -y @toolprint/cli
+# Install the OneGrep CLI
+npx -y @onegrep/cli
 
 # Create your account
-npx @toolprint/cli account
+npx @onegrep/cli account
 # Select "Create Account" when prompted
 ```
 
 ### Sandbox Environment
 
-The Toolprint sandbox comes pre-configured with:
+The OneGrep sandbox comes pre-configured with:
 
 - A collection of popular AI tools across different categories (chat, search, code analysis, etc.)
 - Example tool contexts trained for common agent scenarios
 - Pre-configured security policies and guardrails
 - Sample agent implementations using different frameworks
+
+> _A special thanks to [**Blaxel**](https://blaxel.ai/) for providing hosting services for MCP servers for the OneGrep Sandbox._
 
 ### Exploring the Sandbox
 
@@ -91,7 +93,7 @@ Find tools that match your agent's goals using natural language:
 
 ```bash
 # Start the CLI tool explorer
-npx @toolprint/cli tools
+npx @onegrep/cli tools
 
 # Select "search" from the menu
 # Enter your query when prompted:
@@ -106,7 +108,7 @@ Try out tools directly from the CLI:
 
 ```bash
 # Start the CLI tool explorer
-npx @toolprint/cli tools
+npx @onegrep/cli tools
 
 # Select "Explore integrations"
 # Select "exa" from the list
@@ -122,7 +124,7 @@ Improve tool selection by adding custom context:
 
 ```bash
 # Start the CLI tool explorer
-npx @toolprint/cli tools
+npx @onegrep/cli tools
 
 # Select "Explore integrations"
 # Select any tool
@@ -131,7 +133,7 @@ npx @toolprint/cli tools
 # Add a value (e.g., "mcp monitoring")
 
 # Now search again:
-npx @toolprint/cli tools
+npx @onegrep/cli tools
 # Select "search"
 # Try a query related to your tag:
 "I need to monitor MCP status"
@@ -145,7 +147,7 @@ Once you have sandbox access, install the SDK:
 
 ```bash
 # Install using PNPM
-pnpm add @toolprint/sdk
+pnpm add @onegrep/sdk
 ```
 
 Set up your environment:
@@ -164,9 +166,9 @@ export ONEGREP_API_URL="https://demo.sandbox.onegrep.dev"
 
 #### Run an Agent
 
-Let's start with a complete example of running an agent that uses Toolprint for dynamic tool selection. This example uses LangChain for the agent loop and Blaxel for managing the agent runtime.
+Let's start with a complete example of running an agent that uses OneGrep for dynamic tool selection. This example uses [**Langchain**](https://github.com/langchain-ai/langchain) for the agent loop and [**Blaxel**](https://blaxel.ai/) for managing the agent runtime.
 
-First, install the Just command runner:
+First, install the [**Just**](https://github.com/casey/just) command runner:
 
 ```bash
 brew install just
@@ -186,17 +188,17 @@ just bl-chat
 
 This will start a local agent that:
 
-- Uses Toolprint SDK for intelligent tool selection
+- Uses OneGrep SDK for intelligent tool selection
 - Implements a ReAct agent loop with LangChain
 - Runs in a secure Blaxel runtime environment
 
 #### LangChain Integration
 
-Toolprint seamlessly integrates with LangChain, providing type-safe tool bindings:
+OneGrep seamlessly integrates with LangChain, providing type-safe tool bindings:
 
 ```typescript
-import { getToolbox } from '@toolprint/sdk'
-import { createLangchainToolbox } from '@toolprint/sdk/extensions/langchain'
+import { getToolbox } from '@onegrep/sdk'
+import { createLangchainToolbox } from '@onegrep/sdk/extensions/langchain'
 
 // Initialize toolboxes
 const toolbox = await getToolbox()
@@ -223,25 +225,25 @@ const result = await agent.invoke({
 })
 ```
 
-For more examples and detailed API documentation, check out our [Documentation](packages/toolprint-sdk/docs/apiSpec.md).
+For more examples and detailed API documentation, check out our [Documentation](docs/apiSpec.md).
 
 ## 🔗 Supported Providers
 
-Toolprint integrates with the following tool providers:
+OneGrep integrates with the following tool providers:
 
 ### [Blaxel](https://blaxel.ai)
 
-The AI-first tool hosting platform with built-in security and scalability. Blaxel provides a wide range of pre-built tools and supports custom tool deployment.
+A computing platform for agentic AI that delivers the services and infrastructure needed to build and deploy AI agents. Blaxel has a wide range of pre-built tool servers and supports custom tool deployment.
 
-### [Smithery](https://smithery.dev)
+### [Smithery](https://smithery.ai)
 
-A modern tool hosting platform focused on developer experience and enterprise features. Smithery offers extensive tool management capabilities and robust security controls.
+Smithery is a platform that helps developers find and deploy AI agent-compatible services that follow the Model Context Protocols (MCP) specification. It serves as a central hub for discovering and hosting MCP servers, with the goal of making agentic services more accessible.
 
 > Want to add support for your tool hosting platform? Please reach out to us at support@toolprint.ai or [Create a Provider Support Request](https://github.com/toolprint/sdk-ts/issues/new?template=feature_request.yml&title=[Provider]%3A+Add+support+for+)!
 
 ## 📖 Next Steps
 
-Ready to explore more advanced capabilities? Check out our [API Reference](packages/toolprint-sdk/docs/apiSpec.md#api-methods) to learn about:
+Ready to explore more advanced capabilities? Check out our [API Reference](docs/apiSpec.md#api-methods) to learn about:
 
 - Advanced filtering and search options
 - Custom tool context training
@@ -251,7 +253,7 @@ Ready to explore more advanced capabilities? Check out our [API Reference](packa
 
 ## 🤝 Contributing
 
-We welcome contributions to the Toolprint TypeScript SDK! Here's how you can help:
+We welcome contributions to the OneGrep TypeScript SDK! Here's how you can help:
 
 ### Development Setup
 
@@ -342,9 +344,9 @@ Error: Tool execution failed: Invalid input
 
 ### Getting Help
 
-- Join our [Community Slack](https://join.slack.com/t/toolprint-community/shared_invite/placeholder)
+- Join our [Community Slack](https://join.slack.com/t/onegrep-community/shared_invite/placeholder)
 - Open an [Issue](https://github.com/toolprint/sdk-ts/issues)
-- Check our [API Reference](packages/toolprint-sdk/docs/apiSpec.md) for detailed documentation
+- Check our [API Reference](docs/apiSpec.md) for detailed documentation
 
 ## 📝 License
 

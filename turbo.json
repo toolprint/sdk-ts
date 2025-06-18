@@ -4,20 +4,17 @@
   "globalEnv": ["NODE_ENV", "ONEGREP_*"],
   "globalDependencies": ["**/.env.*local"],
   "tasks": {
-    "generate": {
-      "outputs": ["src/**/*.ts"]
-    },
-    "@onegrep/api-client#generate": {
+    "@toolprint/api-client#generate": {
       "dependsOn": [],
-      "inputs": ["openapi/onegrep-api.yaml"],
+      "inputs": ["openapi/toolprint-api.yaml"],
       "outputs": ["src/**/*.ts"]
     },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"]
     },
-    "@onegrep/sdk#build": {
-      "dependsOn": ["@repo/utils#build", "@onegrep/api-client#build"]
+    "@toolprint/sdk#build": {
+      "dependsOn": ["@repo/utils#build", "@toolprint/api-client#build"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -60,7 +57,7 @@
       "cache": false,
       "persistent": true
     },
-    "@onegrep/n8n-nodes-onegrep#prepack": {
+    "@toolprint/n8n-nodes-onegrep#prepack": {
       "dependsOn": ["build"]
     },
     "package": {
@@ -68,7 +65,7 @@
       "dependsOn": ["build"],
       "outputs": ["pack/**/*"]
     },
-    "@onegrep/n8n-nodes-onegrep#package": {
+    "@toolprint/n8n-nodes-onegrep#package": {
       "dependsOn": ["prepack"]
     },
     "package:sea": {

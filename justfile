@@ -7,6 +7,23 @@ export PATH := "./node_modules/.bin:" + env_var('PATH')
 _default:
     just -l -u
 
+[group('utils')]
+warn_msg *msg='':
+    @echo -e "\n\n\033[1;33m{{msg}}\033[0m\n\n"
+
+[group('utils')]
+warn_local_disclaimers:
+    @just warn_msg "1. ENSURE that you have set your api endpoint to localhost:8080. ConfigProvider utilizes whatever is in ~/.onegrep/config.json if it exists."
+    @just warn_msg "2. CHECK that you are logged into the correct Blaxel workspace."
+    @sleep 3
+
+[group('utils')]
+get_confirmation *msg='':
+    #!/usr/bin/env bash
+    read -p "{{msg}} [y/N] " -n 1 -r
+    echo
+    [[ $REPLY =~ ^[Yy]$ ]]
+
 # install dependencies
 [group('install')]
 install:
@@ -21,7 +38,7 @@ reinstall:
 # update the api client spec
 [group('openapi')]
 update-openapi-spec base-url="https://dev.sandbox.onegrep.dev":
-    curl {{base-url}}/openapi/sdk-client.yaml --output ./packages/onegrep-api-client/openapi/onegrep-api.yaml
+    curl {{base-url}}/openapi/sdk-client.yaml --output ./packages/toolprint-api-client/openapi/toolprint-api.yaml
 
 [group('openapi')]
 update-openapi-spec-local:
@@ -71,7 +88,7 @@ build-api-client:
 # build the sdk package
 [group('build')]
 build-sdk:
-    pnpm turbo run build --force --filter=@onegrep/sdk
+    pnpm turbo run build --force --filter=@toolprint/sdk
 
 # check types
 [group('check')]
@@ -81,12 +98,7 @@ check-types:
 # dev
 [group('dev')]
 dev:
-    pnpm turbo run dev --filter=@onegrep/gateway
-
-# dev n8n
-[group('dev')]
-dev-n8n:
-    pnpm turbo run dev --filter=@onegrep/sdk/n8n-nodes-onegrep
+    pnpm turbo run dev --filter=@toolprint/gateway
 
 # tail all onegrep logs
 [group('logs')]
@@ -116,7 +128,7 @@ bl-chat:
 # start the gateway
 [group('gateway')]
 gateway:
-    pnpm turbo run start --filter=@onegrep/gateway
+    pnpm turbo run start --filter=@toolprint/gateway
 
 # test all packages (use `test name=".*"` to filter by test name regex)
 [group('test')]
@@ -132,7 +144,7 @@ test-api-client name=".*":
 # Example to filter to langchain tests: `just test-sdk ".*Langchain.*"` or `just test-sdk ".*Blaxel.*"` or `just test-sdk ".*HighLevelClient.*"`
 [group('test')]
 test-sdk name=".*":
-    pnpm turbo run test --filter=@onegrep/sdk -- --testNamePattern={{name}}
+    pnpm turbo run test --filter=@toolprint/sdk -- --testNamePattern={{name}}
 
 # inspect the gateway
 [group('mcp-inspector')]
@@ -142,7 +154,7 @@ inspect:
 # inspect the gateway with sse
 [group('mcp-inspector')]
 inspect-sse:
-    pnpm turbo run dev --filter=@onegrep/gateway inspector:sse
+    pnpm turbo run dev --filter=@toolprint/gateway inspector:sse
 
 # inspect the gateway with stdio
 [group('mcp-inspector')]
@@ -172,27 +184,7 @@ pack:
 # version the sdk
 [group('version')]
 version-sdk:
-    pnpm turbo run version --filter=@onegrep/sdk
-
-# publish the sdk
-[group('publish')]
-publish-sdk:
-    pnpm turbo run publish:npm --filter=@onegrep/sdk
-
-# publish the sdk (dry run)
-[group('publish')]
-publish-sdk-dry-run:
-    pnpm turbo run publish:npm:dry-run --filter=@onegrep/sdk
-
-# publish the api client
-[group('publish')]
-publish-api-client:
-    pnpm turbo run publish:npm --filter=@onegrep/api-client
-
-# publish the api client (dry run)
-[group('publish')]
-publish-api-client-dry-run:
-    pnpm turbo run publish:npm:dry-run --filter=@onegrep/api-client
+    pnpm turbo run version --filter=@toolprint/sdk
 
 # clean dist folders
 [group('clean')]
@@ -208,3 +200,61 @@ clean-modules:
 [group('clean')]
 clean:
     pnpm turbo run clean
+
+# Bump versions of all non-private packages
+[group('version')]
+bump-versions level='patch':
+    # Show current versions
+    @echo "Current package versions:"
+    @echo "------------------------"
+    pnpm -r --filter=!./apps/** list --json | jq -r '.[] | select(.private != true) | .name + ": " + .version'
+    @echo "------------------------"
+    @echo "\nWill bump {{level}} version for these packages"
+    @just get_confirmation "Proceed with version bump?"
+
+    # Actually perform the version bump
+    @cd packages/toolprint-sdk && pnpm version {{level}}
+    @cd packages/toolprint-api-client && pnpm version {{level}}
+
+
+# Bump patch versions of all non-private packages
+[group('version')]
+bump-patch: (bump-versions "patch")
+
+# Bump minor versions of all non-private packages
+[group('version')]
+bump-minor: (bump-versions "minor")
+
+# Bump major versions of all non-private packages
+[group('version')]
+bump-major: (bump-versions "major")
+
+
+# publish all packages
+[group('publish')]
+publish *args='':
+    pnpm -r --filter=!./apps/** publish {{args}}
+
+[group('publish')]
+publish-dry-run *args='':
+    pnpm -r --filter=!./apps/** publish --dry-run {{args}}
+
+# publish the sdk
+[group('publish')]
+publish-sdk *args='':
+    cd packages/toolprint-sdk && pnpm publish {{args}}
+
+# publish the sdk (dry run)
+[group('publish')]
+publish-sdk-dry-run *args='':
+    cd packages/toolprint-sdk && pnpm publish --dry-run {{args}}
+
+# publish the api client
+[group('publish')]
+publish-api-client:
+    pnpm turbo run publish:npm --filter=@onegrep/api-client
+
+# publish the api client (dry run)
+[group('publish')]
+publish-api-client-dry-run:
+    pnpm turbo run publish:npm:dry-run --filter=@onegrep/api-client

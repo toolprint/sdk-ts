@@ -2,7 +2,7 @@ import {
   createLangchainToolbox,
   getToolbox,
   LangchainToolbox
-} from '@onegrep/sdk'
+} from '@toolprint/sdk'
 import { ChatOpenAI } from '@langchain/openai'
 import { createReactAgent } from '@langchain/langgraph/prebuilt'
 import {

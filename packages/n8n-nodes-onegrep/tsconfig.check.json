@@ -1,8 +1,0 @@
-{
-  "extends": "@repo/typescript-config/check",
-  "compilerOptions": {
-    "rootDir": "src"
-  },
-  "include": ["src/**/*", "tests/**/*"],
-  "exclude": ["node_modules"]
-}

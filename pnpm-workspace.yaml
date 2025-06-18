@@ -1,5 +1,9 @@
 packages:
-  - "apps/**"
-  - "packages/*"
-  # Exclude patterns start with !
-  - "!**/tmp/**"
+  - 'packages/*'
+  - 'apps/**/*'
+
+shared-workspace-lockfile: true
+
+hoist-pattern:
+  - zod
+  - '*zod*'
