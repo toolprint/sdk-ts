@@ -14,7 +14,7 @@ warn_msg *msg='':
 [group('utils')]
 warn_local_disclaimers:
     @just warn_msg "1. ENSURE that you have set your api endpoint to localhost:8080. ConfigProvider utilizes whatever is in ~/.onegrep/config.json if it exists."
-    @just warn_msg "2. CHECK that you are logged into the correct Blaxel workspace. For local, it's typically aa-local-test > bl login aa-local-test"
+    @just warn_msg "2. CHECK that you are logged into the correct Blaxel workspace."
     @sleep 3
 
 [group('utils')]
@@ -99,11 +99,6 @@ check-types:
 [group('dev')]
 dev:
     pnpm turbo run dev --filter=@toolprint/gateway
-
-# dev n8n
-[group('dev')]
-dev-n8n:
-    pnpm turbo run dev --filter=@toolprint/sdk/n8n-nodes-onegrep
 
 # tail all onegrep logs
 [group('logs')]

@@ -1,9 +1,0 @@
-{
-  "extends": "@repo/typescript-config/types",
-  "compilerOptions": {
-    "strict": true,
-    "outDir": "./dist/types"
-  },
-  "include": ["src"],
-  "exclude": ["tests", "node_modules"]
-}

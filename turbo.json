@@ -1,35 +1,60 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["NODE_ENV", "ONEGREP_*"],
-  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": [
+    "NODE_ENV",
+    "ONEGREP_*"
+  ],
+  "globalDependencies": [
+    "**/.env.*local"
+  ],
   "tasks": {
-    "generate": {
-      "outputs": ["src/**/*.ts"]
-    },
     "@toolprint/api-client#generate": {
       "dependsOn": [],
-      "inputs": ["openapi/toolprint-api.yaml"],
-      "outputs": ["src/**/*.ts"]
+      "inputs": [
+        "openapi/toolprint-api.yaml"
+      ],
+      "outputs": [
+        "src/**/*.ts"
+      ]
     },
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.*local"
+      ]
     },
     "@toolprint/sdk#build": {
-      "dependsOn": ["@repo/utils#build", "@toolprint/api-client#build"]
+      "dependsOn": [
+        "@repo/utils#build",
+        "@toolprint/api-client#build"
+      ]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": [
+        "^lint"
+      ]
     },
     "lint:fix": {
-      "dependsOn": ["^lint:fix"]
+      "dependsOn": [
+        "^lint:fix"
+      ]
     },
     "check-types": {
-      "dependsOn": ["build", "^check-types"]
+      "dependsOn": [
+        "build",
+        "^check-types"
+      ]
     },
     "test": {
-      "dependsOn": ["lint", "build"],
+      "dependsOn": [
+        "lint",
+        "build"
+      ],
       "env": [
         "ONEGREP_API_KEY",
         "ONEGREP_API_URL",
@@ -61,73 +86,126 @@
       "persistent": true
     },
     "@toolprint/n8n-nodes-onegrep#prepack": {
-      "dependsOn": ["build"]
+      "dependsOn": [
+        "build"
+      ]
     },
     "package": {
       "cache": false,
-      "dependsOn": ["build"],
-      "outputs": ["pack/**/*"]
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "pack/**/*"
+      ]
     },
     "@toolprint/n8n-nodes-onegrep#package": {
-      "dependsOn": ["prepack"]
+      "dependsOn": [
+        "prepack"
+      ]
     },
     "package:sea": {
       "cache": false,
-      "dependsOn": ["build"],
-      "outputs": ["bin/**/*"]
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "bin/**/*"
+      ]
     },
     "licenses": {
-      "dependsOn": ["package"]
+      "dependsOn": [
+        "package"
+      ]
     },
     "version": {
-      "dependsOn": ["package"]
+      "dependsOn": [
+        "package"
+      ]
     },
     "publish:github": {
-      "dependsOn": ["package"]
+      "dependsOn": [
+        "package"
+      ]
     },
     "publish:npm": {
-      "dependsOn": ["package"]
+      "dependsOn": [
+        "package"
+      ]
     },
     "publish:npm:dry-run": {
-      "dependsOn": ["package"]
+      "dependsOn": [
+        "package"
+      ]
     },
     "clean": {
       "cache": false,
-      "dependsOn": ["^clean", "clean:dist", "clean:modules", "clean:pack"]
+      "dependsOn": [
+        "^clean",
+        "clean:dist",
+        "clean:modules",
+        "clean:pack"
+      ]
     },
     "clean:dist": {
       "cache": false,
-      "dependsOn": ["^clean:dist"]
+      "dependsOn": [
+        "^clean:dist"
+      ]
     },
     "clean:dist:types": {
       "cache": false,
-      "dependsOn": ["^clean:dist:types"]
+      "dependsOn": [
+        "^clean:dist:types"
+      ]
     },
     "clean:dist:cjs": {
       "cache": false,
-      "dependsOn": ["^clean:dist:cjs"]
+      "dependsOn": [
+        "^clean:dist:cjs"
+      ]
     },
     "clean:dist:esm": {
       "cache": false,
-      "dependsOn": ["^clean:dist:esm"]
+      "dependsOn": [
+        "^clean:dist:esm"
+      ]
     },
     "clean:modules": {
       "cache": false,
-      "dependsOn": ["^clean:modules"]
+      "dependsOn": [
+        "^clean:modules"
+      ]
     },
     "clean:pack": {
       "cache": false,
-      "dependsOn": ["^clean:pack"]
+      "dependsOn": [
+        "^clean:pack"
+      ]
     },
     "dev": {
-      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
-      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
+      "env": [
+        "ONEGREP_API_KEY",
+        "ONEGREP_API_URL"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.*local"
+      ],
       "cache": false,
       "persistent": true
     },
     "inspector:stdio": {
-      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
-      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
+      "env": [
+        "ONEGREP_API_KEY",
+        "ONEGREP_API_URL"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.*local"
+      ],
       "cache": false,
       "persistent": true
     },
@@ -136,21 +214,44 @@
       "persistent": true
     },
     "start": {
-      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
-      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
-      "dependsOn": ["build"],
+      "env": [
+        "ONEGREP_API_KEY",
+        "ONEGREP_API_URL"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.*local"
+      ],
+      "dependsOn": [
+        "build"
+      ],
       "persistent": true
     },
     "@repo/blaxel-langgraph-agent#bl:serve": {
-      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
-      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
+      "env": [
+        "ONEGREP_API_KEY",
+        "ONEGREP_API_URL"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.*local"
+      ],
       "dependsOn": [],
       "cache": false,
       "persistent": true
     },
     "@repo/blaxel-langgraph-agent#bl:chat": {
-      "env": ["ONEGREP_API_KEY", "ONEGREP_API_URL"],
-      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*local"],
+      "env": [
+        "ONEGREP_API_KEY",
+        "ONEGREP_API_URL"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.*local"
+      ],
       "dependsOn": [],
       "cache": false,
       "persistent": true
