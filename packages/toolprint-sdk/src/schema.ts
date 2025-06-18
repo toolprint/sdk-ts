@@ -3,7 +3,7 @@ import { JsonSchema, EquippedTool } from '~/types.js'
 import {
   jsonSchemaToZod,
   JsonSchema as ToZodJsonSchema
-} from '@onegrep/json-schema-to-zod'
+} from '@toolprint/json-schema-to-zod'
 
 import { v5 as uuidv5 } from 'uuid'
 

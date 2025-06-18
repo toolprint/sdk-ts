@@ -71,7 +71,7 @@ build-api-client:
 # build the sdk package
 [group('build')]
 build-sdk:
-    pnpm turbo run build --force --filter=@onegrep/sdk
+    pnpm turbo run build --force --filter=@toolprint/sdk
 
 # check types
 [group('check')]
@@ -81,12 +81,12 @@ check-types:
 # dev
 [group('dev')]
 dev:
-    pnpm turbo run dev --filter=@onegrep/gateway
+    pnpm turbo run dev --filter=@toolprint/gateway
 
 # dev n8n
 [group('dev')]
 dev-n8n:
-    pnpm turbo run dev --filter=@onegrep/sdk/n8n-nodes-onegrep
+    pnpm turbo run dev --filter=@toolprint/sdk/n8n-nodes-onegrep
 
 # tail all onegrep logs
 [group('logs')]
@@ -116,7 +116,7 @@ bl-chat:
 # start the gateway
 [group('gateway')]
 gateway:
-    pnpm turbo run start --filter=@onegrep/gateway
+    pnpm turbo run start --filter=@toolprint/gateway
 
 # test all packages (use `test name=".*"` to filter by test name regex)
 [group('test')]
@@ -132,7 +132,7 @@ test-api-client name=".*":
 # Example to filter to langchain tests: `just test-sdk ".*Langchain.*"` or `just test-sdk ".*Blaxel.*"` or `just test-sdk ".*HighLevelClient.*"`
 [group('test')]
 test-sdk name=".*":
-    pnpm turbo run test --filter=@onegrep/sdk -- --testNamePattern={{name}}
+    pnpm turbo run test --filter=@toolprint/sdk -- --testNamePattern={{name}}
 
 # inspect the gateway
 [group('mcp-inspector')]
@@ -142,7 +142,7 @@ inspect:
 # inspect the gateway with sse
 [group('mcp-inspector')]
 inspect-sse:
-    pnpm turbo run dev --filter=@onegrep/gateway inspector:sse
+    pnpm turbo run dev --filter=@toolprint/gateway inspector:sse
 
 # inspect the gateway with stdio
 [group('mcp-inspector')]
@@ -172,17 +172,17 @@ pack:
 # version the sdk
 [group('version')]
 version-sdk:
-    pnpm turbo run version --filter=@onegrep/sdk
+    pnpm turbo run version --filter=@toolprint/sdk
 
 # publish the sdk
 [group('publish')]
 publish-sdk:
-    pnpm turbo run publish:npm --filter=@onegrep/sdk
+    pnpm turbo run publish:npm --filter=@toolprint/sdk
 
 # publish the sdk (dry run)
 [group('publish')]
 publish-sdk-dry-run:
-    pnpm turbo run publish:npm:dry-run --filter=@onegrep/sdk
+    pnpm turbo run publish:npm:dry-run --filter=@toolprint/sdk
 
 # publish the api client
 [group('publish')]

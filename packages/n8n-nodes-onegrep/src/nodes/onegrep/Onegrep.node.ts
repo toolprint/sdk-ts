@@ -4,7 +4,7 @@ import {
   ToolCallResponse,
   EquippedTool,
   ToolDetails
-} from '@onegrep/sdk'
+} from '@toolprint/sdk'
 import {
   INodeType,
   INodeTypeDescription,

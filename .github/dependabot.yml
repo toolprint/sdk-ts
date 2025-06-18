@@ -26,7 +26,7 @@ updates:
 
   # Also check for updates in the packages directory
   - package-ecosystem: "npm"
-    directory: "/packages/onegrep-sdk"
+    directory: "/packages/toolprint-sdk"
     schedule:
       interval: "weekly"
     labels:

@@ -1,5 +1,5 @@
 import { env, logger } from '@blaxel/core'
-import { createLangchainToolbox, getToolbox } from '@onegrep/sdk'
+import { createLangchainToolbox, getToolbox } from '@toolprint/sdk'
 import Fastify from 'fastify'
 import agent from './agent.js'
 

@@ -19,10 +19,10 @@ export default defineConfig({
     alias: [
       { find: '~', replacement: resolve(__dirname, 'src') },
       {
-        find: '@onegrep/json-schema-to-zod',
+        find: '@toolprint/json-schema-to-zod',
         replacement: resolve(
           __dirname,
-          'node_modules/@onegrep/json-schema-to-zod'
+          'node_modules/@toolprint/json-schema-to-zod'
         )
       }
     ]
