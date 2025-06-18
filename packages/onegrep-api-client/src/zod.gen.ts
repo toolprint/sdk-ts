@@ -737,6 +737,11 @@ export const zAccountCreateRequest = z.object({
 })
 
 /**
+ * Successful Response
+ */
+export const zGetAiDocumentationAiTxtGetResponse = z.string()
+
+/**
  * Response Delete Account Api V1 Account  Delete
  * Successful Response
  */
@@ -1273,6 +1278,12 @@ export const zCreateToolprintApiV1ToolprintsPostData = zToolprintInput
  * Successful Response
  */
 export const zCreateToolprintApiV1ToolprintsPostResponse = zRegisteredToolprint
+
+/**
+ * Successful Response
+ */
+export const zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponse =
+  z.string()
 
 /**
  * Response Get Toolprint Schema Api V1 Toolprints  Well Known Schema Get

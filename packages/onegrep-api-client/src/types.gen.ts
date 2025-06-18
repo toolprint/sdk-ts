@@ -1617,6 +1617,23 @@ export type AccountCreateRequest = {
   invitation_code: string
 }
 
+export type GetAiDocumentationAiTxtGetData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/ai.txt'
+}
+
+export type GetAiDocumentationAiTxtGetResponses = {
+  /**
+   * Successful Response
+   */
+  200: string
+}
+
+export type GetAiDocumentationAiTxtGetResponse =
+  GetAiDocumentationAiTxtGetResponses[keyof GetAiDocumentationAiTxtGetResponses]
+
 export type DeleteAccountApiV1AccountDeleteData = {
   body?: never
   path?: never
@@ -2930,6 +2947,24 @@ export type CreateToolprintApiV1ToolprintsPostResponses = {
 
 export type CreateToolprintApiV1ToolprintsPostResponse =
   CreateToolprintApiV1ToolprintsPostResponses[keyof CreateToolprintApiV1ToolprintsPostResponses]
+
+export type GetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetData = {
+  body?: never
+  path?: never
+  query?: never
+  url: '/api/v1/toolprints/.well-known/ai.txt'
+}
+
+export type GetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponses =
+  {
+    /**
+     * Successful Response
+     */
+    200: string
+  }
+
+export type GetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponse =
+  GetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponses[keyof GetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponses]
 
 export type GetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetData = {
   body?: never

@@ -14,3 +14,4 @@ export * from './providers/blaxel/index.js'
 export * from './providers/smithery/index.js'
 
 export * from './extensions/langchain.js'
+export * from './extensions/types.js'

@@ -6,6 +6,8 @@ import type {
   Client
 } from '@hey-api/client-axios'
 import type {
+  GetAiDocumentationAiTxtGetData,
+  GetAiDocumentationAiTxtGetResponses,
   DeleteAccountApiV1AccountDeleteData,
   DeleteAccountApiV1AccountDeleteResponses,
   GetAccountInformationApiV1AccountGetData,
@@ -131,6 +133,8 @@ import type {
   CreateToolprintApiV1ToolprintsPostData,
   CreateToolprintApiV1ToolprintsPostResponses,
   CreateToolprintApiV1ToolprintsPostErrors,
+  GetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetData,
+  GetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponses,
   GetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetData,
   GetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetResponses,
   GetToolprintTemplateApiV1ToolprintsWellKnownTemplateGetData,
@@ -171,6 +175,7 @@ import type {
   HealthHealthGetResponses
 } from './types.gen.js'
 import {
+  zGetAiDocumentationAiTxtGetResponse,
   zDeleteAccountApiV1AccountDeleteResponse,
   zGetAccountInformationApiV1AccountGetResponse,
   zCreateAccountApiV1AccountPostResponse,
@@ -212,6 +217,7 @@ import {
   zGetStrategyApiV1StrategyPostResponse,
   zCreateFakeRecipesApiV1StrategyFakePostResponse,
   zCreateToolprintApiV1ToolprintsPostResponse,
+  zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponse,
   zGetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetResponse,
   zGetToolprintTemplateApiV1ToolprintsWellKnownTemplateGetResponse,
   zCreateToolprintJsonApiV1ToolprintsJsonPostResponse,
@@ -242,6 +248,51 @@ export type Options<
    * used to access values that aren't defined as part of the SDK function.
    */
   meta?: Record<string, unknown>
+}
+
+export class DefaultService {
+  /**
+   * Get Ai Documentation
+   * Returns the complete API documentation including toolprint examples.
+   *
+   * This endpoint combines:
+   * 1. Base API documentation (base_ai.txt)
+   * 2. Toolprint example and usage guide (toolprint_example.txt)
+   */
+  public static getAiDocumentationAiTxtGet<
+    ThrowOnError extends boolean = false
+  >(options?: Options<GetAiDocumentationAiTxtGetData, ThrowOnError>) {
+    return (options?.client ?? _heyApiClient).get<
+      GetAiDocumentationAiTxtGetResponses,
+      unknown,
+      ThrowOnError
+    >({
+      responseType: 'text',
+      responseValidator: async (data) => {
+        return await zGetAiDocumentationAiTxtGetResponse.parseAsync(data)
+      },
+      url: '/ai.txt',
+      ...options
+    })
+  }
+
+  /**
+   * Health
+   * Generic healthcheck endpoint to ensure the service is running.
+   */
+  public static healthHealthGet<ThrowOnError extends boolean = false>(
+    options?: Options<HealthHealthGetData, ThrowOnError>
+  ) {
+    return (options?.client ?? _heyApiClient).get<
+      HealthHealthGetResponses,
+      unknown,
+      ThrowOnError
+    >({
+      responseType: 'json',
+      url: '/health',
+      ...options
+    })
+  }
 }
 
 export class AccountService {
@@ -1772,6 +1823,40 @@ export class ToolprintsService {
   }
 
   /**
+   * Get Toolprint Instructions
+   * Returns the complete toolprint documentation including example in markdown format.
+   */
+  public static getToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGet<
+    ThrowOnError extends boolean = false
+  >(
+    options?: Options<
+      GetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetData,
+      ThrowOnError
+    >
+  ) {
+    return (options?.client ?? _heyApiClient).get<
+      GetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponses,
+      unknown,
+      ThrowOnError
+    >({
+      responseType: 'text',
+      security: [
+        {
+          name: 'X-ONEGREP-API-KEY',
+          type: 'apiKey'
+        }
+      ],
+      responseValidator: async (data) => {
+        return await zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponse.parseAsync(
+          data
+        )
+      },
+      url: '/api/v1/toolprints/.well-known/ai.txt',
+      ...options
+    })
+  }
+
+  /**
    * Get Toolprint Schema
    * Returns the schema for toolprint definitions.
    */
@@ -2243,26 +2328,6 @@ export class ToolsService {
         )
       },
       url: '/api/v1/tools/{tool_id}/resource',
-      ...options
-    })
-  }
-}
-
-export class DefaultService {
-  /**
-   * Health
-   * Generic healthcheck endpoint to ensure the service is running.
-   */
-  public static healthHealthGet<ThrowOnError extends boolean = false>(
-    options?: Options<HealthHealthGetData, ThrowOnError>
-  ) {
-    return (options?.client ?? _heyApiClient).get<
-      HealthHealthGetResponses,
-      unknown,
-      ThrowOnError
-    >({
-      responseType: 'json',
-      url: '/health',
       ...options
     })
   }

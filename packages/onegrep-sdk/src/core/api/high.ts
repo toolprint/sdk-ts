@@ -46,6 +46,20 @@ export class OneGrepApiHighLevelClient {
     return result.success
   }
 
+  /** Returns the global "ai.txt" for an agent to gather details on what the API can do. */
+  async getAiTxt(): Promise<string> {
+    const result = await makeApiCallWithResult<string>(async () => {
+      return await DefaultService.getAiDocumentationAiTxtGet({
+        client: this.apiClient
+      })
+    })
+
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
   async initialize(): Promise<InitializeResponse> {
     const result = await makeApiCallWithResult<InitializeResponse>(async () => {
       return await SdkService.initializeApiV1SdkInitializeGet({
@@ -562,6 +576,21 @@ export class OneGrepApiHighLevelClient {
   async getToolprintTemplate(): Promise<string> {
     const result = await makeApiCallWithResult<string>(async () => {
       return await ToolprintsService.getToolprintTemplateApiV1ToolprintsWellKnownTemplateGet(
+        {
+          client: this.apiClient
+        }
+      )
+    })
+    if (result.error) {
+      throw result.error
+    }
+    return result.data!
+  }
+
+  /** Returns the "ai.txt" instruction set for toolprint generation. */
+  async getToolprintAiTxt(): Promise<string> {
+    const result = await makeApiCallWithResult<string>(async () => {
+      return await ToolprintsService.getToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGet(
         {
           client: this.apiClient
         }

@@ -1937,6 +1937,23 @@ info:
   version: 0.0.1
 openapi: 3.1.0
 paths:
+  /ai.txt:
+    get:
+      description: |-
+        Returns the complete API documentation including toolprint examples.
+
+        This endpoint combines:
+        1. Base API documentation (base_ai.txt)
+        2. Toolprint example and usage guide (toolprint_example.txt)
+      operationId: get_ai_documentation_ai_txt_get
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+          description: Successful Response
+      summary: Get Ai Documentation
   /api/v1/account/:
     delete:
       operationId: delete_account_api_v1_account__delete
@@ -3316,6 +3333,24 @@ paths:
       security:
         - APIKeyHeader: []
       summary: Create Toolprint
+      tags:
+        - toolprints
+  /api/v1/toolprints/.well-known/ai.txt:
+    get:
+      description: >-
+        Returns the complete toolprint documentation including example in
+        markdown format.
+      operationId: get_toolprint_instructions_api_v1_toolprints__well_known_ai_txt_get
+      responses:
+        '200':
+          content:
+            text/plain:
+              schema:
+                type: string
+          description: Successful Response
+      security:
+        - APIKeyHeader: []
+      summary: Get Toolprint Instructions
       tags:
         - toolprints
   /api/v1/toolprints/.well-known/schema:

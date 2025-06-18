@@ -117,4 +117,22 @@ describe('OneGrepApiHighLevelClient', () => {
       )
     })
   })
+
+  describe('HighLevelClient getAiTxt', () => {
+    it('should return the ai.txt', async () => {
+      const aiTxt = await client.getAiTxt()
+      expect(aiTxt).toBeDefined()
+      expect(typeof aiTxt).toBe('string')
+      log.info('Retrieved ai.txt:', aiTxt)
+    })
+  })
+
+  describe('HighLevelClient toolprint aitxt', () => {
+    it('should return the toolprint ai.txt', async () => {
+      const aiTxt = await client.getToolprintAiTxt()
+      expect(aiTxt).toBeDefined()
+      expect(typeof aiTxt).toBe('string')
+      log.info('Retrieved toolprint ai.txt:', aiTxt)
+    })
+  })
 })
