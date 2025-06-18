@@ -1,7 +1,7 @@
 {
-  "name": "@onegrep/n8n-nodes-onegrep",
-  "description": "OneGrep Node for n8n",
-  "version": "0.0.7",
+  "name": "@toolprint/n8n-nodes-onegrep",
+  "description": "Toolprint Node for n8n",
+  "version": "0.0.1",
   "private": true,
   "license": "MIT",
   "author": {
@@ -10,16 +10,17 @@
   },
   "keywords": [
     "onegrep",
+    "toolprint",
     "n8n",
     "n8n-community-node-package"
   ],
-  "homepage": "https://onegrep.dev",
+  "homepage": "https://www.toolprint.ai",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/onegrep/typescript-sdk.git"
+    "url": "git+https://github.com/toolprint/sdk-ts.git"
   },
   "bugs": {
-    "url": "https://github.com/onegrep/typescript-sdk/issues"
+    "url": "https://github.com/toolprint/sdk-ts/issues"
   },
   "types": "dist/types/index.d.ts",
   "main": "dist/cjs/index.js",
@@ -68,7 +69,7 @@
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.13.4",
     "@types/eslint": "^8.56.0",
-    "@onegrep/sdk": "workspace:*",
+    "@toolprint/sdk": "workspace:*",
     "dotenv": "^16.4.7",
     "tsup": "^8.3.6",
     "typescript": "latest",
@@ -81,7 +82,7 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*",
-    "@onegrep/sdk": "*"
+    "@toolprint/sdk": "*"
   },
   "dependencies": {
     "zod": "^3.24.2"

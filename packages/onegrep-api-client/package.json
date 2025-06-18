@@ -1,12 +1,12 @@
 {
-  "name": "@onegrep/api-client",
+  "name": "@toolprint/api-client",
   "version": "0.0.2",
   "type": "module",
   "license": "MIT",
   "author": "OneGrep, Inc.",
-  "homepage": "https://onegrep.dev",
+  "homepage": "https://www.toolprint.ai",
   "bugs": {
-    "url": "https://github.com/onegrep/typescript-sdk/issues"
+    "url": "https://github.com/toolprint/sdk-ts/issues"
   },
   "types": "dist/types/src/index.d.ts",
   "main": "dist/cjs/src/index.js",
@@ -29,7 +29,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/onegrep/typescript-sdk",
+    "url": "ssh://git@github.com/toolprint/sdk-ts",
     "directory": "packages/onegrep-api-client"
   },
   "publishConfig": {
