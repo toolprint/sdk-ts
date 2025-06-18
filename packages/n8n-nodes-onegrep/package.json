@@ -66,17 +66,17 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.13.4",
-    "@types/eslint": "^8.56.0",
+    "@types/node": "^24.0.3",
+    "@types/eslint": "^9.6.1",
     "@onegrep/sdk": "workspace:*",
-    "dotenv": "^16.4.7",
-    "tsup": "^8.3.6",
+    "dotenv": "^16.5.0",
+    "tsup": "^8.5.0",
     "typescript": "latest",
-    "vitest": "^3.0.5",
+    "vitest": "^3.2.4",
     "n8n": "*",
     "n8n-workflow": "*",
-    "@typescript-eslint/parser": "^7.15.0",
-    "eslint": "^8.56.0",
+    "@typescript-eslint/parser": "^8.34.1",
+    "eslint": "^9.29.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.1"
   },
   "peerDependencies": {
@@ -84,7 +84,7 @@
     "@onegrep/sdk": "*"
   },
   "dependencies": {
-    "zod": "^3.24.2"
+    "zod": "^3.25.67"
   },
   "engines": {
     "node": ">=20 <=22"
