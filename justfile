@@ -191,26 +191,6 @@ pack:
 version-sdk:
     pnpm turbo run version --filter=@toolprint/sdk
 
-# publish the sdk
-[group('publish')]
-publish-sdk *args='':
-    cd packages/toolprint-sdk && pnpm publish {{args}}
-
-# publish the sdk (dry run)
-[group('publish')]
-publish-sdk-dry-run *args='':
-    cd packages/toolprint-sdk && pnpm publish --dry-run {{args}}
-
-# publish the api client
-[group('publish')]
-publish-api-client:
-    pnpm turbo run publish:npm --filter=@onegrep/api-client
-
-# publish the api client (dry run)
-[group('publish')]
-publish-api-client-dry-run:
-    pnpm turbo run publish:npm:dry-run --filter=@onegrep/api-client
-
 # clean dist folders
 [group('clean')]
 clean-dist:
@@ -253,3 +233,29 @@ bump-minor: (bump-versions "minor")
 # Bump major versions of all non-private packages
 [group('version')]
 bump-major: (bump-versions "major")
+
+
+# publish all packages
+[group('publish')]
+publish:
+    pnpm -r --filter=!./apps/** publish
+
+# publish the sdk
+[group('publish')]
+publish-sdk *args='':
+    cd packages/toolprint-sdk && pnpm publish {{args}}
+
+# publish the sdk (dry run)
+[group('publish')]
+publish-sdk-dry-run *args='':
+    cd packages/toolprint-sdk && pnpm publish --dry-run {{args}}
+
+# publish the api client
+[group('publish')]
+publish-api-client:
+    pnpm turbo run publish:npm --filter=@onegrep/api-client
+
+# publish the api client (dry run)
+[group('publish')]
+publish-api-client-dry-run:
+    pnpm turbo run publish:npm:dry-run --filter=@onegrep/api-client
