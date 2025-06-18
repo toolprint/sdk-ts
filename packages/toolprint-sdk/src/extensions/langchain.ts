@@ -81,7 +81,8 @@ const convertToLangChainMessages = (prompts: Prompt[]): SystemMessage[] => {
  * Toolbox interfaces to let us extend the Toolbox for various agent frameworks.
  */
 export class LangchainToolbox
-  implements BaseToolbox<StructuredTool, StructuredToolsRecommendation> {
+  implements BaseToolbox<StructuredTool, StructuredToolsRecommendation>
+{
   toolbox: Toolbox
 
   constructor(toolbox: Toolbox) {

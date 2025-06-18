@@ -21,7 +21,7 @@ class ToolprintRegistrationError extends Error {
 }
 
 export class ToolPrinter implements BaseToolPrinter {
-  constructor(private readonly client: OneGrepApiHighLevelClient) { }
+  constructor(private readonly client: OneGrepApiHighLevelClient) {}
 
   async validate(
     content: string,
