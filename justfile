@@ -240,6 +240,10 @@ bump-major: (bump-versions "major")
 publish *args='':
     pnpm -r --filter=!./apps/** publish {{args}}
 
+[group('publish')]
+publish-dry-run *args='':
+    pnpm -r --filter=!./apps/** publish --dry-run {{args}}
+
 # publish the sdk
 [group('publish')]
 publish-sdk *args='':
