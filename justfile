@@ -237,8 +237,8 @@ bump-major: (bump-versions "major")
 
 # publish all packages
 [group('publish')]
-publish:
-    pnpm -r --filter=!./apps/** publish
+publish *args='':
+    pnpm -r --filter=!./apps/** publish {{args}}
 
 # publish the sdk
 [group('publish')]
