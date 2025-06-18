@@ -1,16 +1,11 @@
 import { z } from 'zod'
-import {
-  getEnv,
-  getLogger,
-  wrapConsole,
-  loggingSchema
-} from '@repo/utils'
+import { getEnv, getLogger, wrapConsole, loggingSchema } from '@repo/utils'
 
 /**
  * NOTE: We previously had a custom sdkLoggingSchema that extended the base loggingSchema
  * to validate ONEGREP_SDK_LOG_LEVEL. This was removed due to TypeScript type conflicts
  * between different instances of Zod types when extending schemas.
- * 
+ *
  * Instead, we now:
  * 1. Use the base loggingSchema directly from @repo/utils
  * 2. Handle ONEGREP_SDK_LOG_LEVEL through the sdkLogLevel function with its own validation
@@ -21,7 +16,8 @@ import {
 const sdkLogLevelSchema = z.string().default('info')
 
 const sdkLogLevel = () => {
-  const rawLevel = process.env.ONEGREP_SDK_LOG_LEVEL ?? process.env.LOG_LEVEL ?? 'info'
+  const rawLevel =
+    process.env.ONEGREP_SDK_LOG_LEVEL ?? process.env.LOG_LEVEL ?? 'info'
   // Parse and validate the log level
   return sdkLogLevelSchema.parse(rawLevel)
 }
