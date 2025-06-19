@@ -1,6 +1,6 @@
 {
   "name": "@toolprint/sdk",
-  "version": "0.0.44",
+  "version": "0.1.0",
   "type": "module",
   "license": "MIT",
   "author": "OneGrep, Inc.",
