@@ -216,6 +216,9 @@ bump-versions level='patch':
     @cd packages/toolprint-sdk && pnpm version {{level}}
     @cd packages/toolprint-api-client && pnpm version {{level}}
 
+[group('version')]
+bump-sdk-version level='patch':
+    @cd packages/toolprint-sdk && pnpm version {{level}}
 
 # Bump patch versions of all non-private packages
 [group('version')]
