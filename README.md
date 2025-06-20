@@ -132,6 +132,10 @@ For a complete, runnable example, check out the [LangChain Chat Agent README](ap
 - **Got a Killer Feature Idea?**: We're all ears. [Open a feature request](https://github.com/toolprint/sdk-ts/issues/new?template=feature_request.yml) and let's build the future of agents together.
 - **Found a Gremlin?**: Bugs happen. [Report it here](https://github.com/toolprint/sdk-ts/issues/new?template=bug_report.yml) and we'll send out the exterminators.
 
+## 🙏 Acknowledgements
+
+A huge thank you to our partners at **[Blaxel](https://blaxel.ai)** for providing the MCPs and agent infrastructure that power our public sandbox.
+
 ## 📝 License
 
 [MIT](LICENSE)
