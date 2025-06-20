@@ -20,22 +20,28 @@
 Get from zero to a working, tool-enabled agent in your editor in under a minute.
 
 #### Step 1: Install the CLI & Create Your Account
+
 ```bash
 brew install toolprint/tap/cli
 toolprint # Follow prompts to create your free account & join the sandbox
 ```
 
 #### Step 2: Start the Toolprint Server
+
 In your terminal, run the MCP server. This is the bridge that allows Toolprint to connect with your local tools and editor.
+
 ```bash
 toolprint mcp
 ```
 
 #### Step 3: Connect to Cursor
+
 In a **new terminal**, run the `toolprint` CLI again and navigate to the `Connect` option to link with your editor.
 
 #### Step 4: Craft Your First Toolprint!
+
 You're all set. Go to Cursor and tag the `@toolprint` assistant to create your first blueprint.
+
 ```
 @toolprint help me find the best tools to create linear tickets
 
@@ -94,37 +100,37 @@ pnpm add @toolprint/sdk
 **Example: Tool & Prompt Injection**
 
 ```typescript
-import { createLangchainToolbox, getToolbox } from '@toolprint/sdk';
-import { createReactAgent, ChatOpenAI, HumanMessage } from '...'; // Other LangChain imports
+import { createLangchainToolbox, getToolbox } from '@toolprint/sdk'
+import { createReactAgent, ChatOpenAI, HumanMessage } from '...' // Other LangChain imports
 
 // 1. Initialize Toolprint
-const toolbox = await createLangchainToolbox(await getToolbox());
+const toolbox = await createLangchainToolbox(await getToolbox())
 
-const userMessage = "Find recent news about AI developments and summarize them.";
+const userMessage = 'Find recent news about AI developments and summarize them.'
 
 // 2. Get tool & prompt recommendations from Toolprint
-const recommendation = await toolbox.recommend(userMessage);
+const recommendation = await toolbox.recommend(userMessage)
 
 // 3. Inject recommended tools and prompts into your agent
 const agent = await createReactAgent({
   llm: new ChatOpenAI(),
-  tools: recommendation.tools, // <-- Tool injection
-});
+  tools: recommendation.tools // <-- Tool injection
+})
 
 const result = await agent.invoke({
   messages: [
     new HumanMessage(userMessage),
-    ...recommendation.messages, // <-- Prompt injection
-  ],
-});
+    ...recommendation.messages // <-- Prompt injection
+  ]
+})
 ```
 
 For a complete, runnable example, check out the [LangChain Chat Agent README](apps/examples/langchain/chat-agent/README.md).
 
 ## 🗣️ Have an Idea? Let's Talk!
 
--   **Got a Killer Feature Idea?**: We're all ears. [Open a feature request on GitHub](https://github.com/toolprint/sdk-ts/issues/new?template=feature_request.yml) and let's build the future of agents together.
--   **Found a Gremlin?**: Bugs happen. [Report it here](https://github.com/toolprint/sdk-ts/issues/new?template=bug_report.yml) and we'll send out the exterminators.
+- **Got a Killer Feature Idea?**: We're all ears. [Open a feature request on GitHub](https://github.com/toolprint/sdk-ts/issues/new?template=feature_request.yml) and let's build the future of agents together.
+- **Found a Gremlin?**: Bugs happen. [Report it here](https://github.com/toolprint/sdk-ts/issues/new?template=bug_report.yml) and we'll send out the exterminators.
 
 ## 📝 License
 
