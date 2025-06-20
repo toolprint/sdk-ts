@@ -166,6 +166,11 @@ inspect-stdio:
 licenses:
     pnpm turbo run licenses
 
+# sync readmes
+[group('docs')]
+sync-readmes:
+    ./scripts/sync-readmes.sh
+
 # pre-commit hooks
 [group('check')]
 pre-commit:
