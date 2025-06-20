@@ -22,8 +22,10 @@ Get from zero to a working, tool-enabled agent in your editor in under a minute.
 #### Step 1: Install the CLI & Create Your Account
 
 ```bash
-brew install toolprint/tap/cli
-toolprint # Follow prompts to create your free account & join the sandbox
+brew install toolprint/tap/toolprint
+
+# Follow prompts to create your free account & join the sandbox
+toolprint
 ```
 
 #### Step 2: Start the Toolprint Server
@@ -129,7 +131,7 @@ For a complete, runnable example, check out the [LangChain Chat Agent README](..
 
 ## 🗣️ Have an Idea? Let's Talk!
 
-- **Got a Killer Feature Idea?**: We're all ears. [Open a feature request on GitHub](https://github.com/toolprint/sdk-ts/issues/new?template=feature_request.yml) and let's build the future of agents together.
+- **Got a Killer Feature Idea?**: We're all ears. [Open a feature request](https://github.com/toolprint/sdk-ts/issues/new?template=feature_request.yml) and let's build the future of agents together.
 - **Found a Gremlin?**: Bugs happen. [Report it here](https://github.com/toolprint/sdk-ts/issues/new?template=bug_report.yml) and we'll send out the exterminators.
 
 ## 🙏 Acknowledgements

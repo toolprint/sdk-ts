@@ -22,8 +22,10 @@ Get from zero to a working, tool-enabled agent in your editor in under a minute.
 #### Step 1: Install the CLI & Create Your Account
 
 ```bash
-brew install toolprint/tap/cli
-toolprint # Follow prompts to create your free account & join the sandbox
+brew install toolprint/tap/toolprint
+
+# Follow prompts to create your free account & join the sandbox
+toolprint
 ```
 
 #### Step 2: Start the Toolprint Server
