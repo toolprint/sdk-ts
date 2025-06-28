@@ -12,7 +12,7 @@ describe('API Client Integration Tests', () => {
       url: '/health'
     })
     expect(response).toBeDefined()
-    expect(response.status).toBe(200)
+    expect(response.response.status).toBe(200)
     log.info(JSON.stringify(response.data))
   })
 
@@ -22,7 +22,7 @@ describe('API Client Integration Tests', () => {
       url: '/api/v1/servers'
     })
     expect(response).toBeDefined()
-    expect(response.status).toBe(200)
+    expect(response.response.status).toBe(200)
     log.info(JSON.stringify(response.data))
   })
 
@@ -37,7 +37,7 @@ describe('API Client Integration Tests', () => {
       url: `/api/v1/servers/${server.id}/client`
     })
     expect(response).toBeDefined()
-    expect(response.status).toBe(200)
+    expect(response.response.status).toBe(200)
     log.info(JSON.stringify(response.data))
   })
 })

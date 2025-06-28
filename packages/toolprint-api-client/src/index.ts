@@ -18,3 +18,4 @@ export {
 export * from './client.gen.js'
 export * from './schemas.gen.js'
 export * from './zod.gen.js'
+export { createClient, createConfig } from './client/index.js'
