@@ -215,7 +215,8 @@ describe('Blaxel Toolbox Tests', () => {
 
   it('should be able to make a tool call with invalid input', async () => {
     const toolDetailsMap = await toolbox.listTools()
-    console.log(
+    log.debug(
+      'Filtered tools:',
       Array.from(toolDetailsMap.values()).filter(
         (d) =>
           d.integrationName === integrationName ||
