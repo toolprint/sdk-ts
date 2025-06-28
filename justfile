@@ -83,7 +83,7 @@ build-utils:
 # build the api client package
 [group('build')]
 build-api-client:
-    pnpm turbo run build --force --filter=@onegrep/api-client
+    pnpm turbo run build --force --filter=@toolprint/api-client
 
 # build the sdk package
 [group('build')]
@@ -137,7 +137,11 @@ test name=".*":
 
 [group('test')]
 test-api-client name=".*":
-    pnpm turbo run test --filter=@onegrep/api-client -- --testNamePattern={{name}}
+    pnpm turbo run test --filter=@toolprint/api-client -- --testNamePattern={{name}}
+
+[group('test')]
+test-high-level-api-client name=".*":
+    pnpm turbo run test --filter=@toolprint/sdk -- --testNamePattern=.*OneGrepApiHighLevelClient.*
 
 # test the sdk package (use `test-sdk ".*"` to filter by test name regex)
 # * Note that "name" isn't the file name but the name of the test class within a file.

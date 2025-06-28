@@ -39,7 +39,7 @@ class BlaxelSettingsOverrider {
     const homeDir = os.homedir()
     fs.writeFileSync(join(homeDir, '.blaxel/config.yaml'), configYaml)
 
-    console.log('Synced Blaxel settings', configYaml)
+    console.debug('Synced Blaxel settings', configYaml)
   }
 }
 
@@ -61,29 +61,29 @@ export async function syncBlaxelSettings(): Promise<void> {
     JSON.stringify(blaxelSettings.credentials)
   )
   if (blaxelCredentials.apiKey && blaxelCredentials.workspace) {
-    console.log('Blaxel settings already loaded from api key. Skipping sync.')
+    console.debug('Blaxel settings already loaded from api key. Skipping sync.')
     // It correctly loaded existing settings therefore we don't need to forcibly manipulate the blaxel settings.
     return
   } else if (
     blaxelCredentials.clientCredentials &&
     blaxelCredentials.workspace
   ) {
-    console.log(
+    console.debug(
       'Blaxel settings already loaded from client credentials. Skipping sync.'
     )
     // It correctly loaded existing settings therefore we don't need to forcibly manipulate the blaxel settings.
     return
   }
 
-  console.log('No existing blaxel settings found. Syncing Blaxel settings...')
+  console.debug('No existing blaxel settings found. Syncing Blaxel settings...')
 
   const secretManager = await getDopplerSecretManager()
   await secretManager.initialize()
   const bl_workspace = await secretManager.getSecret('BL_WORKSPACE')
   const bl_api_key = await secretManager.getSecret('BL_API_KEY')
-  console.log('Blaxel workspace', bl_workspace)
+  console.debug('Blaxel workspace', bl_workspace)
   const obfuscated_api_key = bl_api_key?.replace(/./g, '*')
-  console.log('Blaxel api key', obfuscated_api_key)
+  console.debug('Blaxel api key', obfuscated_api_key)
 
   const override = new BlaxelSettingsOverrider(bl_api_key!, bl_workspace!)
   override.sync()

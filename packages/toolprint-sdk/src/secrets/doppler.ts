@@ -31,15 +31,31 @@ export class DopplerSecretManager implements SecretManager {
   }
 
   async initialize(): Promise<void> {
-    const initResponse: InitializeResponse =
-      await this.highLevelClient.initialize()
+    log.debug('Initializing Doppler secret manager...')
 
-    // ? If none of these get vended, this will error out.
-    this.serviceToken = initResponse.doppler_service_token as string
-    this.project = initResponse.doppler_project as string
-    this.config = initResponse.doppler_config as string
+    try {
+      const initResponse: InitializeResponse =
+        await this.highLevelClient.initialize()
 
-    this.client = new DopplerSDK({ accessToken: this.serviceToken })
+      // ? If none of these get vended, this will error out.
+      this.serviceToken = initResponse.doppler_service_token as string
+      this.project = initResponse.doppler_project as string
+      this.config = initResponse.doppler_config as string
+
+      log.debug(`Doppler configuration received:`)
+      log.debug(`  Project: ${this.project}`)
+      log.debug(`  Config: ${this.config}`)
+      log.debug(
+        `  Service Token: ${this.serviceToken ? `${this.serviceToken.substring(0, 8)}...` : 'undefined'}`
+      )
+
+      this.client = new DopplerSDK({ accessToken: this.serviceToken })
+
+      log.info('Doppler secret manager initialized successfully')
+    } catch (error) {
+      log.error('Failed to initialize Doppler secret manager:', error)
+      throw error
+    }
   }
 
   private isInitialized(): boolean {
@@ -52,14 +68,40 @@ export class DopplerSecretManager implements SecretManager {
      * the SDK and are not stale.
      */
     if (!this.isInitialized()) {
+      log.error(
+        'Doppler Secrets Manager not initialized - cannot fetch secrets'
+      )
       throw new Error('Doppler Secrets Manager not initialized')
     }
 
-    const secrets = await this.doppler.secrets.list(this.project!, this.config!)
-    if (!secrets.secrets) {
-      log.debug('No secrets discovered from doppler secrets manager')
-    }
+    log.debug(
+      `Fetching secrets from Doppler project: ${this.project}, config: ${this.config}`
+    )
 
+    try {
+      const secrets = await this.doppler.secrets.list(
+        this.project!,
+        this.config!
+      )
+
+      if (!secrets.secrets) {
+        log.debug('No secrets discovered from doppler secrets manager')
+      } else {
+        const secretCount = Object.keys(secrets.secrets).length
+        log.debug(`Successfully fetched ${secretCount} secrets from Doppler`)
+      }
+
+      return this.parseSecretsResponse(secrets)
+    } catch (error) {
+      log.error(
+        `Failed to fetch secrets from Doppler project: ${this.project}, config: ${this.config}`
+      )
+      log.error('Doppler API error details:', error)
+      throw error
+    }
+  }
+
+  private parseSecretsResponse(secrets: any): Map<string, string> {
     // Secrets model is a mess from doppler so we'll jsonify it and re-parse it
     const secretsJson = JSON.stringify(secrets)
     const secretsParsed = JSON.parse(secretsJson)
@@ -79,14 +121,21 @@ export class DopplerSecretManager implements SecretManager {
      */
 
     const secretsMap = new Map<string, string>()
+    let skippedCount = 0
+
     for (const secretName in secretsParsed.secrets) {
       // Doppler secrets.list returns DOPPLER_ prefixed secrets for some reason so we'll skip them.
       if (secretName.startsWith('DOPPLER_')) {
+        skippedCount++
         continue
       }
 
       secretsMap.set(secretName, secretsParsed.secrets[secretName].raw)
     }
+
+    log.debug(
+      `Parsed ${secretsMap.size} secrets from Doppler response (skipped ${skippedCount} DOPPLER_ prefixed secrets)`
+    )
 
     return secretsMap
   }
@@ -101,12 +150,30 @@ export class DopplerSecretManager implements SecretManager {
     secretNames: string[],
     requireAll: boolean = false
   ): Promise<Map<string, string>> {
+    log.debug(
+      `Requesting ${secretNames.length} secrets from Doppler: [${secretNames.join(', ')}]`
+    )
+    log.debug(`RequireAll mode: ${requireAll}`)
+
     const secretsMap = await this.fetchSecrets()
+    const foundSecrets = secretNames.filter((secretName) =>
+      secretsMap.has(secretName)
+    )
     const missingSecrets = secretNames.filter(
       (secretName) => !secretsMap.has(secretName)
     )
+
+    log.debug(
+      `Found ${foundSecrets.length}/${secretNames.length} requested secrets`
+    )
+    if (foundSecrets.length > 0) {
+      log.debug(`Available secrets: [${foundSecrets.join(', ')}]`)
+    }
+
     if (missingSecrets.length > 0) {
+      log.debug(`Missing secrets: [${missingSecrets.join(', ')}]`)
       if (requireAll) {
+        log.error(`Missing required secrets: ${missingSecrets.join(', ')}`)
         throw new Error(
           `Missing required secrets: ${missingSecrets.join(', ')}`
         )
@@ -117,7 +184,14 @@ export class DopplerSecretManager implements SecretManager {
       }
     }
 
-    return secretsMap
+    // Return only the requested secrets that were found
+    const requestedSecretsMap = new Map<string, string>()
+    for (const secretName of foundSecrets) {
+      requestedSecretsMap.set(secretName, secretsMap.get(secretName)!)
+    }
+
+    log.debug(`Returning ${requestedSecretsMap.size} secrets`)
+    return requestedSecretsMap
   }
 
   async syncProcessEnvironment(): Promise<void> {

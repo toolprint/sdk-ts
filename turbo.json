@@ -32,7 +32,8 @@
         "ONEGREP_API_URL",
         "LOG_MODE",
         "LOG_LEVEL",
-        "SMITHERY_API_KEY"
+        "SMITHERY_API_KEY",
+        "COMPOSIO_API_KEY"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",

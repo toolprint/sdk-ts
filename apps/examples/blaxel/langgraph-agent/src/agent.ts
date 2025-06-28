@@ -30,10 +30,30 @@ export default async function agent(
   })
 
   for await (const chunk of streamResponse) {
-    if (chunk.agent)
-      for (const message of chunk.agent.messages) {
-        stream.write(message.content)
+    if (chunk.agent && chunk.agent.messages) {
+      // Handle both array and non-array message types
+      const messages = Array.isArray(chunk.agent.messages)
+        ? chunk.agent.messages
+        : [chunk.agent.messages]
+
+      for (const message of messages) {
+        // Handle different message content types
+        if (typeof message === 'string') {
+          stream.write(message)
+        } else if (message && typeof message === 'object') {
+          // Extract content from LangChain message objects
+          const content = (message as any).content || ''
+
+          // Only write non-empty content
+          if (content && content.trim()) {
+            stream.write(content)
+          }
+
+          // For tool call messages, we can optionally add a note
+          // but skip the complex metadata
+        }
       }
+    }
   }
   stream.end()
 }

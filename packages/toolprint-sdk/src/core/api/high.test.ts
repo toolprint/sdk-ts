@@ -60,6 +60,7 @@ describe('OneGrepApiHighLevelClient', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(OneGrepApiError)
         const oneGrepError = err as OneGrepApiError
+        log.info('OneGrepApiError:', oneGrepError)
         expect(oneGrepError.data).toBeDefined()
         expect(oneGrepError.data).toBeTypeOf('object')
         log.info(

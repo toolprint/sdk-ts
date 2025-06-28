@@ -139,6 +139,7 @@ const registerSessionMakers = async (secretManager: SecretManager) => {
   // ! As a hack, we need to sync the process environment to get environment variables for authentication
   // TODO: Remove this once we have more reliable ways to create API clients
   // For some reason, even when we provide all the Blaxel config directly above, something is still using the env vars
+  // eslint-disable-next-line no-constant-condition
   if (process.env.ONEGREP_SDK_INJECT_SECRETS_TO_ENV || true) {
     await secretManager.syncProcessEnvironment()
   }

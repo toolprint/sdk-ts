@@ -5,7 +5,7 @@ import { ToolServerConnectionManager } from './connection.js'
 
 import { testLog } from '../test/log.test.js'
 
-const log = testLog
+const _log = testLog
 
 // import { SecretManager } from '~/secrets/index.js'
 

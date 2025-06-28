@@ -20,7 +20,6 @@ export default defineConfig({
   },
   plugins: [
     ...defaultPlugins,
-    '@hey-api/client-axios',
     'zod',
     {
       // Recommended by HeyAPI: https://heyapi.dev/openapi-ts/output/typescript#enums

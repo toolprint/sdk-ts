@@ -2,7 +2,7 @@ import {
   createConfig,
   createClient,
   ClientOptions
-} from '@hey-api/client-axios'
+} from '@toolprint/api-client'
 import { getEnv, sdkApiSchema } from '@repo/utils'
 import { OneGrepApiClient } from './types.js'
 
@@ -17,7 +17,8 @@ export function createUnauthenticatedClient(baseUrl: string): OneGrepApiClient {
   try {
     const client = createClient(
       createConfig<ClientOptions>({
-        baseURL: baseUrl
+        baseUrl: baseUrl,
+        throwOnError: true
       })
     )
     return client as unknown as OneGrepApiClient
@@ -60,8 +61,9 @@ export function createApiClientFromParams(clientParams: {
   try {
     const client = createClient(
       createConfig<ClientOptions>({
-        baseURL: baseUrl,
-        headers: headers
+        baseUrl: baseUrl,
+        headers: headers,
+        throwOnError: true
       })
     )
     return client as unknown as OneGrepApiClient

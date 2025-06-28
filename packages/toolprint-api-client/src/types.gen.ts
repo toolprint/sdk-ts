@@ -3330,7 +3330,7 @@ export type HealthHealthGetResponses = {
 }
 
 export type ClientOptions = {
-  baseURL:
+  baseUrl:
     | 'http://localhost:8080'
     | 'http://localhost:8080'
     | 'https://test-sandbox.onegrep.dev'
