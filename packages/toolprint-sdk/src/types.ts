@@ -18,6 +18,7 @@ export type JsonSchema = Record<string, any> | boolean
  * Schemas that represent how to pass inputs to a tool.
  */
 export type ToolCallArgs = Record<string, any>
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ToolCallApproval {}
 export interface ToolCallInput {
   args: ToolCallArgs

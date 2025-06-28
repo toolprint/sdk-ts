@@ -433,7 +433,7 @@ export class UniversalToolCache implements ToolCache {
         tools: toolDetails,
         messages
       }
-    } catch (_) {
+    } catch {
       log.debug(
         `No toolprint found for goal: ${goal}, performing traditional search`
       )

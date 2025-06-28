@@ -83,7 +83,7 @@ export function createBlaxelMcpClientTransports(
       )
     }
     return transports
-  } catch (error) {
+  } catch {
     throw new InvalidTransportConfigError(
       `Failed to create Blaxel MCP client transports for: ${functionName}`
     )

@@ -325,7 +325,7 @@ describe.skip('Smithery Toolbox Tests', () => {
   let smitheryServers: Record<string, ToolServer>
 
   const serverId = '3f9bf702-a521-5f41-b6d7-076067314163' // @hesreallyhim/mcp-server-isitdown
-  const serverName = '@hesreallyhim/mcp-server-isitdown'
+  const _serverName = '@hesreallyhim/mcp-server-isitdown'
   const toolName = 'get_website_status'
 
   beforeAll(async () => {

@@ -33,10 +33,10 @@ const convertToLangChainTool = (equippedTool: EquippedTool): StructuredTool => {
     equippedTool.details.inputSchema
   )
 
-  const zodOutputType: ZodTypeAny = z.any()
+  const _zodOutputType: ZodTypeAny = z.any()
 
   type ToolInputType = z.infer<typeof zodInputType>
-  type ToolOutputType = z.infer<typeof zodOutputType>
+  type ToolOutputType = z.infer<typeof _zodOutputType>
 
   // The tool call function with proper signature for LangChain
   const toolcallFunc = async (
