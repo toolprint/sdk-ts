@@ -6,7 +6,7 @@ import { z } from 'zod'
  * ValidationError
  */
 export const zValidationError = z.object({
-  loc: z.array(z.unknown()),
+  loc: z.array(z.union([z.string(), z.number().int()])),
   msg: z.string(),
   type: z.string()
 })
@@ -619,7 +619,30 @@ export const zComposioToolServerClient = z.object({
  * Response for the SDK to initialize.
  */
 export const zInitializeResponse = z.object({
-  clients: z.array(z.unknown()),
+  clients: z.array(
+    z.union([
+      z
+        .object({
+          client_type: z.literal('mcp')
+        })
+        .and(zMcpToolServerClient),
+      z
+        .object({
+          client_type: z.literal('blaxel')
+        })
+        .and(zBlaxelToolServerClient),
+      z
+        .object({
+          client_type: z.literal('smithery')
+        })
+        .and(zSmitheryToolServerClient),
+      z
+        .object({
+          client_type: z.literal('composio')
+        })
+        .and(zComposioToolServerClient)
+    ])
+  ),
   doppler_config: z.union([z.string(), z.null()]).optional(),
   doppler_env: z.union([z.string(), z.null()]).optional(),
   doppler_project: z.union([z.string(), z.null()]).optional(),
@@ -736,10 +759,22 @@ export const zAccountCreateRequest = z.object({
   invitation_code: z.string()
 })
 
+export const zGetAiDocumentationAiTxtGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
 /**
  * Successful Response
  */
 export const zGetAiDocumentationAiTxtGetResponse = z.string()
+
+export const zDeleteAccountApiV1AccountDeleteData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Response Delete Account Api V1 Account  Delete
@@ -747,20 +782,44 @@ export const zGetAiDocumentationAiTxtGetResponse = z.string()
  */
 export const zDeleteAccountApiV1AccountDeleteResponse = z.boolean()
 
+export const zGetAccountInformationApiV1AccountGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
 /**
  * Successful Response
  */
 export const zGetAccountInformationApiV1AccountGetResponse = zAccountInformation
+
+export const zCreateAccountApiV1AccountPostData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
  */
 export const zCreateAccountApiV1AccountPostResponse = zUserAccount
 
+export const zGetApiKeyApiV1AccountApiKeyGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
 /**
  * Successful Response
  */
 export const zGetApiKeyApiV1AccountApiKeyGetResponse = zUserAccount
+
+export const zGetAuthStatusApiV1AccountAuthStatusGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -769,7 +828,11 @@ export const zGetAuthStatusApiV1AccountAuthStatusGetResponse =
   zAuthenticationStatus
 
 export const zCreateAccountByInvitationApiV1AccountInvitationCodePostData =
-  zAccountCreateRequest
+  z.object({
+    body: zAccountCreateRequest,
+    path: z.never().optional(),
+    query: z.never().optional()
+  })
 
 /**
  * Successful Response
@@ -777,11 +840,23 @@ export const zCreateAccountByInvitationApiV1AccountInvitationCodePostData =
 export const zCreateAccountByInvitationApiV1AccountInvitationCodePostResponse =
   zAccountInformation
 
+export const zGetServiceTokenApiV1AccountServiceTokenGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
 /**
  * Successful Response
  */
 export const zGetServiceTokenApiV1AccountServiceTokenGetResponse =
   zServiceTokenResponse
+
+export const zRotateServiceTokenApiV1AccountServiceTokenPostData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -789,79 +864,46 @@ export const zGetServiceTokenApiV1AccountServiceTokenGetResponse =
 export const zRotateServiceTokenApiV1AccountServiceTokenPostResponse =
   zServiceTokenResponse
 
-/**
- * Page
- * Page number (1-indexed)
- */
-export const zGetAuditLogsApiV1AuditGetParameterPage = z
-  .number()
-  .int()
-  .gte(1)
-  .default(1)
-
-/**
- * Page Size
- * Items per page
- */
-export const zGetAuditLogsApiV1AuditGetParameterPageSize = z
-  .number()
-  .int()
-  .gte(1)
-  .lte(500)
-  .default(100)
-
-/**
- * Policy Id
- * Filter by policy ID
- */
-export const zGetAuditLogsApiV1AuditGetParameterPolicyId = z.union([
-  z.string(),
-  z.null()
-])
-
-/**
- * Action
- * Filter by action type
- */
-export const zGetAuditLogsApiV1AuditGetParameterAction = z.union([
-  z.string(),
-  z.null()
-])
-
-/**
- * Start Date
- * Filter logs after this date (ISO format)
- */
-export const zGetAuditLogsApiV1AuditGetParameterStartDate = z.union([
-  z.string().datetime(),
-  z.null()
-])
-
-/**
- * End Date
- * Filter logs before this date (ISO format)
- */
-export const zGetAuditLogsApiV1AuditGetParameterEndDate = z.union([
-  z.string().datetime(),
-  z.null()
-])
+export const zGetAuditLogsApiV1AuditGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      page: z.number().int().gte(1).optional().default(1),
+      page_size: z.number().int().gte(1).lte(500).optional().default(100),
+      policy_id: z.union([z.string(), z.null()]).optional(),
+      action: z.union([z.string(), z.null()]).optional(),
+      start_date: z.union([z.string().datetime(), z.null()]).optional(),
+      end_date: z.union([z.string().datetime(), z.null()]).optional()
+    })
+    .optional()
+})
 
 /**
  * Successful Response
  */
 export const zGetAuditLogsApiV1AuditGetResponse = zPaginatedResponseAuditLog
 
+export const zGetAllFlagsApiV1FlagsGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
 /**
  * Successful Response
  */
 export const zGetAllFlagsApiV1FlagsGetResponse = zGetAllFlagsResponse
 
-/**
- * Active
- */
-export const zListIntegrationsApiV1IntegrationsGetParameterActive = z
-  .boolean()
-  .default(false)
+export const zListIntegrationsApiV1IntegrationsGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      active: z.boolean().optional().default(false)
+    })
+    .optional()
+})
 
 /**
  * Response List Integrations Api V1 Integrations  Get
@@ -871,11 +913,14 @@ export const zListIntegrationsApiV1IntegrationsGetResponse = z.array(
   zIntegrationConfigDetails
 )
 
-/**
- * Integration Name
- */
-export const zGetIntegrationToolsApiV1IntegrationsIntegrationNameToolsGetParameterIntegrationName =
-  z.string()
+export const zGetIntegrationToolsApiV1IntegrationsIntegrationNameToolsGetData =
+  z.object({
+    body: z.never().optional(),
+    path: z.object({
+      integration_name: z.string()
+    }),
+    query: z.never().optional()
+  })
 
 /**
  * Response Get Integration Tools Api V1 Integrations  Integration Name  Tools Get
@@ -885,13 +930,13 @@ export const zGetIntegrationToolsApiV1IntegrationsIntegrationNameToolsGetRespons
   z.array(zToolResource)
 
 export const zUpsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsCustomTagsPostData =
-  zMultipleToolCustomTagsParamsRequest
-
-/**
- * Integration Name
- */
-export const zUpsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsCustomTagsPostParameterIntegrationName =
-  z.string()
+  z.object({
+    body: zMultipleToolCustomTagsParamsRequest,
+    path: z.object({
+      integration_name: z.string()
+    }),
+    query: z.never().optional()
+  })
 
 /**
  * Response Upsert Multiple Tool Custom Tags Api V1 Integrations  Integration Name  Tools Custom Tags Post
@@ -900,17 +945,15 @@ export const zUpsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsC
 export const zUpsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsCustomTagsPostResponse =
   z.array(zToolResource)
 
-/**
- * Integration Name
- */
-export const zGetToolDetailsApiV1IntegrationsIntegrationNameToolsToolNameGetParameterIntegrationName =
-  z.string()
-
-/**
- * Tool Name
- */
-export const zGetToolDetailsApiV1IntegrationsIntegrationNameToolsToolNameGetParameterToolName =
-  z.string()
+export const zGetToolDetailsApiV1IntegrationsIntegrationNameToolsToolNameGetData =
+  z.object({
+    body: z.never().optional(),
+    path: z.object({
+      integration_name: z.string(),
+      tool_name: z.string()
+    }),
+    query: z.never().optional()
+  })
 
 /**
  * Successful Response
@@ -919,19 +962,14 @@ export const zGetToolDetailsApiV1IntegrationsIntegrationNameToolsToolNameGetResp
   zToolResource
 
 export const zDeleteToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsDeleteData =
-  zToolCustomTagSelectionParamsRequest
-
-/**
- * Integration Name
- */
-export const zDeleteToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsDeleteParameterIntegrationName =
-  z.string()
-
-/**
- * Tool Name
- */
-export const zDeleteToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsDeleteParameterToolName =
-  z.string()
+  z.object({
+    body: zToolCustomTagSelectionParamsRequest,
+    path: z.object({
+      integration_name: z.string(),
+      tool_name: z.string()
+    }),
+    query: z.never().optional()
+  })
 
 /**
  * Successful Response
@@ -940,19 +978,14 @@ export const zDeleteToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameC
   zToolResource
 
 export const zUpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsPostData =
-  zToolCustomTagsParamsRequest
-
-/**
- * Integration Name
- */
-export const zUpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsPostParameterIntegrationName =
-  z.string()
-
-/**
- * Tool Name
- */
-export const zUpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsPostParameterToolName =
-  z.string()
+  z.object({
+    body: zToolCustomTagsParamsRequest,
+    path: z.object({
+      integration_name: z.string(),
+      tool_name: z.string()
+    }),
+    query: z.never().optional()
+  })
 
 /**
  * Successful Response
@@ -960,21 +993,16 @@ export const zUpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameC
 export const zUpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsPostResponse =
   zToolResource
 
-/**
- * Skip
- */
-export const zGetAllPoliciesApiV1PoliciesGetParameterSkip = z
-  .number()
-  .int()
-  .default(0)
-
-/**
- * Limit
- */
-export const zGetAllPoliciesApiV1PoliciesGetParameterLimit = z
-  .number()
-  .int()
-  .default(100)
+export const zGetAllPoliciesApiV1PoliciesGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      skip: z.number().int().optional().default(0),
+      limit: z.number().int().optional().default(100)
+    })
+    .optional()
+})
 
 /**
  * Response Get All Policies Api V1 Policies  Get
@@ -982,28 +1010,27 @@ export const zGetAllPoliciesApiV1PoliciesGetParameterLimit = z
  */
 export const zGetAllPoliciesApiV1PoliciesGetResponse = z.array(zPolicy)
 
-export const zCreatePolicyApiV1PoliciesPostData = zNewPolicyRequest
+export const zCreatePolicyApiV1PoliciesPostData = z.object({
+  body: zNewPolicyRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
  */
 export const zCreatePolicyApiV1PoliciesPostResponse = zPolicy
 
-/**
- * Page
- */
-export const zGetApprovalRequestsApiV1PoliciesApprovalsGetParameterPage = z
-  .number()
-  .int()
-  .default(0)
-
-/**
- * Page Size
- */
-export const zGetApprovalRequestsApiV1PoliciesApprovalsGetParameterPageSize = z
-  .number()
-  .int()
-  .default(100)
+export const zGetApprovalRequestsApiV1PoliciesApprovalsGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      page: z.number().int().optional().default(0),
+      page_size: z.number().int().optional().default(100)
+    })
+    .optional()
+})
 
 /**
  * Response Get Approval Requests Api V1 Policies Approvals Get
@@ -1012,11 +1039,26 @@ export const zGetApprovalRequestsApiV1PoliciesApprovalsGetParameterPageSize = z
 export const zGetApprovalRequestsApiV1PoliciesApprovalsGetResponse =
   z.array(zApprovalAndPolicy)
 
+export const zCheckResourceAccessGetApiV1PoliciesResourcesCheckGetData =
+  z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: z.never().optional()
+  })
+
 /**
  * Successful Response
  */
 export const zCheckResourceAccessGetApiV1PoliciesResourcesCheckGetResponse =
   zPolicyCheckResult
+
+export const zCheckResourceAccessApiV1PoliciesResourcesCheckPostData = z.object(
+  {
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: z.never().optional()
+  }
+)
 
 /**
  * Successful Response
@@ -1024,48 +1066,56 @@ export const zCheckResourceAccessGetApiV1PoliciesResourcesCheckGetResponse =
 export const zCheckResourceAccessApiV1PoliciesResourcesCheckPostResponse =
   zPolicyCheckResult
 
-/**
- * Resource Name
- */
-export const zCheckResourceForApprovalApiV1PoliciesResourcesResourceNameApprovalGetParameterResourceName =
-  z.string()
+export const zCheckResourceForApprovalApiV1PoliciesResourcesResourceNameApprovalGetData =
+  z.object({
+    body: z.never().optional(),
+    path: z.object({
+      resource_name: z.string()
+    }),
+    query: z.never().optional()
+  })
 
-/**
- * Policy Id
- */
-export const zGetPolicyApiV1PoliciesPolicyIdGetParameterPolicyId = z.string()
+export const zGetPolicyApiV1PoliciesPolicyIdGetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    policy_id: z.string()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
  */
 export const zGetPolicyApiV1PoliciesPolicyIdGetResponse = zPolicy
 
-/**
- * Update Data
- */
-export const zUpdatePolicyApiV1PoliciesPolicyIdPutData = z.object({})
-
-/**
- * Policy Id
- */
-export const zUpdatePolicyApiV1PoliciesPolicyIdPutParameterPolicyId = z.string()
+export const zUpdatePolicyApiV1PoliciesPolicyIdPutData = z.object({
+  body: z.object({}),
+  path: z.object({
+    policy_id: z.string()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
  */
 export const zUpdatePolicyApiV1PoliciesPolicyIdPutResponse = zPolicy
 
-/**
- * Policy Id
- */
-export const zCheckPolicyStatusApiV1PoliciesPolicyIdAuditIdStatusPostParameterPolicyId =
-  z.string().uuid()
+export const zCheckPolicyStatusApiV1PoliciesPolicyIdAuditIdStatusPostData =
+  z.object({
+    body: z.never().optional(),
+    path: z.object({
+      policy_id: z.string().uuid(),
+      audit_id: z.number().int()
+    }),
+    query: z.never().optional()
+  })
 
-/**
- * Audit Id
- */
-export const zCheckPolicyStatusApiV1PoliciesPolicyIdAuditIdStatusPostParameterAuditId =
-  z.number().int()
+export const zListProvidersApiV1ProvidersGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Response List Providers Api V1 Providers  Get
@@ -1074,11 +1124,13 @@ export const zCheckPolicyStatusApiV1PoliciesPolicyIdAuditIdStatusPostParameterAu
 export const zListProvidersApiV1ProvidersGetResponse =
   z.array(zToolServerProvider)
 
-/**
- * Provider Id
- */
-export const zGetProviderApiV1ProvidersProviderIdGetParameterProviderId =
-  z.string()
+export const zGetProviderApiV1ProvidersProviderIdGetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    provider_id: z.string()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -1086,11 +1138,13 @@ export const zGetProviderApiV1ProvidersProviderIdGetParameterProviderId =
 export const zGetProviderApiV1ProvidersProviderIdGetResponse =
   zToolServerProvider
 
-/**
- * Provider Id
- */
-export const zGetServersApiV1ProvidersProviderIdServersGetParameterProviderId =
-  z.string()
+export const zGetServersApiV1ProvidersProviderIdServersGetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    provider_id: z.string()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Response Get Servers Api V1 Providers  Provider Id  Servers Get
@@ -1099,16 +1153,30 @@ export const zGetServersApiV1ProvidersProviderIdServersGetParameterProviderId =
 export const zGetServersApiV1ProvidersProviderIdServersGetResponse =
   z.array(zToolServer)
 
-/**
- * Provider Id
- */
-export const zSyncProviderApiV1ProvidersProviderIdSyncPostParameterProviderId =
-  z.string()
+export const zSyncProviderApiV1ProvidersProviderIdSyncPostData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    provider_id: z.string()
+  }),
+  query: z.never().optional()
+})
+
+export const zInitializeApiV1SdkInitializeGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
  */
 export const zInitializeApiV1SdkInitializeGetResponse = zInitializeResponse
+
+export const zGetServiceTokenApiV1SdkServiceTokenGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -1116,7 +1184,29 @@ export const zInitializeApiV1SdkInitializeGetResponse = zInitializeResponse
 export const zGetServiceTokenApiV1SdkServiceTokenGetResponse =
   zServiceTokenResponse
 
-export const zSearchToolprintsApiV1SearchToolprintsPostData = zSearchRequest
+export const zReindexApiV1SearchReindexPostData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
+export const zReindexToolprintsApiV1SearchReindexToolprintsPostData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
+export const zReindexToolsApiV1SearchReindexToolsPostData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
+export const zSearchToolprintsApiV1SearchToolprintsPostData = z.object({
+  body: zSearchRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -1125,7 +1215,11 @@ export const zSearchToolprintsApiV1SearchToolprintsPostResponse =
   zSearchResponseScoredItemRegisteredToolprint
 
 export const zGetToolprintRecommendationApiV1SearchToolprintsRecommendationPostData =
-  zSearchRequest
+  z.object({
+    body: zSearchRequest,
+    path: z.never().optional(),
+    query: z.never().optional()
+  })
 
 /**
  * Successful Response
@@ -1133,7 +1227,11 @@ export const zGetToolprintRecommendationApiV1SearchToolprintsRecommendationPostD
 export const zGetToolprintRecommendationApiV1SearchToolprintsRecommendationPostResponse =
   zToolprintRecommendation
 
-export const zSearchToolsApiV1SearchToolsPostData = zSearchRequest
+export const zSearchToolsApiV1SearchToolsPostData = z.object({
+  body: zSearchRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -1141,10 +1239,19 @@ export const zSearchToolsApiV1SearchToolsPostData = zSearchRequest
 export const zSearchToolsApiV1SearchToolsPostResponse =
   zSearchResponseScoredItemTool
 
-/**
- * Secret Name
- */
-export const zGetSecretApiV1SecretsSecretNameGetParameterSecretName = z.string()
+export const zGetSecretsApiV1SecretsGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
+export const zGetSecretApiV1SecretsSecretNameGetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    secret_name: z.string()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Response Get Secret Api V1 Secrets  Secret Name  Get
@@ -1152,20 +1259,18 @@ export const zGetSecretApiV1SecretsSecretNameGetParameterSecretName = z.string()
  */
 export const zGetSecretApiV1SecretsSecretNameGetResponse = z.object({})
 
-export const zUpsertSecretApiV1SecretsSecretNamePutData =
-  zBodyUpsertSecretApiV1SecretsSecretNamePut
-
-/**
- * X-Onegrep-Profile-Id
- */
-export const zUpsertSecretApiV1SecretsSecretNamePutParameterXOnegrepProfileId =
-  z.union([z.string(), z.null()])
-
-/**
- * Secret Name
- */
-export const zUpsertSecretApiV1SecretsSecretNamePutParameterSecretName =
-  z.string()
+export const zUpsertSecretApiV1SecretsSecretNamePutData = z.object({
+  body: zBodyUpsertSecretApiV1SecretsSecretNamePut,
+  path: z.object({
+    secret_name: z.string()
+  }),
+  query: z.never().optional(),
+  headers: z
+    .object({
+      'X-ONEGREP-PROFILE-ID': z.union([z.string(), z.null()]).optional()
+    })
+    .optional()
+})
 
 /**
  * Successful Response
@@ -1173,27 +1278,38 @@ export const zUpsertSecretApiV1SecretsSecretNamePutParameterSecretName =
 export const zUpsertSecretApiV1SecretsSecretNamePutResponse =
   zUpsertSecretResponse
 
+export const zListServersApiV1ServersGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
 /**
  * Response List Servers Api V1 Servers  Get
  * Successful Response
  */
 export const zListServersApiV1ServersGetResponse = z.array(zToolServer)
 
-/**
- * Server Id
- */
-export const zGetServerApiV1ServersServerIdGetParameterServerId = z.string()
+export const zGetServerApiV1ServersServerIdGetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    server_id: z.string()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
  */
 export const zGetServerApiV1ServersServerIdGetResponse = zToolServer
 
-/**
- * Server Id
- */
-export const zGetServerClientApiV1ServersServerIdClientGetParameterServerId =
-  z.string()
+export const zGetServerClientApiV1ServersServerIdClientGetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    server_id: z.string()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Response Get Server Client Api V1 Servers  Server Id  Client Get
@@ -1222,11 +1338,14 @@ export const zGetServerClientApiV1ServersServerIdClientGetResponse = z.union([
     .and(zComposioToolServerClient)
 ])
 
-/**
- * Server Id
- */
-export const zGetServerPropertiesApiV1ServersServerIdPropertiesGetParameterServerId =
-  z.string()
+export const zGetServerPropertiesApiV1ServersServerIdPropertiesGetData =
+  z.object({
+    body: z.never().optional(),
+    path: z.object({
+      server_id: z.string()
+    }),
+    query: z.never().optional()
+  })
 
 /**
  * Successful Response
@@ -1234,23 +1353,15 @@ export const zGetServerPropertiesApiV1ServersServerIdPropertiesGetParameterServe
 export const zGetServerPropertiesApiV1ServersServerIdPropertiesGetResponse =
   zToolServerProperties
 
-/**
- * Value
- */
 export const zPatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchData =
-  z.object({})
-
-/**
- * Server Id
- */
-export const zPatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchParameterServerId =
-  z.string()
-
-/**
- * Key
- */
-export const zPatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchParameterKey =
-  z.string()
+  z.object({
+    body: z.object({}),
+    path: z.object({
+      server_id: z.string(),
+      key: z.string()
+    }),
+    query: z.never().optional()
+  })
 
 /**
  * Successful Response
@@ -1258,7 +1369,11 @@ export const zPatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchParamet
 export const zPatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchResponse =
   zToolServerProperties
 
-export const zGetStrategyApiV1StrategyPostData = zSearchRequest
+export const zGetStrategyApiV1StrategyPostData = z.object({
+  body: zSearchRequest,
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Response Get Strategy Api V1 Strategy  Post
@@ -1266,24 +1381,48 @@ export const zGetStrategyApiV1StrategyPostData = zSearchRequest
  */
 export const zGetStrategyApiV1StrategyPostResponse = z.array(zStrategy)
 
+export const zCreateFakeRecipesApiV1StrategyFakePostData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
 /**
  * Response Create Fake Recipes Api V1 Strategy Fake Post
  * Successful Response
  */
 export const zCreateFakeRecipesApiV1StrategyFakePostResponse = z.array(zRecipe)
 
-export const zCreateToolprintApiV1ToolprintsPostData = zToolprintInput
+export const zCreateToolprintApiV1ToolprintsPostData = z.object({
+  body: zToolprintInput,
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
  */
 export const zCreateToolprintApiV1ToolprintsPostResponse = zRegisteredToolprint
 
+export const zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetData =
+  z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: z.never().optional()
+  })
+
 /**
  * Successful Response
  */
 export const zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponse =
   z.string()
+
+export const zGetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetData =
+  z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: z.never().optional()
+  })
 
 /**
  * Response Get Toolprint Schema Api V1 Toolprints  Well Known Schema Get
@@ -1292,13 +1431,24 @@ export const zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponse =
 export const zGetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetResponse =
   z.object({})
 
+export const zGetToolprintTemplateApiV1ToolprintsWellKnownTemplateGetData =
+  z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: z.never().optional()
+  })
+
 /**
  * Successful Response
  */
 export const zGetToolprintTemplateApiV1ToolprintsWellKnownTemplateGetResponse =
   z.string()
 
-export const zCreateToolprintJsonApiV1ToolprintsJsonPostData = zBasicPostBody
+export const zCreateToolprintJsonApiV1ToolprintsJsonPostData = z.object({
+  body: zBasicPostBody,
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -1306,7 +1456,11 @@ export const zCreateToolprintJsonApiV1ToolprintsJsonPostData = zBasicPostBody
 export const zCreateToolprintJsonApiV1ToolprintsJsonPostResponse =
   zRegisteredToolprint
 
-export const zValidateToolprintApiV1ToolprintsValidatePostData = zToolprintInput
+export const zValidateToolprintApiV1ToolprintsValidatePostData = z.object({
+  body: zToolprintInput,
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -1315,13 +1469,18 @@ export const zValidateToolprintApiV1ToolprintsValidatePostResponse =
   zBasicPostResponse
 
 export const zValidateToolprintJsonApiV1ToolprintsValidateJsonPostData =
-  zBasicPostBody
+  z.object({
+    body: zBasicPostBody,
+    path: z.never().optional(),
+    query: z.never().optional()
+  })
 
-/**
- * Yaml Content
- */
 export const zValidateToolprintYamlApiV1ToolprintsValidateYamlPostData =
-  z.string()
+  z.object({
+    body: z.string(),
+    path: z.never().optional(),
+    query: z.never().optional()
+  })
 
 /**
  * Successful Response
@@ -1329,10 +1488,11 @@ export const zValidateToolprintYamlApiV1ToolprintsValidateYamlPostData =
 export const zValidateToolprintYamlApiV1ToolprintsValidateYamlPostResponse =
   zBasicPostResponse
 
-/**
- * Yaml Content
- */
-export const zCreateToolprintYamlApiV1ToolprintsYamlPostData = z.string()
+export const zCreateToolprintYamlApiV1ToolprintsYamlPostData = z.object({
+  body: z.string(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -1340,12 +1500,13 @@ export const zCreateToolprintYamlApiV1ToolprintsYamlPostData = z.string()
 export const zCreateToolprintYamlApiV1ToolprintsYamlPostResponse =
   zRegisteredToolprint
 
-/**
- * Toolprint Id
- */
-export const zGetToolprintApiV1ToolprintsToolprintIdGetParameterToolprintId = z
-  .string()
-  .uuid()
+export const zGetToolprintApiV1ToolprintsToolprintIdGetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    toolprint_id: z.string().uuid()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -1353,14 +1514,23 @@ export const zGetToolprintApiV1ToolprintsToolprintIdGetParameterToolprintId = z
 export const zGetToolprintApiV1ToolprintsToolprintIdGetResponse =
   zRegisteredToolprint
 
+export const zListToolsApiV1ToolsGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})
+
 /**
  * Response List Tools Api V1 Tools  Get
  * Successful Response
  */
 export const zListToolsApiV1ToolsGetResponse = z.array(zTool)
 
-export const zGetToolResourcesBatchApiV1ToolsResourcesBatchPostData =
-  zMultiIdPostBody
+export const zGetToolResourcesBatchApiV1ToolsResourcesBatchPostData = z.object({
+  body: zMultiIdPostBody,
+  path: z.never().optional(),
+  query: z.never().optional()
+})
 
 /**
  * Response Get Tool Resources Batch Api V1 Tools Resources Batch Post
@@ -1369,21 +1539,26 @@ export const zGetToolResourcesBatchApiV1ToolsResourcesBatchPostData =
 export const zGetToolResourcesBatchApiV1ToolsResourcesBatchPostResponse =
   z.array(zToolResource)
 
-/**
- * Tool Id
- */
-export const zGetToolApiV1ToolsToolIdGetParameterToolId = z.string()
+export const zGetToolApiV1ToolsToolIdGetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    tool_id: z.string()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
  */
 export const zGetToolApiV1ToolsToolIdGetResponse = zTool
 
-/**
- * Tool Id
- */
-export const zGetToolPropertiesApiV1ToolsToolIdPropertiesGetParameterToolId =
-  z.string()
+export const zGetToolPropertiesApiV1ToolsToolIdPropertiesGetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    tool_id: z.string()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
@@ -1391,13 +1566,21 @@ export const zGetToolPropertiesApiV1ToolsToolIdPropertiesGetParameterToolId =
 export const zGetToolPropertiesApiV1ToolsToolIdPropertiesGetResponse =
   zToolProperties
 
-/**
- * Tool Id
- */
-export const zGetToolResourceApiV1ToolsToolIdResourceGetParameterToolId =
-  z.string()
+export const zGetToolResourceApiV1ToolsToolIdResourceGetData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    tool_id: z.string()
+  }),
+  query: z.never().optional()
+})
 
 /**
  * Successful Response
  */
 export const zGetToolResourceApiV1ToolsToolIdResourceGetResponse = zToolResource
+
+export const zHealthHealthGetData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional()
+})

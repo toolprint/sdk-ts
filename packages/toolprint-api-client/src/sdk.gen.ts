@@ -4,7 +4,7 @@ import type {
   Options as ClientOptions,
   TDataShape,
   Client
-} from '@hey-api/client-axios'
+} from './client/index.js'
 import type {
   GetAiDocumentationAiTxtGetData,
   GetAiDocumentationAiTxtGetResponses,
@@ -175,61 +175,125 @@ import type {
   HealthHealthGetResponses
 } from './types.gen.js'
 import {
+  zGetAiDocumentationAiTxtGetData,
   zGetAiDocumentationAiTxtGetResponse,
+  zDeleteAccountApiV1AccountDeleteData,
   zDeleteAccountApiV1AccountDeleteResponse,
+  zGetAccountInformationApiV1AccountGetData,
   zGetAccountInformationApiV1AccountGetResponse,
+  zCreateAccountApiV1AccountPostData,
   zCreateAccountApiV1AccountPostResponse,
+  zGetApiKeyApiV1AccountApiKeyGetData,
   zGetApiKeyApiV1AccountApiKeyGetResponse,
+  zGetAuthStatusApiV1AccountAuthStatusGetData,
   zGetAuthStatusApiV1AccountAuthStatusGetResponse,
+  zCreateAccountByInvitationApiV1AccountInvitationCodePostData,
   zCreateAccountByInvitationApiV1AccountInvitationCodePostResponse,
+  zGetServiceTokenApiV1AccountServiceTokenGetData,
   zGetServiceTokenApiV1AccountServiceTokenGetResponse,
+  zRotateServiceTokenApiV1AccountServiceTokenPostData,
   zRotateServiceTokenApiV1AccountServiceTokenPostResponse,
+  zGetAuditLogsApiV1AuditGetData,
   zGetAuditLogsApiV1AuditGetResponse,
+  zGetAllFlagsApiV1FlagsGetData,
   zGetAllFlagsApiV1FlagsGetResponse,
+  zListIntegrationsApiV1IntegrationsGetData,
   zListIntegrationsApiV1IntegrationsGetResponse,
+  zGetIntegrationToolsApiV1IntegrationsIntegrationNameToolsGetData,
   zGetIntegrationToolsApiV1IntegrationsIntegrationNameToolsGetResponse,
+  zUpsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsCustomTagsPostData,
   zUpsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsCustomTagsPostResponse,
+  zGetToolDetailsApiV1IntegrationsIntegrationNameToolsToolNameGetData,
   zGetToolDetailsApiV1IntegrationsIntegrationNameToolsToolNameGetResponse,
+  zDeleteToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsDeleteData,
   zDeleteToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsDeleteResponse,
+  zUpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsPostData,
   zUpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsPostResponse,
+  zGetAllPoliciesApiV1PoliciesGetData,
   zGetAllPoliciesApiV1PoliciesGetResponse,
+  zCreatePolicyApiV1PoliciesPostData,
   zCreatePolicyApiV1PoliciesPostResponse,
+  zGetApprovalRequestsApiV1PoliciesApprovalsGetData,
   zGetApprovalRequestsApiV1PoliciesApprovalsGetResponse,
+  zCheckResourceAccessGetApiV1PoliciesResourcesCheckGetData,
   zCheckResourceAccessGetApiV1PoliciesResourcesCheckGetResponse,
+  zCheckResourceAccessApiV1PoliciesResourcesCheckPostData,
   zCheckResourceAccessApiV1PoliciesResourcesCheckPostResponse,
+  zCheckResourceForApprovalApiV1PoliciesResourcesResourceNameApprovalGetData,
+  zGetPolicyApiV1PoliciesPolicyIdGetData,
   zGetPolicyApiV1PoliciesPolicyIdGetResponse,
+  zUpdatePolicyApiV1PoliciesPolicyIdPutData,
   zUpdatePolicyApiV1PoliciesPolicyIdPutResponse,
+  zCheckPolicyStatusApiV1PoliciesPolicyIdAuditIdStatusPostData,
+  zListProvidersApiV1ProvidersGetData,
   zListProvidersApiV1ProvidersGetResponse,
+  zGetProviderApiV1ProvidersProviderIdGetData,
   zGetProviderApiV1ProvidersProviderIdGetResponse,
+  zGetServersApiV1ProvidersProviderIdServersGetData,
   zGetServersApiV1ProvidersProviderIdServersGetResponse,
+  zSyncProviderApiV1ProvidersProviderIdSyncPostData,
+  zInitializeApiV1SdkInitializeGetData,
   zInitializeApiV1SdkInitializeGetResponse,
+  zGetServiceTokenApiV1SdkServiceTokenGetData,
   zGetServiceTokenApiV1SdkServiceTokenGetResponse,
+  zReindexApiV1SearchReindexPostData,
+  zReindexToolprintsApiV1SearchReindexToolprintsPostData,
+  zReindexToolsApiV1SearchReindexToolsPostData,
+  zSearchToolprintsApiV1SearchToolprintsPostData,
   zSearchToolprintsApiV1SearchToolprintsPostResponse,
+  zGetToolprintRecommendationApiV1SearchToolprintsRecommendationPostData,
   zGetToolprintRecommendationApiV1SearchToolprintsRecommendationPostResponse,
+  zSearchToolsApiV1SearchToolsPostData,
   zSearchToolsApiV1SearchToolsPostResponse,
+  zGetSecretsApiV1SecretsGetData,
+  zGetSecretApiV1SecretsSecretNameGetData,
   zGetSecretApiV1SecretsSecretNameGetResponse,
+  zUpsertSecretApiV1SecretsSecretNamePutData,
   zUpsertSecretApiV1SecretsSecretNamePutResponse,
+  zListServersApiV1ServersGetData,
   zListServersApiV1ServersGetResponse,
+  zGetServerApiV1ServersServerIdGetData,
   zGetServerApiV1ServersServerIdGetResponse,
+  zGetServerClientApiV1ServersServerIdClientGetData,
   zGetServerClientApiV1ServersServerIdClientGetResponse,
+  zGetServerPropertiesApiV1ServersServerIdPropertiesGetData,
   zGetServerPropertiesApiV1ServersServerIdPropertiesGetResponse,
+  zPatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchData,
   zPatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchResponse,
+  zGetStrategyApiV1StrategyPostData,
   zGetStrategyApiV1StrategyPostResponse,
+  zCreateFakeRecipesApiV1StrategyFakePostData,
   zCreateFakeRecipesApiV1StrategyFakePostResponse,
+  zCreateToolprintApiV1ToolprintsPostData,
   zCreateToolprintApiV1ToolprintsPostResponse,
+  zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetData,
   zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponse,
+  zGetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetData,
   zGetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetResponse,
+  zGetToolprintTemplateApiV1ToolprintsWellKnownTemplateGetData,
   zGetToolprintTemplateApiV1ToolprintsWellKnownTemplateGetResponse,
+  zCreateToolprintJsonApiV1ToolprintsJsonPostData,
   zCreateToolprintJsonApiV1ToolprintsJsonPostResponse,
+  zValidateToolprintApiV1ToolprintsValidatePostData,
   zValidateToolprintApiV1ToolprintsValidatePostResponse,
+  zValidateToolprintJsonApiV1ToolprintsValidateJsonPostData,
+  zValidateToolprintYamlApiV1ToolprintsValidateYamlPostData,
   zValidateToolprintYamlApiV1ToolprintsValidateYamlPostResponse,
+  zCreateToolprintYamlApiV1ToolprintsYamlPostData,
   zCreateToolprintYamlApiV1ToolprintsYamlPostResponse,
+  zGetToolprintApiV1ToolprintsToolprintIdGetData,
   zGetToolprintApiV1ToolprintsToolprintIdGetResponse,
+  zListToolsApiV1ToolsGetData,
   zListToolsApiV1ToolsGetResponse,
+  zGetToolResourcesBatchApiV1ToolsResourcesBatchPostData,
   zGetToolResourcesBatchApiV1ToolsResourcesBatchPostResponse,
+  zGetToolApiV1ToolsToolIdGetData,
   zGetToolApiV1ToolsToolIdGetResponse,
+  zGetToolPropertiesApiV1ToolsToolIdPropertiesGetData,
   zGetToolPropertiesApiV1ToolsToolIdPropertiesGetResponse,
-  zGetToolResourceApiV1ToolsToolIdResourceGetResponse
+  zGetToolResourceApiV1ToolsToolIdResourceGetData,
+  zGetToolResourceApiV1ToolsToolIdResourceGetResponse,
+  zHealthHealthGetData
 } from './zod.gen.js'
 import { client as _heyApiClient } from './client.gen.js'
 
@@ -250,7 +314,7 @@ export type Options<
   meta?: Record<string, unknown>
 }
 
-export class DefaultService {
+export class Default {
   /**
    * Get Ai Documentation
    * Returns the complete API documentation including toolprint examples.
@@ -267,7 +331,9 @@ export class DefaultService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'text',
+      requestValidator: async (data) => {
+        return await zGetAiDocumentationAiTxtGetData.parseAsync(data)
+      },
       responseValidator: async (data) => {
         return await zGetAiDocumentationAiTxtGetResponse.parseAsync(data)
       },
@@ -288,14 +354,16 @@ export class DefaultService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zHealthHealthGetData.parseAsync(data)
+      },
       url: '/health',
       ...options
     })
   }
 }
 
-export class AccountService {
+export class Account {
   /**
    * Delete Account
    */
@@ -307,16 +375,18 @@ export class AccountService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zDeleteAccountApiV1AccountDeleteData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zDeleteAccountApiV1AccountDeleteResponse.parseAsync(data)
+      },
       security: [
         {
           scheme: 'bearer',
           type: 'http'
         }
       ],
-      responseValidator: async (data) => {
-        return await zDeleteAccountApiV1AccountDeleteResponse.parseAsync(data)
-      },
       url: '/api/v1/account/',
       ...options
     })
@@ -333,18 +403,20 @@ export class AccountService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetAccountInformationApiV1AccountGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zGetAccountInformationApiV1AccountGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           scheme: 'bearer',
           type: 'http'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetAccountInformationApiV1AccountGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/account/',
       ...options
     })
@@ -365,16 +437,18 @@ export class AccountService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCreateAccountApiV1AccountPostData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zCreateAccountApiV1AccountPostResponse.parseAsync(data)
+      },
       security: [
         {
           scheme: 'bearer',
           type: 'http'
         }
       ],
-      responseValidator: async (data) => {
-        return await zCreateAccountApiV1AccountPostResponse.parseAsync(data)
-      },
       url: '/api/v1/account/',
       ...options
     })
@@ -392,16 +466,18 @@ export class AccountService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetApiKeyApiV1AccountApiKeyGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zGetApiKeyApiV1AccountApiKeyGetResponse.parseAsync(data)
+      },
       security: [
         {
           scheme: 'bearer',
           type: 'http'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetApiKeyApiV1AccountApiKeyGetResponse.parseAsync(data)
-      },
       url: '/api/v1/account/api-key',
       ...options
     })
@@ -424,7 +500,16 @@ export class AccountService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetAuthStatusApiV1AccountAuthStatusGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetAuthStatusApiV1AccountAuthStatusGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           scheme: 'bearer',
@@ -435,11 +520,6 @@ export class AccountService {
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetAuthStatusApiV1AccountAuthStatusGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/account/auth/status',
       ...options
     })
@@ -462,18 +542,22 @@ export class AccountService {
       CreateAccountByInvitationApiV1AccountInvitationCodePostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCreateAccountByInvitationApiV1AccountInvitationCodePostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zCreateAccountByInvitationApiV1AccountInvitationCodePostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           scheme: 'bearer',
           type: 'http'
         }
       ],
-      responseValidator: async (data) => {
-        return await zCreateAccountByInvitationApiV1AccountInvitationCodePostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/account/invitation-code',
       ...options,
       headers: {
@@ -500,18 +584,22 @@ export class AccountService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetServiceTokenApiV1AccountServiceTokenGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetServiceTokenApiV1AccountServiceTokenGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           scheme: 'bearer',
           type: 'http'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetServiceTokenApiV1AccountServiceTokenGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/account/service-token',
       ...options
     })
@@ -533,25 +621,29 @@ export class AccountService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zRotateServiceTokenApiV1AccountServiceTokenPostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zRotateServiceTokenApiV1AccountServiceTokenPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           scheme: 'bearer',
           type: 'http'
         }
       ],
-      responseValidator: async (data) => {
-        return await zRotateServiceTokenApiV1AccountServiceTokenPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/account/service-token',
       ...options
     })
   }
 }
 
-export class AuditService {
+export class Audit {
   /**
    * Get Audit Logs
    * Gets audit logs visible to the user with pagination and filtering.
@@ -568,23 +660,25 @@ export class AuditService {
       GetAuditLogsApiV1AuditGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetAuditLogsApiV1AuditGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zGetAuditLogsApiV1AuditGetResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetAuditLogsApiV1AuditGetResponse.parseAsync(data)
-      },
       url: '/api/v1/audit/',
       ...options
     })
   }
 }
 
-export class FlagsService {
+export class Flags {
   /**
    * Get All Flags
    */
@@ -596,23 +690,25 @@ export class FlagsService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetAllFlagsApiV1FlagsGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zGetAllFlagsApiV1FlagsGetResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetAllFlagsApiV1FlagsGetResponse.parseAsync(data)
-      },
       url: '/api/v1/flags/',
       ...options
     })
   }
 }
 
-export class IntegrationsService {
+export class Integrations {
   /**
    * List Integrations
    * Lists all available integrations for a user's organization.
@@ -626,18 +722,20 @@ export class IntegrationsService {
       ListIntegrationsApiV1IntegrationsGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zListIntegrationsApiV1IntegrationsGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zListIntegrationsApiV1IntegrationsGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zListIntegrationsApiV1IntegrationsGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/integrations/',
       ...options
     })
@@ -660,18 +758,22 @@ export class IntegrationsService {
       GetIntegrationToolsApiV1IntegrationsIntegrationNameToolsGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetIntegrationToolsApiV1IntegrationsIntegrationNameToolsGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetIntegrationToolsApiV1IntegrationsIntegrationNameToolsGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetIntegrationToolsApiV1IntegrationsIntegrationNameToolsGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/integrations/{integration_name}/tools',
       ...options
     })
@@ -694,18 +796,22 @@ export class IntegrationsService {
       UpsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsCustomTagsPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zUpsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsCustomTagsPostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zUpsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsCustomTagsPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zUpsertMultipleToolCustomTagsApiV1IntegrationsIntegrationNameToolsCustomTagsPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/integrations/{integration_name}/tools/custom/tags',
       ...options,
       headers: {
@@ -732,18 +838,22 @@ export class IntegrationsService {
       GetToolDetailsApiV1IntegrationsIntegrationNameToolsToolNameGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetToolDetailsApiV1IntegrationsIntegrationNameToolsToolNameGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetToolDetailsApiV1IntegrationsIntegrationNameToolsToolNameGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetToolDetailsApiV1IntegrationsIntegrationNameToolsToolNameGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/integrations/{integration_name}/tools/{tool_name}',
       ...options
     })
@@ -766,18 +876,22 @@ export class IntegrationsService {
       DeleteToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsDeleteErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zDeleteToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsDeleteData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zDeleteToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsDeleteResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zDeleteToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsDeleteResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/integrations/{integration_name}/tools/{tool_name}/custom/tags',
       ...options,
       headers: {
@@ -805,18 +919,22 @@ export class IntegrationsService {
       UpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zUpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsPostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zUpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zUpsertToolCustomTagsApiV1IntegrationsIntegrationNameToolsToolNameCustomTagsPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/integrations/{integration_name}/tools/{tool_name}/custom/tags',
       ...options,
       headers: {
@@ -827,7 +945,7 @@ export class IntegrationsService {
   }
 }
 
-export class PoliciesService {
+export class Policies {
   /**
    * Get All Policies
    */
@@ -839,16 +957,18 @@ export class PoliciesService {
       GetAllPoliciesApiV1PoliciesGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetAllPoliciesApiV1PoliciesGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zGetAllPoliciesApiV1PoliciesGetResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetAllPoliciesApiV1PoliciesGetResponse.parseAsync(data)
-      },
       url: '/api/v1/policies/',
       ...options
     })
@@ -865,16 +985,18 @@ export class PoliciesService {
       CreatePolicyApiV1PoliciesPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCreatePolicyApiV1PoliciesPostData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zCreatePolicyApiV1PoliciesPostResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zCreatePolicyApiV1PoliciesPostResponse.parseAsync(data)
-      },
       url: '/api/v1/policies/',
       ...options,
       headers: {
@@ -901,18 +1023,22 @@ export class PoliciesService {
       GetApprovalRequestsApiV1PoliciesApprovalsGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetApprovalRequestsApiV1PoliciesApprovalsGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetApprovalRequestsApiV1PoliciesApprovalsGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetApprovalRequestsApiV1PoliciesApprovalsGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/policies/approvals',
       ...options
     })
@@ -934,7 +1060,11 @@ export class PoliciesService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCheckResourceAccessGetApiV1PoliciesResourcesCheckGetData.parseAsync(
+          data
+        )
+      },
       responseValidator: async (data) => {
         return await zCheckResourceAccessGetApiV1PoliciesResourcesCheckGetResponse.parseAsync(
           data
@@ -962,18 +1092,22 @@ export class PoliciesService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCheckResourceAccessApiV1PoliciesResourcesCheckPostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zCheckResourceAccessApiV1PoliciesResourcesCheckPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zCheckResourceAccessApiV1PoliciesResourcesCheckPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/policies/resources/check',
       ...options
     })
@@ -998,7 +1132,11 @@ export class PoliciesService {
       CheckResourceForApprovalApiV1PoliciesResourcesResourceNameApprovalGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCheckResourceForApprovalApiV1PoliciesResourcesResourceNameApprovalGetData.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
@@ -1021,16 +1159,18 @@ export class PoliciesService {
       GetPolicyApiV1PoliciesPolicyIdGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetPolicyApiV1PoliciesPolicyIdGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zGetPolicyApiV1PoliciesPolicyIdGetResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetPolicyApiV1PoliciesPolicyIdGetResponse.parseAsync(data)
-      },
       url: '/api/v1/policies/{policy_id}',
       ...options
     })
@@ -1047,18 +1187,20 @@ export class PoliciesService {
       UpdatePolicyApiV1PoliciesPolicyIdPutErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zUpdatePolicyApiV1PoliciesPolicyIdPutData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zUpdatePolicyApiV1PoliciesPolicyIdPutResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zUpdatePolicyApiV1PoliciesPolicyIdPutResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/policies/{policy_id}',
       ...options,
       headers: {
@@ -1084,7 +1226,11 @@ export class PoliciesService {
       CheckPolicyStatusApiV1PoliciesPolicyIdAuditIdStatusPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCheckPolicyStatusApiV1PoliciesPolicyIdAuditIdStatusPostData.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
@@ -1097,7 +1243,7 @@ export class PoliciesService {
   }
 }
 
-export class ProvidersService {
+export class Providers {
   /**
    * List Providers
    */
@@ -1109,16 +1255,18 @@ export class ProvidersService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zListProvidersApiV1ProvidersGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zListProvidersApiV1ProvidersGetResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zListProvidersApiV1ProvidersGetResponse.parseAsync(data)
-      },
       url: '/api/v1/providers/',
       ...options
     })
@@ -1137,18 +1285,22 @@ export class ProvidersService {
       GetProviderApiV1ProvidersProviderIdGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetProviderApiV1ProvidersProviderIdGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetProviderApiV1ProvidersProviderIdGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetProviderApiV1ProvidersProviderIdGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/providers/{provider_id}',
       ...options
     })
@@ -1170,18 +1322,22 @@ export class ProvidersService {
       GetServersApiV1ProvidersProviderIdServersGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetServersApiV1ProvidersProviderIdServersGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetServersApiV1ProvidersProviderIdServersGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetServersApiV1ProvidersProviderIdServersGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/providers/{provider_id}/servers',
       ...options
     })
@@ -1203,7 +1359,11 @@ export class ProvidersService {
       SyncProviderApiV1ProvidersProviderIdSyncPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zSyncProviderApiV1ProvidersProviderIdSyncPostData.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
@@ -1216,7 +1376,7 @@ export class ProvidersService {
   }
 }
 
-export class SdkService {
+export class Sdk {
   /**
    * Initialize
    */
@@ -1228,16 +1388,18 @@ export class SdkService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zInitializeApiV1SdkInitializeGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zInitializeApiV1SdkInitializeGetResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zInitializeApiV1SdkInitializeGetResponse.parseAsync(data)
-      },
       url: '/api/v1/sdk/initialize',
       ...options
     })
@@ -1257,25 +1419,29 @@ export class SdkService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetServiceTokenApiV1SdkServiceTokenGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetServiceTokenApiV1SdkServiceTokenGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetServiceTokenApiV1SdkServiceTokenGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/sdk/service-token',
       ...options
     })
   }
 }
 
-export class SearchService {
+export class Search {
   /**
    * Reindex
    * Reindexes all tools and toolprints for an organization.
@@ -1288,7 +1454,9 @@ export class SearchService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zReindexApiV1SearchReindexPostData.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
@@ -1317,7 +1485,11 @@ export class SearchService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zReindexToolprintsApiV1SearchReindexToolprintsPostData.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
@@ -1342,7 +1514,11 @@ export class SearchService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zReindexToolsApiV1SearchReindexToolsPostData.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
@@ -1372,18 +1548,22 @@ export class SearchService {
       SearchToolprintsApiV1SearchToolprintsPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zSearchToolprintsApiV1SearchToolprintsPostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zSearchToolprintsApiV1SearchToolprintsPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zSearchToolprintsApiV1SearchToolprintsPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/search/toolprints',
       ...options,
       headers: {
@@ -1419,18 +1599,22 @@ export class SearchService {
       GetToolprintRecommendationApiV1SearchToolprintsRecommendationPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetToolprintRecommendationApiV1SearchToolprintsRecommendationPostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetToolprintRecommendationApiV1SearchToolprintsRecommendationPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetToolprintRecommendationApiV1SearchToolprintsRecommendationPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/search/toolprints/recommendation',
       ...options,
       headers: {
@@ -1453,16 +1637,18 @@ export class SearchService {
       SearchToolsApiV1SearchToolsPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zSearchToolsApiV1SearchToolsPostData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zSearchToolsApiV1SearchToolsPostResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zSearchToolsApiV1SearchToolsPostResponse.parseAsync(data)
-      },
       url: '/api/v1/search/tools',
       ...options,
       headers: {
@@ -1473,7 +1659,7 @@ export class SearchService {
   }
 }
 
-export class SecretsService {
+export class Secrets {
   /**
    * Get Secrets
    */
@@ -1485,7 +1671,9 @@ export class SecretsService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetSecretsApiV1SecretsGetData.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
@@ -1508,18 +1696,20 @@ export class SecretsService {
       GetSecretApiV1SecretsSecretNameGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetSecretApiV1SecretsSecretNameGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zGetSecretApiV1SecretsSecretNameGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetSecretApiV1SecretsSecretNameGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/secrets/{secret_name}',
       ...options
     })
@@ -1536,7 +1726,14 @@ export class SecretsService {
       UpsertSecretApiV1SecretsSecretNamePutErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zUpsertSecretApiV1SecretsSecretNamePutData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zUpsertSecretApiV1SecretsSecretNamePutResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
@@ -1547,11 +1744,6 @@ export class SecretsService {
           type: 'http'
         }
       ],
-      responseValidator: async (data) => {
-        return await zUpsertSecretApiV1SecretsSecretNamePutResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/secrets/{secret_name}',
       ...options,
       headers: {
@@ -1562,7 +1754,7 @@ export class SecretsService {
   }
 }
 
-export class ServersService {
+export class Servers {
   /**
    * List Servers
    */
@@ -1574,16 +1766,18 @@ export class ServersService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zListServersApiV1ServersGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zListServersApiV1ServersGetResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zListServersApiV1ServersGetResponse.parseAsync(data)
-      },
       url: '/api/v1/servers/',
       ...options
     })
@@ -1600,16 +1794,18 @@ export class ServersService {
       GetServerApiV1ServersServerIdGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetServerApiV1ServersServerIdGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zGetServerApiV1ServersServerIdGetResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetServerApiV1ServersServerIdGetResponse.parseAsync(data)
-      },
       url: '/api/v1/servers/{server_id}',
       ...options
     })
@@ -1631,18 +1827,22 @@ export class ServersService {
       GetServerClientApiV1ServersServerIdClientGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetServerClientApiV1ServersServerIdClientGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetServerClientApiV1ServersServerIdClientGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetServerClientApiV1ServersServerIdClientGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/servers/{server_id}/client',
       ...options
     })
@@ -1664,18 +1864,22 @@ export class ServersService {
       GetServerPropertiesApiV1ServersServerIdPropertiesGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetServerPropertiesApiV1ServersServerIdPropertiesGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetServerPropertiesApiV1ServersServerIdPropertiesGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetServerPropertiesApiV1ServersServerIdPropertiesGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/servers/{server_id}/properties',
       ...options
     })
@@ -1697,18 +1901,22 @@ export class ServersService {
       PatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zPatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zPatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zPatchServerPropertiesApiV1ServersServerIdPropertiesKeyPatchResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/servers/{server_id}/properties/{key}',
       ...options,
       headers: {
@@ -1719,7 +1927,7 @@ export class ServersService {
   }
 }
 
-export class StrategyService {
+export class Strategy {
   /**
    * Get Strategy
    * Gets a strategy for a given goal.
@@ -1732,16 +1940,18 @@ export class StrategyService {
       GetStrategyApiV1StrategyPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetStrategyApiV1StrategyPostData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zGetStrategyApiV1StrategyPostResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetStrategyApiV1StrategyPostResponse.parseAsync(data)
-      },
       url: '/api/v1/strategy/',
       ...options,
       headers: {
@@ -1765,25 +1975,29 @@ export class StrategyService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCreateFakeRecipesApiV1StrategyFakePostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zCreateFakeRecipesApiV1StrategyFakePostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zCreateFakeRecipesApiV1StrategyFakePostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/strategy/fake',
       ...options
     })
   }
 }
 
-export class ToolprintsService {
+export class Toolprints {
   /**
    * Create Toolprint
    * Creates a new toolprint and indexes it for search.
@@ -1801,18 +2015,20 @@ export class ToolprintsService {
       CreateToolprintApiV1ToolprintsPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCreateToolprintApiV1ToolprintsPostData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zCreateToolprintApiV1ToolprintsPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zCreateToolprintApiV1ToolprintsPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/toolprints/',
       ...options,
       headers: {
@@ -1839,18 +2055,22 @@ export class ToolprintsService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'text',
+      requestValidator: async (data) => {
+        return await zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetToolprintInstructionsApiV1ToolprintsWellKnownAiTxtGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/toolprints/.well-known/ai.txt',
       ...options
     })
@@ -1873,18 +2093,22 @@ export class ToolprintsService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetToolprintSchemaApiV1ToolprintsWellKnownSchemaGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/toolprints/.well-known/schema',
       ...options
     })
@@ -1907,18 +2131,22 @@ export class ToolprintsService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'text',
+      requestValidator: async (data) => {
+        return await zGetToolprintTemplateApiV1ToolprintsWellKnownTemplateGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetToolprintTemplateApiV1ToolprintsWellKnownTemplateGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetToolprintTemplateApiV1ToolprintsWellKnownTemplateGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/toolprints/.well-known/template',
       ...options
     })
@@ -1946,18 +2174,22 @@ export class ToolprintsService {
       CreateToolprintJsonApiV1ToolprintsJsonPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCreateToolprintJsonApiV1ToolprintsJsonPostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zCreateToolprintJsonApiV1ToolprintsJsonPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zCreateToolprintJsonApiV1ToolprintsJsonPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/toolprints/json',
       ...options,
       headers: {
@@ -1989,18 +2221,22 @@ export class ToolprintsService {
       ValidateToolprintApiV1ToolprintsValidatePostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zValidateToolprintApiV1ToolprintsValidatePostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zValidateToolprintApiV1ToolprintsValidatePostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zValidateToolprintApiV1ToolprintsValidatePostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/toolprints/validate',
       ...options,
       headers: {
@@ -2033,7 +2269,11 @@ export class ToolprintsService {
       ValidateToolprintJsonApiV1ToolprintsValidateJsonPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zValidateToolprintJsonApiV1ToolprintsValidateJsonPostData.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
@@ -2073,18 +2313,22 @@ export class ToolprintsService {
       ThrowOnError
     >({
       bodySerializer: null,
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zValidateToolprintYamlApiV1ToolprintsValidateYamlPostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zValidateToolprintYamlApiV1ToolprintsValidateYamlPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zValidateToolprintYamlApiV1ToolprintsValidateYamlPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/toolprints/validate/yaml',
       ...options,
       headers: {
@@ -2117,18 +2361,22 @@ export class ToolprintsService {
       ThrowOnError
     >({
       bodySerializer: null,
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zCreateToolprintYamlApiV1ToolprintsYamlPostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zCreateToolprintYamlApiV1ToolprintsYamlPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zCreateToolprintYamlApiV1ToolprintsYamlPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/toolprints/yaml',
       ...options,
       headers: {
@@ -2155,25 +2403,29 @@ export class ToolprintsService {
       GetToolprintApiV1ToolprintsToolprintIdGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetToolprintApiV1ToolprintsToolprintIdGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetToolprintApiV1ToolprintsToolprintIdGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetToolprintApiV1ToolprintsToolprintIdGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/toolprints/{toolprint_id}',
       ...options
     })
   }
 }
 
-export class ToolsService {
+export class Tools {
   /**
    * List Tools
    * List all tools for the current user.
@@ -2186,16 +2438,18 @@ export class ToolsService {
       unknown,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zListToolsApiV1ToolsGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zListToolsApiV1ToolsGetResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zListToolsApiV1ToolsGetResponse.parseAsync(data)
-      },
       url: '/api/v1/tools/',
       ...options
     })
@@ -2218,18 +2472,22 @@ export class ToolsService {
       GetToolResourcesBatchApiV1ToolsResourcesBatchPostErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetToolResourcesBatchApiV1ToolsResourcesBatchPostData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetToolResourcesBatchApiV1ToolsResourcesBatchPostResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetToolResourcesBatchApiV1ToolsResourcesBatchPostResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/tools/resources/batch',
       ...options,
       headers: {
@@ -2250,16 +2508,18 @@ export class ToolsService {
       GetToolApiV1ToolsToolIdGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetToolApiV1ToolsToolIdGetData.parseAsync(data)
+      },
+      responseValidator: async (data) => {
+        return await zGetToolApiV1ToolsToolIdGetResponse.parseAsync(data)
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetToolApiV1ToolsToolIdGetResponse.parseAsync(data)
-      },
       url: '/api/v1/tools/{tool_id}',
       ...options
     })
@@ -2281,18 +2541,22 @@ export class ToolsService {
       GetToolPropertiesApiV1ToolsToolIdPropertiesGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetToolPropertiesApiV1ToolsToolIdPropertiesGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetToolPropertiesApiV1ToolsToolIdPropertiesGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetToolPropertiesApiV1ToolsToolIdPropertiesGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/tools/{tool_id}/properties',
       ...options
     })
@@ -2315,18 +2579,22 @@ export class ToolsService {
       GetToolResourceApiV1ToolsToolIdResourceGetErrors,
       ThrowOnError
     >({
-      responseType: 'json',
+      requestValidator: async (data) => {
+        return await zGetToolResourceApiV1ToolsToolIdResourceGetData.parseAsync(
+          data
+        )
+      },
+      responseValidator: async (data) => {
+        return await zGetToolResourceApiV1ToolsToolIdResourceGetResponse.parseAsync(
+          data
+        )
+      },
       security: [
         {
           name: 'X-ONEGREP-API-KEY',
           type: 'apiKey'
         }
       ],
-      responseValidator: async (data) => {
-        return await zGetToolResourceApiV1ToolsToolIdResourceGetResponse.parseAsync(
-          data
-        )
-      },
       url: '/api/v1/tools/{tool_id}/resource',
       ...options
     })

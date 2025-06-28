@@ -79,21 +79,20 @@
     "clean:pack": "rimraf ./pack"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.77.0",
     "@repo/typescript-config": "workspace:*",
     "@repo/utils": "workspace:*",
-    "@hey-api/openapi-ts": "^0.69.0",
+    "@types/node": "^22.15.34",
+    "check-licenses": "^1.1.0",
+    "dotenv": "^16.6.1",
     "openapi-endpoint-trimmer": "^2.0.1",
-    "@types/node": "^22.13.4",
-    "dotenv": "^16.4.7",
     "path": "^0.12.7",
     "rimraf": "^6.0.1",
-    "tsup": "^8.3.6",
+    "tsup": "^8.5.0",
     "typescript": "5.7.3",
-    "vitest": "^3.0.7",
-    "check-licenses": "^1.1.0"
+    "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@hey-api/client-axios": "^0.8.0",
-    "zod": "^3.24.2"
+    "zod": "^3.25.67"
   }
 }
