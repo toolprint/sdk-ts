@@ -17,7 +17,8 @@ export function createUnauthenticatedClient(baseUrl: string): OneGrepApiClient {
   try {
     const client = createClient(
       createConfig<ClientOptions>({
-        baseUrl: baseUrl
+        baseUrl: baseUrl,
+        throwOnError: true
       })
     )
     return client as unknown as OneGrepApiClient
@@ -61,7 +62,8 @@ export function createApiClientFromParams(clientParams: {
     const client = createClient(
       createConfig<ClientOptions>({
         baseUrl: baseUrl,
-        headers: headers
+        headers: headers,
+        throwOnError: true
       })
     )
     return client as unknown as OneGrepApiClient

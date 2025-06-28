@@ -139,6 +139,10 @@ test name=".*":
 test-api-client name=".*":
     pnpm turbo run test --filter=@toolprint/api-client -- --testNamePattern={{name}}
 
+[group('test')]
+test-high-level-api-client name=".*":
+    pnpm turbo run test --filter=@toolprint/sdk -- --testNamePattern=.*OneGrepApiHighLevelClient.*
+
 # test the sdk package (use `test-sdk ".*"` to filter by test name regex)
 # * Note that "name" isn't the file name but the name of the test class within a file.
 # Example to filter to langchain tests: `just test-sdk ".*Langchain.*"` or `just test-sdk ".*Blaxel.*"` or `just test-sdk ".*HighLevelClient.*"`
