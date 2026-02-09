@@ -16,19 +16,19 @@
     "bl:chat": "bl chat --local blaxel-agent"
   },
   "dependencies": {
-    "@blaxel/core": "0.2.0",
-    "@blaxel/langgraph": "0.2.0",
-    "@langchain/core": "0.3.61",
-    "@langchain/langgraph": "0.3.5",
-    "@opentelemetry/instrumentation-fastify": "^0.45.0",
+    "@blaxel/core": "0.2.64",
+    "@blaxel/langgraph": "0.2.64",
+    "@langchain/core": "1.1.19",
+    "@langchain/langgraph": "1.1.4",
+    "@opentelemetry/instrumentation-fastify": "^0.55.0",
     "@toolprint/sdk": "workspace:*",
-    "fastify": "^5.4.0",
-    "zod": "^3.25.67"
+    "fastify": "^5.7.4",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/express": "^5.0.3",
-    "@types/node": "^22.15.34",
-    "tsx": "^4.20.3",
-    "typescript": "^5.8.3"
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.2.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }
